@@ -39,6 +39,7 @@ namespace Talbat
             services.AddCors();
             services.AddControllers();
             services.AddScoped<IGenericService<City>, CityService>();
+            services.AddScoped<IGenericService<Client>, ClientService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Talbat", Version = "v1" });

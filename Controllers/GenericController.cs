@@ -41,7 +41,7 @@ namespace Talbat.Controllers
             return Ok(item);
         }
         // GET api/<GenericController>/5
-        [HttpGet("{id}", Name = nameof(GetById))]
+        [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
