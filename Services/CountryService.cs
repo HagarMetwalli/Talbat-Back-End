@@ -9,38 +9,38 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class CityService : IGenericService<City>
+    public class CountryService : IGenericService<Country>
     {
-        private static ConcurrentDictionary <int, City> CitiesCache;
+        private static ConcurrentDictionary<int, Country> CountriesCache;
         private TalabatContext db;
-        public CityService(TalabatContext db)
+        public CountryService(TalabatContext db)
         {
             this.db = db;
-            if (CitiesCache == null)
+            if (CountriesCache == null)
             {
-                CitiesCache = new ConcurrentDictionary<int, City>(
-                    db.Cities.ToDictionary(c => c.CityId));
+                CountriesCache = new ConcurrentDictionary<int, Country>(
+                    db.Countries.ToDictionary(c => c.CountryId));
             }
         }
-        public async Task<City> CreatAsync(City c)
+        public async Task<Country> CreatAsync(Country c)
         {
-            EntityEntry<City> added = await db.Cities.AddAsync(c);
+            EntityEntry<Country> added = await db.Countries.AddAsync(c);
             int affected = await db.SaveChangesAsync();
             if (affected == 1)
             {
-                return CitiesCache.AddOrUpdate(c.CityId, c, UpdateCache);
+                return CountriesCache.AddOrUpdate(c.CountryId, c, UpdateCache);
             }
             else
             {
                 return null;
             }
         }
-        private City UpdateCache(int id , City c)
+        private Country UpdateCache(int id, Country c)
         {
-            City old;
-            if(CitiesCache.TryGetValue(id,out old))
+            Country old;
+            if (CountriesCache.TryGetValue(id, out old))
             {
-                if (CitiesCache.TryUpdate(id, c, old))
+                if (CountriesCache.TryUpdate(id, c, old))
                 {
                     return c;
                 }
@@ -49,33 +49,32 @@ namespace Talbat.Services
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            City c = db.Cities.Find(id);
-            db.Cities.Remove(c);
+            Country c = db.Countries.Find(id);
+            db.Countries.Remove(c);
             int affected = await db.SaveChangesAsync();
             if (affected == 1)
             {
-                return CitiesCache.TryRemove(id, out c);
+                return CountriesCache.TryRemove(id, out c);
             }
             else
             {
                 return null;
             }
         }
-
-        public Task<IEnumerable<City>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<City>>(() => CitiesCache.Values);
-
-        public Task<City> RetriveAsync(int id)
+        public Task<IEnumerable<Country>> RetriveAllAsync() => 
+            Task<IEnumerable>.Run<IEnumerable<Country>>(() => CountriesCache.Values);
+        public Task<Country> RetriveAsync(int id)
         {
             return Task.Run(() =>
             {
-                CitiesCache.TryGetValue(id, out City c);
+                CountriesCache.TryGetValue(id, out Country c);
                 return c;
             });
         }
 
-        public async Task<City> UpdateAsync(int id, City c)
+        public async Task<Country> UpdateAsync(int id, Country c)
         {
-            db.Cities.Update(c);
+            db.Countries.Update(c);
             int affected = await db.SaveChangesAsync();
             if (affected == 1)
             {

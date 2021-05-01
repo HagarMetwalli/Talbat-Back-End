@@ -40,6 +40,13 @@ namespace Talbat
             services.AddControllers();
             services.AddScoped<IGenericService<City>, CityService>();
             services.AddScoped<IGenericService<Client>, ClientService>();
+            //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
+            services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
+            services.AddScoped<IGenericService<Country>, CountryService>();
+            services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
+            services.AddScoped<IGenericService<Invoice>, InvoiceService>();
+            services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
+            services.AddScoped<IGenericService<Item>, ItemService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Talbat", Version = "v1" });

@@ -7,27 +7,27 @@ using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
 
+
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CititesController : GenericController<City>
+    public class ItemCategoriesController : GenericController<ItemCategory>
     {
-        private IGenericService<City> repo;
-        public CititesController(IGenericService<City> repo) : base(repo)
+        private IGenericService<ItemCategory> repo;
+        public ItemCategoriesController(IGenericService<ItemCategory> repo) : base(repo)
         {
             this.repo = repo;
         }
-
-        // Patch api/<GenericController>/5
+        // Patch api/Cities/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> update(int id, [FromBody] City c)
+        public async Task<IActionResult> update(int id, [FromBody] ItemCategory i)
         {
-            if (c == null || c.CityId != id)
+            if (i == null || i.ItemCategoryId != id)
             {
                 return BadRequest();
             }
@@ -35,12 +35,12 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var existing = await repo.RetriveAsync(c.CityId);
+            var existing = await repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await repo.UpdateAsync(id, c);
+            await repo.UpdateAsync(id, i);
             return new NoContentResult();
 
         }
