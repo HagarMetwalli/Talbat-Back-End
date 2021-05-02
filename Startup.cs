@@ -47,6 +47,7 @@ namespace Talbat
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();
             services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
             services.AddScoped<IGenericService<Item>, ItemService>();
+            services.AddScoped<IGenericService<Order>, OrderService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Talbat", Version = "v1" });
