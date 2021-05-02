@@ -48,6 +48,14 @@ namespace Talbat
             services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
             services.AddScoped<IGenericService<Item>, ItemService>();
             services.AddScoped<IGenericService<Order>, OrderService>();
+            services.AddScoped<IGenericService<Offer>, OfferService>();
+            services.AddScoped<IGenericService<JobCategory>, JobCategoryService>();
+            services.AddScoped<IGenericService<JobPeriod>, JobPeriodService>();
+            services.AddScoped<IGenericService<JobLocation>, JobLocationService>();
+            services.AddScoped<IGenericService<JobType>, JobTypeService>();
+            services.AddScoped<IGenericService<Job>, JobService>();
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Talbat", Version = "v1" });
