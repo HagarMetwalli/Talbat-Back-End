@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class createDB : Migration
+    public partial class blabla : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

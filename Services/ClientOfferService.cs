@@ -9,6 +9,7 @@ using Talbat.IServices;
 using Talbat.Models;
 
 namespace Talbat.Services
+{
     public class ClientOfferService
     {
         private static ConcurrentDictionary<string, ClientOffer> ClientOffersCache;
