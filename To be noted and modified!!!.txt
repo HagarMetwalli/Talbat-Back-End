@@ -1,7 +1,7 @@
 ﻿*Check:
 1- Store Rate? we said it'd be a run time calculated task why then a column?
 2- Offer Price is an integer value meanwhile in DB it's a varchar value
-3- 
+3- all table with relations need to have a repo not only for it's model, but also for it's relational data models!!
 
 
 
@@ -12,6 +12,7 @@
 - JobLocation
 - JobPeriod
 - JobType
+- Job
 - 
 
 
@@ -20,6 +21,5 @@
 - OfferReview
 - OfferItem
 
-- Job
 
 
