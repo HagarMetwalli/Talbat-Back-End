@@ -11,6 +11,7 @@ namespace Talbat.Models
         {
             Items = new HashSet<Item>();
             Orders = new HashSet<Order>();
+            Partners = new HashSet<Partner>();
             Reviews = new HashSet<Review>();
             StoreWorkingHours = new HashSet<StoreWorkingHour>();
         }
@@ -27,10 +28,12 @@ namespace Talbat.Models
         public int? StorePaymentOnDeliverCash { get; set; }
         public int? StorePaymentVisa { get; set; }
         public string StoreCuisine { get; set; }
-        public int? StoreRate { get; set; }
+        public int? StoreTypeId { get; set; }
 
+        public virtual StoreType StoreType { get; set; }
         public virtual ICollection<Item> Items { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Partner> Partners { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<StoreWorkingHour> StoreWorkingHours { get; set; }
     }
