@@ -12,5 +12,9 @@ namespace Talbat.Models
         public string PartnerLname { get; set; }
         public string PartnerEmail { get; set; }
         public int? PartnerPhoneNo { get; set; }
+        public int? StoreId { get; set; }
+        public string PartnerPassword { get; set; }
+
+        public virtual Store Store { get; set; }
     }
 }
