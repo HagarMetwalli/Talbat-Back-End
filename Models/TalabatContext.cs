@@ -45,11 +45,11 @@ namespace Talbat.Models
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<ReviewCategory> ReviewCategories { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
+        public virtual DbSet<StoreType> StoreTypes { get; set; }
         public virtual DbSet<StoreWorkingHour> StoreWorkingHours { get; set; }
         public virtual DbSet<SubItem> SubItems { get; set; }
         public virtual DbSet<SubItemCategory> SubItemCategories { get; set; }
         public virtual DbSet<TempPartnerRegisterationDetail> TempPartnerRegisterationDetails { get; set; }
-        public virtual DbSet<TempStoreRegisterationDetail> TempStoreRegisterationDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -124,6 +124,12 @@ namespace Talbat.Models
             modelBuilder.Entity<ClientAddress>(entity =>
             {
                 entity.ToTable("ClientAddress");
+
+                entity.HasIndex(e => e.CityId, "IX_ClientAddress_City_Id");
+
+                entity.HasIndex(e => e.ClientId, "IX_ClientAddress_Client_Id");
+
+                entity.HasIndex(e => e.RegionId, "IX_ClientAddress_Region_Id");
 
                 entity.Property(e => e.ClientAddressId).HasColumnName("ClientAddress_Id");
 
@@ -205,6 +211,12 @@ namespace Talbat.Models
 
                 entity.ToTable("ClientDeliveryManOrder");
 
+                entity.HasIndex(e => e.ClientAddressId, "IX_ClientDeliveryManOrder_ClientAddress_Id");
+
+                entity.HasIndex(e => e.DeliveryManId, "IX_ClientDeliveryManOrder_DeliveryMan_Id");
+
+                entity.HasIndex(e => e.InvoiceId, "IX_ClientDeliveryManOrder_Invoice_Id");
+
                 entity.Property(e => e.ClientId).HasColumnName("Client_Id");
 
                 entity.Property(e => e.DeliveryManId).HasColumnName("DeliveryMan_Id");
@@ -249,6 +261,8 @@ namespace Talbat.Models
 
                 entity.ToTable("Client_Offer");
 
+                entity.HasIndex(e => e.OfferId, "IX_Client_Offer_Offer_Id");
+
                 entity.Property(e => e.UserId).HasColumnName("User_Id");
 
                 entity.Property(e => e.OfferId).HasColumnName("Offer_Id");
@@ -270,6 +284,8 @@ namespace Talbat.Models
                     .HasName("PK_User_Seeking_Jobs");
 
                 entity.ToTable("Client_Seeking_Jobs");
+
+                entity.HasIndex(e => e.JobId, "IX_Client_Seeking_Jobs_Job_Id");
 
                 entity.Property(e => e.ClientId).HasColumnName("Client_Id");
 
@@ -332,6 +348,8 @@ namespace Talbat.Models
             {
                 entity.ToTable("Invoice");
 
+                entity.HasIndex(e => e.OrderId, "IX_Invoice_Order_Id");
+
                 entity.Property(e => e.InvoiceId).HasColumnName("Invoice_Id");
 
                 entity.Property(e => e.AddressDetails).IsUnicode(false);
@@ -347,6 +365,10 @@ namespace Talbat.Models
             modelBuilder.Entity<Item>(entity =>
             {
                 entity.ToTable("Item");
+
+                entity.HasIndex(e => e.CountryId, "IX_Item_Country_Id");
+
+                entity.HasIndex(e => e.StoreId, "IX_Item_Store_Id");
 
                 entity.Property(e => e.ItemId).HasColumnName("Item_Id");
 
@@ -423,6 +445,14 @@ namespace Talbat.Models
             modelBuilder.Entity<Job>(entity =>
             {
                 entity.ToTable("Job");
+
+                entity.HasIndex(e => e.JobCategoryId, "IX_Job_JobCategory_Id");
+
+                entity.HasIndex(e => e.JobLocationId, "IX_Job_JobLocation_Id");
+
+                entity.HasIndex(e => e.JobPeriodId, "IX_Job_JobPeriod_Id");
+
+                entity.HasIndex(e => e.JobTypeId, "IX_Job_JobType_Id");
 
                 entity.Property(e => e.JobId).HasColumnName("Job_Id");
 
@@ -572,6 +602,8 @@ namespace Talbat.Models
 
                 entity.ToTable("OfferItem");
 
+                entity.HasIndex(e => e.ItemId, "IX_OfferItem_Item_Id");
+
                 entity.Property(e => e.OfferId).HasColumnName("Offer_Id");
 
                 entity.Property(e => e.ItemId).HasColumnName("Item_Id");
@@ -618,6 +650,10 @@ namespace Talbat.Models
             {
                 entity.ToTable("Order");
 
+                entity.HasIndex(e => e.ClientId, "IX_Order_Client_Id");
+
+                entity.HasIndex(e => e.StoreId, "IX_Order_Store_Id");
+
                 entity.Property(e => e.OrderId).HasColumnName("Order_Id");
 
                 entity.Property(e => e.ClientId).HasColumnName("Client_Id");
@@ -655,6 +691,8 @@ namespace Talbat.Models
 
                 entity.ToTable("OrderItem");
 
+                entity.HasIndex(e => e.ItemId, "IX_OrderItem_Item_Id");
+
                 entity.Property(e => e.OrderId).HasColumnName("Order_Id");
 
                 entity.Property(e => e.ItemId).HasColumnName("Item_Id");
@@ -683,6 +721,8 @@ namespace Talbat.Models
             modelBuilder.Entity<OrderReview>(entity =>
             {
                 entity.ToTable("OrderReview");
+
+                entity.HasIndex(e => e.OrderId, "IX_OrderReview_Order_Id");
 
                 entity.Property(e => e.OrderReviewId)
                     .ValueGeneratedNever()
@@ -713,20 +753,28 @@ namespace Talbat.Models
 
                 entity.Property(e => e.PartnerEmail)
                     .HasMaxLength(50)
-                    .IsUnicode(false)
                     .HasColumnName("Partner_Email");
 
                 entity.Property(e => e.PartnerFname)
                     .HasMaxLength(50)
-                    .IsUnicode(false)
                     .HasColumnName("Partner_FName");
 
                 entity.Property(e => e.PartnerLname)
                     .HasMaxLength(50)
-                    .IsUnicode(false)
                     .HasColumnName("Partner_LName");
 
+                entity.Property(e => e.PartnerPassword)
+                    .HasMaxLength(50)
+                    .HasColumnName("Partner_Password");
+
                 entity.Property(e => e.PartnerPhoneNo).HasColumnName("Partner_PhoneNo");
+
+                entity.Property(e => e.StoreId).HasColumnName("Store_Id");
+
+                entity.HasOne(d => d.Store)
+                    .WithMany(p => p.Partners)
+                    .HasForeignKey(d => d.StoreId)
+                    .HasConstraintName("FK_Partner_Store");
             });
 
             modelBuilder.Entity<Region>(entity =>
@@ -745,6 +793,12 @@ namespace Talbat.Models
             modelBuilder.Entity<Review>(entity =>
             {
                 entity.ToTable("Review");
+
+                entity.HasIndex(e => e.ReviewCategoryId, "IX_Review_ReviewCategory_Id");
+
+                entity.HasIndex(e => e.StoreId, "IX_Review_Store_Id");
+
+                entity.HasIndex(e => e.UserId, "IX_Review_User_Id");
 
                 entity.Property(e => e.ReviewId).HasColumnName("Review_Id");
 
@@ -842,12 +896,32 @@ namespace Talbat.Models
                     .IsUnicode(false)
                     .HasColumnName("Store_PreOrder");
 
-                entity.Property(e => e.StoreRate).HasColumnName("Store_Rate");
+                entity.Property(e => e.StoreTypeId).HasColumnName("StoreType_Id");
+
+                entity.HasOne(d => d.StoreType)
+                    .WithMany(p => p.Stores)
+                    .HasForeignKey(d => d.StoreTypeId)
+                    .HasConstraintName("FK_Store_StoreType");
+            });
+
+            modelBuilder.Entity<StoreType>(entity =>
+            {
+                entity.ToTable("StoreType");
+
+                entity.Property(e => e.StoreTypeId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("StoreType_Id");
+
+                entity.Property(e => e.StoreType1)
+                    .HasMaxLength(50)
+                    .HasColumnName("Store_Type");
             });
 
             modelBuilder.Entity<StoreWorkingHour>(entity =>
             {
                 entity.ToTable("StoreWorkingHour");
+
+                entity.HasIndex(e => e.StoreId, "IX_StoreWorkingHour_Store_Id");
 
                 entity.Property(e => e.StoreWorkingHourId)
                     .ValueGeneratedNever()
@@ -879,6 +953,10 @@ namespace Talbat.Models
             modelBuilder.Entity<SubItem>(entity =>
             {
                 entity.ToTable("SubItem");
+
+                entity.HasIndex(e => e.ItemId, "IX_SubItem_Item_Id");
+
+                entity.HasIndex(e => e.SubItemCategoryId, "IX_SubItem_SubItemCategory_Id");
 
                 entity.Property(e => e.SubItemId)
                     .ValueGeneratedNever()
@@ -937,67 +1015,47 @@ namespace Talbat.Models
 
             modelBuilder.Entity<TempPartnerRegisterationDetail>(entity =>
             {
-                entity.HasKey(e => e.PartnerId);
+                entity.HasKey(e => e.TempPartnerStoreId);
 
-                entity.Property(e => e.PartnerId)
+                entity.Property(e => e.TempPartnerStoreId)
                     .ValueGeneratedNever()
-                    .HasColumnName("Partner_Id");
+                    .HasColumnName("TempPartnerStore_Id");
 
                 entity.Property(e => e.PartnerContactRole)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
+                    .HasMaxLength(50)
                     .HasColumnName("Partner_ContactRole");
 
                 entity.Property(e => e.PartnerEmail)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
+                    .HasMaxLength(50)
                     .HasColumnName("Partner_Email");
 
                 entity.Property(e => e.PartnerFname)
                     .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
+                    .HasMaxLength(50)
                     .HasColumnName("Partner_FName");
 
                 entity.Property(e => e.PartnerLname)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
+                    .HasMaxLength(50)
                     .HasColumnName("Partner_LName");
 
                 entity.Property(e => e.PartnerPhoneNumber)
-                    .HasMaxLength(15)
-                    .IsUnicode(false)
+                    .HasMaxLength(50)
                     .HasColumnName("Partner_PhoneNumber");
 
-                entity.Property(e => e.StoreCountry)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("Store_Country");
-            });
-
-            modelBuilder.Entity<TempStoreRegisterationDetail>(entity =>
-            {
-                entity.HasKey(e => e.StoreId);
-
-                entity.Property(e => e.StoreId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("Store_Id");
-
-                entity.Property(e => e.StoreAddress)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("Store_Address");
+                entity.Property(e => e.StoreAddress).HasColumnName("Store_Address");
 
                 entity.Property(e => e.StoreBranchesNo).HasColumnName("Store_BranchesNo");
 
                 entity.Property(e => e.StoreContact)
                     .HasMaxLength(50)
-                    .IsUnicode(false)
                     .HasColumnName("Store_Contact");
+
+                entity.Property(e => e.StoreCountry)
+                    .HasMaxLength(50)
+                    .HasColumnName("Store_Country");
 
                 entity.Property(e => e.StoreName)
                     .HasMaxLength(50)
-                    .IsUnicode(false)
                     .HasColumnName("Store_Name");
 
                 entity.Property(e => e.StoreStatus)
@@ -1005,10 +1063,12 @@ namespace Talbat.Models
                     .HasColumnName("Store_Status")
                     .IsFixedLength(true);
 
-                entity.Property(e => e.StoreType)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("Store_Type");
+                entity.Property(e => e.StoreTypeId).HasColumnName("Store_Type_Id");
+
+                entity.HasOne(d => d.StoreType)
+                    .WithMany(p => p.TempPartnerRegisterationDetails)
+                    .HasForeignKey(d => d.StoreTypeId)
+                    .HasConstraintName("FK_TempPartnerRegisterationDetails_StoreType");
             });
 
             OnModelCreatingPartial(modelBuilder);
