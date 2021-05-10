@@ -9,6 +9,8 @@ namespace Talbat.Models
     {
         public int ItemId { get; set; }
         public int OrderReviewId { get; set; }
-        public int ItemStatus { get; set; }
+        public int RateStatusId { get; set; }
+
+        public virtual RateStatus RateStatus { get; set; }
     }
 }
