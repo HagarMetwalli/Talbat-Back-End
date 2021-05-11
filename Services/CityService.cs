@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Talbat.Services
     public class CityService : IGenericService<City>
     {
         private TalabatContext _db;
-        public CityService(TalabatContext db)
+        public CityService(TalabatContext db):base()
         {
             _db = db;
         }
@@ -44,11 +45,11 @@ namespace Talbat.Services
             return Task.Run(() => _db.Cities.Find(id));
         }
 
-        public async Task<City> UpdateAsync(City c)
+        public async Task<City> UpdateAsync(int id ,City c)
         {
-
-            _db.Cities.Update(c);
-            int affected = await _db.SaveChangesAsync();
+            TalabatContext _dbc = new TalabatContext();
+            _dbc.Cities.Update(c);
+            int affected = await _dbc.SaveChangesAsync();
             if (affected == 1)
                 return c;   
             return null;

@@ -60,7 +60,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PatchCity(int id, City city)
+        public async Task<ActionResult<City>> PatchCity(int id, City city)
         {
             if (city == null)
                 return BadRequest();
@@ -73,11 +73,11 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var c =  await _repo.UpdateAsync(city);
-            if (c == null)
-                return BadRequest();
+            var c =  await _repo.UpdateAsync(id,city);
+           if (c == null)
+               return BadRequest();
 
-            return NoContent();
+            return city ;
         }
         // DELETE api/cities/5
         [HttpDelete("{id}")]
