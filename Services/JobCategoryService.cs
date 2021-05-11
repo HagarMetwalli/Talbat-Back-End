@@ -93,6 +93,9 @@ namespace Talbat.Services
             return null;
         }
 
-
+        public Task<JobCategory> UpdateAsync(JobCategory item)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

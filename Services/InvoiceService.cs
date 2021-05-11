@@ -83,5 +83,10 @@ namespace Talbat.Services
             }
             return null;
         }
+
+        public Task<Invoice> UpdateAsync(Invoice item)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
