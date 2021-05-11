@@ -54,6 +54,8 @@ namespace Talbat
             services.AddScoped<IGenericService<JobLocation>, JobLocationService>();
             services.AddScoped<IGenericService<JobType>, JobTypeService>();
             services.AddScoped<IGenericService<Job>, JobService>();
+            services.AddScoped<IGenericService<Store>, StoreService>();
+            services.AddScoped<IGenericService<StoreType>, StoreTypeService>();
 
 
             services.AddSwaggerGen(c =>
