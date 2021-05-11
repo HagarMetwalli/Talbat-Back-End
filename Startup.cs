@@ -23,6 +23,7 @@ namespace Talbat
 {
     public class Startup
     {
+        string MyAllowSpecificOrigins = "T";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -36,8 +37,18 @@ namespace Talbat
             services.AddDbContext<TalabatContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Talbaltconn")));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
-            services.AddCors();
-            services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyHeader();
+                });
+            });
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
+            Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IGenericService<City>, CityService>();
             services.AddScoped<IGenericService<Client>, ClientService>();
             //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
@@ -67,14 +78,16 @@ namespace Talbat
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors(
-                 options =>
-                 {
-                     options.AllowAnyOrigin();
-                     options.AllowAnyMethod();
-                     options.AllowAnyHeader();
-                 }
-            );
+            //app.UseCors(
+            //     options =>
+            //     {
+            //         options.AllowAnyOrigin();
+            //         options.AllowAnyMethod();
+            //         options.AllowAnyHeader();
+            //     }
+            //);
+            app.UseCors(MyAllowSpecificOrigins);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

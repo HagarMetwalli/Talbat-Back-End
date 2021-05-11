@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -23,7 +24,9 @@ namespace Talbat.Models
         public string ClientEmail { get; set; }
         public DateTime ClientDateOfBirth { get; set; }
         public string ClientPassword { get; set; }
-        public string ClientGender { get; set; }
+        [Range(0, 1, ErrorMessage = "Gender Must be between 0 or 1")]
+
+        public int ClientGenderIsMale { get; set; }
         public int ClientNewsletterSubscribe { get; set; }
         public int ClientSmsSubscribe { get; set; }
 
