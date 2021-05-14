@@ -73,11 +73,11 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var c =  await _repo.UpdateAsync(id,city);
-           if (c == null)
+            var c =  await _repo.UpdateAsync(city);
+            if (c == null)
                return BadRequest();
 
-            return city ;
+            return new NoContentResult();
         }
         // DELETE api/cities/5
         [HttpDelete("{id}")]

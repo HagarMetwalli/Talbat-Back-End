@@ -45,7 +45,7 @@ namespace Talbat.Services
             return Task.Run(() => _db.Cities.Find(id));
         }
 
-        public async Task<City> UpdateAsync(int id ,City c)
+        public async Task<City> UpdateAsync(City c)
         {
             TalabatContext _dbc = new TalabatContext();
             _dbc.Cities.Update(c);

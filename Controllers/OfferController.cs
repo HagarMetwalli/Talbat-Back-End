@@ -46,7 +46,7 @@ namespace Talbat.Controllers
                 return NotFound();
             }
 
-            await repo_Offer.UpdateAsync(id,o);
+            await repo_Offer.UpdateAsync(o);
             return new NoContentResult();
 
         }
