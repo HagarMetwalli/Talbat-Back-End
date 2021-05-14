@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210510231715_models")]
-    partial class models
+    [Migration("20210511093842_Models")]
+    partial class Models
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

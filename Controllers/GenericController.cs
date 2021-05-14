@@ -56,7 +56,6 @@ namespace Talbat.Controllers
         }
         // DELETE api/<GenericController>/5
         [HttpDelete("{id}")]
-        [HttpPut("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

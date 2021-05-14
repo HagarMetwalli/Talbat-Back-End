@@ -84,6 +84,11 @@ namespace Talbat.Services
             }
             return null;
         }
+
+        public Task<DeliveryMan> UpdateAsync(DeliveryMan item)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
 

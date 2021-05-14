@@ -11,7 +11,7 @@ namespace Talbat.IServices
         Task<T> CreatAsync(T item);
         Task<IEnumerable<T>> RetriveAllAsync();
         Task<T> RetriveAsync(int id);
-        Task<T> UpdateAsync(int id,T item);
+        Task<T> UpdateAsync(T item);
         Task<bool?> DeleteAsync(int id);
 
     }

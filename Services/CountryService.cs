@@ -72,15 +72,20 @@ namespace Talbat.Services
             });
         }
 
-        public async Task<Country> UpdateAsync(int id, Country c)
+        public async Task<Country> UpdateAsync(Country c)
         {
             db.Countries.Update(c);
             int affected = await db.SaveChangesAsync();
             if (affected == 1)
             {
-                return UpdateCache(id, c);
+                return c;
             }
             return null;
+        }
+
+        public Task<Country> UpdateAsync(int id, Country item)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -83,5 +83,10 @@ namespace Talbat.Services
             }
             return null;
         }
+
+        public Task<Item> UpdateAsync(Item item)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
