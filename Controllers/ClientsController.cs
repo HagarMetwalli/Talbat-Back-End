@@ -12,39 +12,97 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsController : GenericController<Client>
+    public class ClientsController : ControllerBase
     {
-        private IGenericService<Client> repo;
+        private IGenericService<Client> _repo;
 
-        public ClientsController(IGenericService<Client> repo) : base(repo)
+        public ClientsController(IGenericService<Client> repo)
         {
-            this.repo = repo;
+            _repo = repo;
         }
 
-        // Patch api/<GenericController>/5
+        // GET: api/clients
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Client>))]
+        public async Task<IEnumerable<Client>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/clients/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetById(int id)
+        {
+            Client client = await _repo.RetriveAsync(id);
+            if (client == null)
+                return NotFound();
+            return Ok(client);
+        }
+
+        // POST api/clients
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Post([FromBody] Client client)
+        {
+            if (client == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            Client added = await _repo.CreatAsync(client);
+            if (added == null)
+                return BadRequest();
+
+            return Ok(client);
+        }
+
+        //Patch api/clients/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-
-        public async Task<IActionResult> update(int id, [FromBody] Client c)
+        public async Task<ActionResult<City>> PatchCity(int id, Client client)
         {
-            if (c == null || c.ClientId != id)
-            {
+            if (client == null)
                 return BadRequest();
-            }
+
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
-            var existing = await repo.RetriveAsync(c.ClientId);
+
+            var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await repo.UpdateAsync(c);
-            return new NoContentResult();
+            var _client = await _repo.UpdateAsync(client);
+            if (_client == null)
+                return BadRequest();
 
+            return new NoContentResult();
+        }
+        // DELETE api/clients/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            bool? deleted = await _repo.DeleteAsync(id);
+            if (deleted.HasValue && deleted.Value)
+            {
+                return new NoContentResult();//204 No Content
+            }
+            else
+            {
+                return BadRequest($"item {id} was found but failed to delete");
+            }
         }
     }
 }

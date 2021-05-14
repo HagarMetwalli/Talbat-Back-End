@@ -23,6 +23,19 @@ namespace Talbat.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<City>))]
         public async Task<IEnumerable<City>> Get() => await _repo.RetriveAllAsync();
 
+        // GET api/cities/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetById(int id)
+        {
+            City city = await _repo.RetriveAsync(id);
+            if (city == null)
+                return NotFound();
+            return Ok(city);
+        }
+
         // POST api/cities
         [HttpPost]
         [ProducesResponseType(201)]
@@ -42,20 +55,7 @@ namespace Talbat.Controllers
             return Ok(city);
         }
 
-
-        // GET api/cities/5
-        [HttpGet("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-
-        public async Task<IActionResult> GetById(int id)
-        {
-            City city = await _repo.RetriveAsync(id);
-            if (city == null)
-                return NotFound();
-            return Ok(city);
-        }
-
+        //Patch api/cities/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
