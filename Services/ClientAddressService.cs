@@ -82,6 +82,11 @@ namespace Talbat.Services
             }
             return null;
         }
+
+        public Task<ClientAddress> UpdateAsync(ClientAddress item)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
 }

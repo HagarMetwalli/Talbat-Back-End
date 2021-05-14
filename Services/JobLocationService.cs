@@ -93,6 +93,9 @@ namespace Talbat.Services
             return null;
         }
 
-
+        public Task<JobLocation> UpdateAsync(JobLocation item)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
