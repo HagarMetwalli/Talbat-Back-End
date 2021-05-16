@@ -14,10 +14,12 @@ namespace Talbat.Controllers
     public class ItemReviewsController : ControllerBase
     {
         private IGenericService<ItemReview> _repo;
+        private TalabatContext _db;
 
-        public ItemReviewsController(IGenericService<ItemReview> repo)
+        public ItemReviewsController(IGenericService<ItemReview> repo,TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
         // GET: api/itemreviews
         [HttpGet]
@@ -43,7 +45,8 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] ItemReview itemReview)
         {
-            if (itemReview == null)
+            var ratestatusId = _db.RateStatuses.Find(itemReview.RateStatusId);
+            if (itemReview == null || ratestatusId == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -62,7 +65,8 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<ItemReview>> PatchItemReview(int id, [FromBody] ItemReview itemReview)
         {
-            if (itemReview == null || itemReview.ItemId != id)
+            var ratestatusId = _db.RateStatuses.Find(itemReview.RateStatusId);
+            if (itemReview == null ||ratestatusId ==null || itemReview.ItemId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)

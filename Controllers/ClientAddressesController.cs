@@ -14,9 +14,12 @@ namespace Talbat.Controllers
     public class ClientAddressesController : ControllerBase
     {
         private IGenericService<ClientAddress> _repo;
-        public ClientAddressesController(IGenericService<ClientAddress> repo)
+        private TalabatContext _db;
+
+        public ClientAddressesController(IGenericService<ClientAddress> repo,TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
         // GET: api/clientaddresses
         [HttpGet]
@@ -42,7 +45,12 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] ClientAddress clientAddress)
         {
-            if (clientAddress == null)
+            var clientId = _db.Clients.Find(clientAddress.ClientId);
+            var addresstypeId = _db.AddressTypes.Find(clientAddress.ClientAddressTypeId);
+            var cityId = _db.Cities.Find(clientAddress.CityId);
+            var regionId = _db.Regions.Find(clientAddress.RegionId);
+
+            if (clientAddress == null|| clientId==null || addresstypeId ==null ||cityId == null || regionId == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -62,7 +70,11 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<ClientAddress>> PatchClientAddress(int id, [FromBody] ClientAddress clientAddress)
         {
-            if (clientAddress == null || clientAddress.ClientAddressId!=id)
+            var clientId = _db.Clients.Find(clientAddress.ClientId);
+            var addresstypeId = _db.AddressTypes.Find(clientAddress.ClientAddressTypeId);
+            var cityId = _db.Cities.Find(clientAddress.CityId);
+            var regionId = _db.Regions.Find(clientAddress.RegionId);
+            if (clientAddress == null || clientId == null || addresstypeId == null || cityId == null || regionId == null || clientAddress.ClientAddressId!=id)
                 return BadRequest();
 
             if (!ModelState.IsValid)

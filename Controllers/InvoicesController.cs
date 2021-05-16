@@ -15,9 +15,12 @@ namespace Talbat.Controllers
     public class InvoicesController : ControllerBase
     {
         private IGenericService<Invoice> _repo;
-        public InvoicesController(IGenericService<Invoice> repo) 
+        private TalabatContext _db;
+
+        public InvoicesController(IGenericService<Invoice> repo , TalabatContext db) 
         {
             _repo = repo;
+            _db = db;
         }
         // GET: api/Invoices
         [HttpGet]
@@ -43,7 +46,9 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] Invoice invoice)
         {
-            if (invoice == null)
+            var orderId = _db.Orders.Find(invoice.OrderId);
+
+            if (invoice == null || orderId==null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -85,7 +90,8 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> PatchInvoice(int id, [FromBody] Invoice invoice)
         {
-            if (invoice == null || invoice.InvoiceId != id)
+            var orderId = _db.Orders.Find(invoice.OrderId);
+            if (invoice == null || orderId ==null || invoice.InvoiceId != id)
             {
                 return BadRequest();
             }

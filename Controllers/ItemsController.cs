@@ -14,9 +14,12 @@ namespace Talbat.Controllers
     public class ItemsController : ControllerBase
     {
         private IGenericService<Item> _repo;
-        public ItemsController(IGenericService<Item> repo)
+        private TalabatContext _db;
+
+        public ItemsController(IGenericService<Item> repo,TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
         // GET: api/items
         [HttpGet]
@@ -42,7 +45,10 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] Item item)
         {
-            if (item == null)
+            var countryId = _db.Countries.Find(item.CountryId);
+            var storeId = _db.Stores.Find(item.StoreId);
+
+            if (item == null || countryId==null || storeId ==null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -83,9 +89,11 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchItem(int id, [FromBody] Item i)
+        public async Task<IActionResult> PatchItem(int id, [FromBody] Item item)
         {
-            if (i == null || i.ItemId != id)
+            var countryId = _db.Countries.Find(item.CountryId);
+            var storeId = _db.Stores.Find(item.StoreId);
+            if (item == null ||countryId==null|| storeId==null|| item.ItemId != id)
             {
                 return BadRequest();
             }
@@ -98,7 +106,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(i);
+            await _repo.UpdateAsync(item);
             return new NoContentResult();
 
         }
