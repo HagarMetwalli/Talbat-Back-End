@@ -11,22 +11,83 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeliveryMenController : GenericController<DeliveryMan>
+    public class DeliveryMenController : ControllerBase
     {
-        private IGenericService<DeliveryMan> repo;
-        public DeliveryMenController(IGenericService<DeliveryMan> repo) : base(repo)
+        private IGenericService<DeliveryMan> _repo;
+        public DeliveryMenController(IGenericService<DeliveryMan> repo) 
         {
-            this.repo = repo;
+            _repo = repo;
         }
+        // GET: api/DeliveryMen
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<DeliveryMan>))]
+        public async Task<IEnumerable<DeliveryMan>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/DeliveryMen/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetById(int id)
+        {
+            DeliveryMan deliveryMan = await _repo.RetriveAsync(id);
+            if (deliveryMan == null)
+                return NotFound();
+            return Ok(deliveryMan);
+        }
+
+        // POST api/DeliveryMen
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Post([FromBody] DeliveryMan deliveryMan)
+        {
+            if (deliveryMan == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            DeliveryMan added = await _repo.CreatAsync(deliveryMan);
+            if (added == null)
+                return BadRequest();
+
+            return Ok();
+        }
+
+
+        // DELETE api/DeliveryMen/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            bool? deleted = await _repo.DeleteAsync(id);
+            if (deleted.HasValue && deleted.Value)
+            {
+                return new NoContentResult();//204 No Content
+            }
+            else
+            {
+                return BadRequest($"DeliveryMan {id} was found but failed to delete");
+            }
+        }
+
         // Patch api/deliveryMen/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> update(int id, [FromBody] DeliveryMan d)
+        public async Task<IActionResult> PatchDeliveryMan(int id, [FromBody] DeliveryMan deliveryMan)
         {
-            if (d == null || d.DeliveryManId != id)
+            if (deliveryMan == null || deliveryMan.DeliveryManId != id)
             {
                 return BadRequest();
             }
@@ -34,12 +95,12 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var existing = await repo.RetriveAsync(id);
+            var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await repo.UpdateAsync(d);
+            await _repo.UpdateAsync(deliveryMan);
             return new NoContentResult();
 
         }

@@ -11,12 +11,70 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ItemsController : GenericController<Item>
+    public class ItemsController : ControllerBase
     {
-        private IGenericService<Item> repo;
-        public ItemsController(IGenericService<Item> repo) : base(repo)
+        private IGenericService<Item> _repo;
+        public ItemsController(IGenericService<Item> repo)
         {
-            this.repo = repo;
+            _repo = repo;
+        }
+        // GET: api/items
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Item>))]
+        public async Task<IEnumerable<Item>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/items/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetById(int id)
+        {
+            Item item = await _repo.RetriveAsync(id);
+            if (item == null)
+                return NotFound();
+            return Ok(item);
+        }
+
+        // POST api/items
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Post([FromBody] Item item)
+        {
+            if (item == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            Item added = await _repo.CreatAsync(item);
+            if (added == null)
+                return BadRequest();
+            return Ok();
+        }
+
+        // DELETE api/items/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            bool? deleted = await _repo.DeleteAsync(id);
+            if (deleted.HasValue && deleted.Value)
+            {
+                return new NoContentResult();//204 No Content
+            }
+            else
+            {
+                return BadRequest($"item {id} was found but failed to delete");
+            }
         }
 
         // Patch api/Cities/5
@@ -25,7 +83,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> update(int id, [FromBody] Item i)
+        public async Task<IActionResult> PatchItem(int id, [FromBody] Item i)
         {
             if (i == null || i.ItemId != id)
             {
@@ -35,12 +93,12 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var existing = await repo.RetriveAsync(id);
+            var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await repo.UpdateAsync(i);
+            await _repo.UpdateAsync(i);
             return new NoContentResult();
 
         }

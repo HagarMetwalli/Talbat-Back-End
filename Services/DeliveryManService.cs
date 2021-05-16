@@ -11,83 +11,47 @@ namespace Talbat.Services
 {
     public class DeliveryManService:IGenericService<DeliveryMan>
     {
-        private static ConcurrentDictionary<int, DeliveryMan> DeliveryMenCache;
-        private TalabatContext db;
+        private TalabatContext _db;
         public DeliveryManService(TalabatContext db)
         {
-            this.db = db;
-            if (DeliveryMenCache == null)
-            {
-                DeliveryMenCache = new ConcurrentDictionary<int, DeliveryMan>(
-                    db.DeliveryMen.ToDictionary(d => d.DeliveryManId));
-            }
+            _db = db;
         }
-        public async Task<DeliveryMan> CreatAsync(DeliveryMan c)
+        public async Task<DeliveryMan> CreatAsync(DeliveryMan deliveryMan)
         {
-            EntityEntry<DeliveryMan> added = await db.DeliveryMen.AddAsync(c);
-            int affected = await db.SaveChangesAsync();
+            await _db.DeliveryMen.AddAsync(deliveryMan);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return DeliveryMenCache.AddOrUpdate(c.DeliveryManId, c, UpdateCache);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        private DeliveryMan UpdateCache(int id, DeliveryMan c)
-        {
-            DeliveryMan old;
-            if (DeliveryMenCache.TryGetValue(id, out old))
-            {
-                if (DeliveryMenCache.TryUpdate(id, c, old))
-                {
-                    return c;
-                }
-            }
+                return deliveryMan;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            DeliveryMan c = db.DeliveryMen.Find(id);
-            db.DeliveryMen.Remove(c);
-            int affected = await db.SaveChangesAsync();
+            DeliveryMan deliveryMan = await RetriveAsync(id);
+            _db.DeliveryMen.Remove(deliveryMan);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return DeliveryMenCache.TryRemove(id, out c);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public Task<IEnumerable<DeliveryMan>> RetriveAllAsync() => 
-            Task<IEnumerable>.Run<IEnumerable<DeliveryMan>>(() => DeliveryMenCache.Values);
-
-        public Task<DeliveryMan> RetriveAsync(int id)
-        {
-            return Task.Run(() =>
-            {
-                DeliveryMenCache.TryGetValue(id, out DeliveryMan c);
-                return c;
-            });
-        }
-
-        public async Task<DeliveryMan> UpdateAsync(int id, DeliveryMan d)
-        {
-            db.DeliveryMen.Update(d);
-            int affected = await db.SaveChangesAsync();
-            if (affected == 1)
-            {
-                return UpdateCache(id, d);
-            }
+                return true;
             return null;
         }
 
-        public Task<DeliveryMan> UpdateAsync(DeliveryMan item)
+        public Task<IEnumerable<DeliveryMan>> RetriveAllAsync()
         {
-            throw new System.NotImplementedException();
+            return Task<IEnumerable>.Run<IEnumerable<DeliveryMan>>(() => _db.DeliveryMen);
+        }
+        public Task<DeliveryMan> RetriveAsync(int id)
+        {
+            return Task.Run(() => _db.DeliveryMen.Find(id));
+        }
+
+
+        public async Task<DeliveryMan> UpdateAsync(DeliveryMan deliveryMan)
+        {
+            _db = new TalabatContext();
+            _db.DeliveryMen.Update(deliveryMan);
+            int affected = await _db.SaveChangesAsync();
+            if (affected == 1)
+                return deliveryMan;
+            return null;
         }
     }
 }

@@ -51,8 +51,7 @@ namespace Talbat.Controllers
             City added = await _repo.CreatAsync(city);
             if (added == null)
                return BadRequest();
-
-            return Ok(city);
+            return Ok();
         }
 
         //Patch api/cities/5
@@ -60,9 +59,9 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchCity(int id, City city)
+        public async Task<ActionResult<City>> PatchCity(int id, [FromBody] City city)
         {
-            if (city == null)
+            if (city == null||city.CityId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -98,7 +97,7 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"item {id} was found but failed to delete");
+                return BadRequest($"city {id} was found but failed to delete");
             }
         }
 

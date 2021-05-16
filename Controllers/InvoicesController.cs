@@ -10,12 +10,72 @@ using Talbat.Models;
 
 namespace Talbat.Controllers
 {
-    public class InvoicesController : GenericController<Invoice>
+    [Route("api/[controller]")]
+    [ApiController]
+    public class InvoicesController : ControllerBase
     {
-        private IGenericService<Invoice> repo;
-        public InvoicesController(IGenericService<Invoice> repo) : base(repo)
+        private IGenericService<Invoice> _repo;
+        public InvoicesController(IGenericService<Invoice> repo) 
         {
-            this.repo = repo;
+            _repo = repo;
+        }
+        // GET: api/Invoices
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Invoice>))]
+        public async Task<IEnumerable<Invoice>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/Invoices/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetById(int id)
+        {
+            Invoice invoice = await _repo.RetriveAsync(id);
+            if (invoice == null)
+                return NotFound();
+            return Ok(invoice);
+        }
+
+        // POST api/Invoices
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Post([FromBody] Invoice invoice)
+        {
+            if (invoice == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            Invoice added = await _repo.CreatAsync(invoice);
+            if (added == null)
+                return BadRequest();
+            return Ok();
+        }
+
+        // DELETE api/Invoices/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            bool? deleted = await _repo.DeleteAsync(id);
+            if (deleted.HasValue && deleted.Value)
+            {
+                return new NoContentResult();//204 No Content
+            }
+            else
+            {
+                return BadRequest($"invoice {id} was found but failed to delete");
+            }
         }
         // Patch api/ Invoices/5
         [HttpPatch("{id}")]
@@ -23,9 +83,9 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> update(int id, [FromBody] Invoice i)
+        public async Task<IActionResult> PatchInvoice(int id, [FromBody] Invoice invoice)
         {
-            if (i == null || i.InvoiceId != id)
+            if (invoice == null || invoice.InvoiceId != id)
             {
                 return BadRequest();
             }
@@ -33,12 +93,12 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var existing = await repo.RetriveAsync(id);
+            var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await repo.UpdateAsync(i);
+            await _repo.UpdateAsync(invoice);
             return new NoContentResult();
 
         }

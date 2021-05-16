@@ -11,82 +11,47 @@ namespace Talbat.Services
 {
     public class InvoiceService : IGenericService<Invoice>
     {
-        private static ConcurrentDictionary<int, Invoice> InvoicesCache;
-        private TalabatContext db;
+        private TalabatContext _db;
         public InvoiceService(TalabatContext db)
         {
-            this.db = db;
-            if (InvoicesCache == null)
-            {
-                InvoicesCache = new ConcurrentDictionary<int, Invoice>(
-                    db.Invoices.ToDictionary(i => i.InvoiceId));
-            }
+            _db = db;
         }
-        public async Task<Invoice> CreatAsync(Invoice i)
+        public async Task<Invoice> CreatAsync(Invoice invoice)
         {
-            EntityEntry<Invoice> added = await db.Invoices.AddAsync(i);
-            int affected = await db.SaveChangesAsync();
+            await _db.Invoices.AddAsync(invoice);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return InvoicesCache.AddOrUpdate(i.InvoiceId, i, UpdateCache);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        private Invoice UpdateCache(int id, Invoice i)
-        {
-            Invoice old;
-            if (InvoicesCache.TryGetValue(id, out old))
-            {
-                if (InvoicesCache.TryUpdate(id, i, old))
-                {
-                    return i;
-                }
-            }
+                return invoice;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            Invoice c = db.Invoices.Find(id);
-            db.Invoices.Remove(c);
-            int affected = await db.SaveChangesAsync();
+            Invoice invoice = await RetriveAsync(id);
+            _db.Invoices.Remove(invoice);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return InvoicesCache.TryRemove(id, out c);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public Task<IEnumerable<Invoice>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Invoice>>(() => InvoicesCache.Values);
-
-        public Task<Invoice> RetriveAsync(int id)
-        {
-            return Task.Run(() =>
-            {
-                InvoicesCache.TryGetValue(id, out Invoice i);
-                return i;
-            });
-        }
-
-        public async Task<Invoice> UpdateAsync(int id, Invoice i)
-        {
-            db.Invoices.Update(i);
-            int affected = await db.SaveChangesAsync();
-            if (affected == 1)
-            {
-                return UpdateCache(id, i);
-            }
+                return true;
             return null;
         }
 
-        public Task<Invoice> UpdateAsync(Invoice item)
+        public Task<IEnumerable<Invoice>> RetriveAllAsync()
         {
-            throw new System.NotImplementedException();
+            return Task<IEnumerable>.Run<IEnumerable<Invoice>>(() => _db.Invoices);
         }
+        public Task<Invoice> RetriveAsync(int id)
+        {
+            return Task.Run(() => _db.Invoices.Find(id));
+        }
+
+        public async Task<Invoice> UpdateAsync(Invoice invoice)
+        {
+            _db = new TalabatContext();
+            _db.Invoices.Update(invoice);
+            int affected = await _db.SaveChangesAsync();
+            if (affected == 1)
+                return invoice;
+            return null;
+        }
+
     }
 }

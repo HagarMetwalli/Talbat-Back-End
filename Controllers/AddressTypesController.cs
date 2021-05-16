@@ -1,71 +1,67 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Talbat.IServices;
 using Talbat.Models;
-
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsController : ControllerBase
+    public class AddressTypesController : ControllerBase
     {
-        private IGenericService<Client> _repo;
-
-        public ClientsController(IGenericService<Client> repo)
+        private IGenericService<AddressType> _repo;
+        public AddressTypesController(IGenericService<AddressType> repo)
         {
             _repo = repo;
         }
-
-        // GET: api/clients
+        // GET: api/addresstypes
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Client>))]
-        public async Task<IEnumerable<Client>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<AddressType>))]
+        public async Task<IEnumerable<AddressType>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/clients/5
+        // GET api/addresstypes/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            Client client = await _repo.RetriveAsync(id);
-            if (client == null)
+            AddressType addressType = await _repo.RetriveAsync(id);
+            if (addressType == null)
                 return NotFound();
-            return Ok(client);
+            return Ok(addressType);
         }
 
-        // POST api/clients
+        // POST api/addresstypes
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] Client client)
+        public async Task<IActionResult> Post([FromBody] AddressType addressType)
         {
-            if (client == null)
+            if (addressType == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Client added = await _repo.CreatAsync(client);
+            AddressType added = await _repo.CreatAsync(addressType);
             if (added == null)
                 return BadRequest();
 
-            return Ok();
+            return Ok(addressType);
         }
 
-        //Patch api/clients/5
+        //Patch api/addresstypes/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchClient(int id, [FromBody] Client client)
+        public async Task<ActionResult<AddressType>> PatchAddressType(int id, [FromBody] AddressType addressType)
         {
-            if (client == null || client.ClientId!=id)
+            if (addressType == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -76,13 +72,13 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _client = await _repo.UpdateAsync(client);
-            if (_client == null)
+            var _addressType = await _repo.UpdateAsync(addressType);
+            if (_addressType == null)
                 return BadRequest();
 
             return new NoContentResult();
         }
-        // DELETE api/clients/5
+        // DELETE api/addresstypes/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -101,8 +97,9 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"client {id} was found but failed to delete");
+                return BadRequest($"AddressType {id} was found but failed to delete");
             }
         }
+
     }
 }

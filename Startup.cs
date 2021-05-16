@@ -52,21 +52,14 @@ namespace Talbat
             services.AddScoped<IGenericService<City>, CityService>();
             services.AddScoped<IGenericService<Client>, ClientService>();
             //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
+            services.AddScoped<IGenericService<AddressType>, AddressTypeService>();
             services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
             services.AddScoped<IGenericService<Country>, CountryService>();
             services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();
             services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
             services.AddScoped<IGenericService<Item>, ItemService>();
-            services.AddScoped<IGenericService<Order>, OrderService>();
-            services.AddScoped<IGenericService<Offer>, OfferService>();
-            services.AddScoped<IGenericService<JobCategory>, JobCategoryService>();
-            services.AddScoped<IGenericService<JobPeriod>, JobPeriodService>();
-            services.AddScoped<IGenericService<JobLocation>, JobLocationService>();
-            services.AddScoped<IGenericService<JobType>, JobTypeService>();
-            services.AddScoped<IGenericService<Job>, JobService>();
-
-
+            services.AddScoped< IGenericService<ItemReview>, ItemReviewService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Talbat", Version = "v1" });
