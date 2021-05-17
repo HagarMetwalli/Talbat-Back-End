@@ -13,85 +13,47 @@ namespace Talbat.Services
     public class ClientService: IGenericService<Client>
     {
         private static ConcurrentDictionary<int,Client> ClientsCache;
-        private TalabatContext db;
+        private TalabatContext _db;
         public ClientService(TalabatContext db)
         {
-            this.db = db;
-            if (ClientsCache == null)
-            {
-                ClientsCache = new ConcurrentDictionary<int, Client>(
-                    db.Clients.ToDictionary(c => c.ClientId));
-            }
+            _db = db;
+        }
+        public Task<IEnumerable<Client>> RetriveAllAsync()
+        {
+            return Task<IEnumerable>.Run<IEnumerable<Client>>(() => _db.Clients);
         }
 
-        public async Task<Client> CreatAsync(Client c)
+        public Task<Client> RetriveAsync(int id)
         {
-            EntityEntry<Client> added = await db.Clients.AddAsync(c);
-            int affected = await db.SaveChangesAsync();
+            return Task.Run(() => _db.Clients.Find(id));
+        }
+
+        public async Task<Client> CreatAsync(Client client)
+        {
+            await _db.Clients.AddAsync(client);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return ClientsCache.AddOrUpdate(c.ClientId, c, UpdateCache);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        private Client UpdateCache(int id, Client c)
-        {
-            Client old;
-            if (ClientsCache.TryGetValue(id, out old))
-            {
-                if (ClientsCache.TryUpdate(id, c, old))
-                {
-                    return c;
-                }
-            }
+                return client;
             return null;
-
-
+        }
+        public async Task<Client> UpdateAsync(Client client)
+        {
+            _db = new TalabatContext();
+            _db.Clients.Update(client);
+            int affected = await _db.SaveChangesAsync();
+            if (affected == 1)
+                return client;
+            return null;
         }
 
         public async Task<bool?> DeleteAsync(int id)
         {
-            Client c = db.Clients.Find(id);
-            db.Clients.Remove(c);
-            int affected = await db.SaveChangesAsync();
+            Client client = await RetriveAsync(id);
+            _db.Clients.Remove(client);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return ClientsCache.TryRemove(id, out c);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public Task<IEnumerable<Client>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Client>>(() => ClientsCache.Values);
-
-
-        public Task<Client> RetriveAsync(int id)
-        {
-            return Task.Run(() =>
-            {
-                ClientsCache.TryGetValue(id, out Client c);
-                return c;
-            });
-        }
-        public async Task<Client> UpdateAsync(int id, Client c)
-        {
-            db.Clients.Update(c);
-            int affected = await db.SaveChangesAsync();
-            if (affected == 1)
-            {
-                return UpdateCache(id, c);
-            }
+                return true;
             return null;
-        }
-
-        public Task<Client> UpdateAsync(Client item)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -23,6 +23,19 @@ namespace Talbat.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<City>))]
         public async Task<IEnumerable<City>> Get() => await _repo.RetriveAllAsync();
 
+        // GET api/cities/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetById(int id)
+        {
+            City city = await _repo.RetriveAsync(id);
+            if (city == null)
+                return NotFound();
+            return Ok(city);
+        }
+
         // POST api/cities
         [HttpPost]
         [ProducesResponseType(201)]
@@ -38,31 +51,17 @@ namespace Talbat.Controllers
             City added = await _repo.CreatAsync(city);
             if (added == null)
                return BadRequest();
-
-            return Ok(city);
+            return Ok();
         }
 
-
-        // GET api/cities/5
-        [HttpGet("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-
-        public async Task<IActionResult> GetById(int id)
-        {
-            City city = await _repo.RetriveAsync(id);
-            if (city == null)
-                return NotFound();
-            return Ok(city);
-        }
-
+        //Patch api/cities/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchCity(int id, City city)
+        public async Task<ActionResult<City>> PatchCity(int id, [FromBody] City city)
         {
-            if (city == null)
+            if (city == null||city.CityId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -98,7 +97,7 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"item {id} was found but failed to delete");
+                return BadRequest($"city {id} was found but failed to delete");
             }
         }
 

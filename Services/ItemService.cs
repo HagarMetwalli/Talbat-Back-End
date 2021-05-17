@@ -11,82 +11,46 @@ namespace Talbat.Services
 {
     public class ItemService:IGenericService<Item>
     {
-        private static ConcurrentDictionary<int, Item> ItemsCache;
-        private TalabatContext db;
+        private TalabatContext _db;
         public ItemService(TalabatContext db)
         {
-            this.db = db;
-            if (ItemsCache == null)
-            {
-                ItemsCache = new ConcurrentDictionary<int, Item>(
-                    db.Items.ToDictionary(i => i.ItemId));
-            }
+            _db = db;
         }
-        public async Task<Item> CreatAsync(Item i)
+        public async Task<Item> CreatAsync(Item item)
         {
-            EntityEntry<Item> added = await db.Items.AddAsync(i);
-            int affected = await db.SaveChangesAsync();
+            await _db.Items.AddAsync(item);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return ItemsCache.AddOrUpdate(i.ItemId, i, UpdateCache);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        private Item UpdateCache(int id, Item c)
-        {
-            Item old;
-            if (ItemsCache.TryGetValue(id, out old))
-            {
-                if (ItemsCache.TryUpdate(id, c, old))
-                {
-                    return c;
-                }
-            }
+                return item;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            Item c = db.Items.Find(id);
-            db.Items.Remove(c);
-            int affected = await db.SaveChangesAsync();
+            Item item = await RetriveAsync(id);
+            _db.Items.Remove(item);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return ItemsCache.TryRemove(id, out c);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public Task<IEnumerable<Item>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Item>>(() => ItemsCache.Values);
-
-        public Task<Item> RetriveAsync(int id)
-        {
-            return Task.Run(() =>
-            {
-                ItemsCache.TryGetValue(id, out Item c);
-                return c;
-            });
-        }
-
-        public async Task<Item> UpdateAsync(int id, Item c)
-        {
-            db.Items.Update(c);
-            int affected = await db.SaveChangesAsync();
-            if (affected == 1)
-            {
-                return UpdateCache(id, c);
-            }
+                return true;
             return null;
         }
 
-        public Task<Item> UpdateAsync(Item item)
+        public Task<IEnumerable<Item>> RetriveAllAsync()
         {
-            throw new System.NotImplementedException();
+            return Task<IEnumerable>.Run<IEnumerable<Item>>(() => _db.Items);
+        }
+        public Task<Item> RetriveAsync(int id)
+        {
+            return Task.Run(() => _db.Items.Find(id));
+        }
+
+        public async Task<Item> UpdateAsync(Item item)
+        {
+            _db = new TalabatContext();
+            _db.Items.Update(item);
+            int affected = await _db.SaveChangesAsync();
+            if (affected == 1)
+                return item;
+            return null;
         }
     }
 }

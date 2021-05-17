@@ -12,20 +12,78 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ItemCategoriesController : GenericController<ItemCategory>
+    public class ItemCategoriesController : ControllerBase
     {
-        private IGenericService<ItemCategory> repo;
-        public ItemCategoriesController(IGenericService<ItemCategory> repo) : base(repo)
+        private IGenericService<ItemCategory> _repo;
+        public ItemCategoriesController(IGenericService<ItemCategory> repo) 
         {
-            this.repo = repo;
+            _repo = repo;
         }
-        // Patch api/Cities/5
-        [HttpPatch("{id}")]
+        // GET: api/itemcategories
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ItemCategory>))]
+        public async Task<IEnumerable<ItemCategory>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/ItemCategories/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetById(int id)
+        {
+            ItemCategory itemCategory = await _repo.RetriveAsync(id);
+            if (itemCategory == null)
+                return NotFound();
+            return Ok(itemCategory);
+        }
+
+        // POST api/ItemCategories
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Post([FromBody] ItemCategory itemCategory)
+        {
+            if (itemCategory == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            ItemCategory added = await _repo.CreatAsync(itemCategory);
+            if (added == null)
+                return BadRequest();
+            return Ok();
+        }
+
+        // DELETE api/ItemCategories/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            bool? deleted = await _repo.DeleteAsync(id);
+            if (deleted.HasValue && deleted.Value)
+            {
+                return new NoContentResult();//204 No Content
+            }
+            else
+            {
+                return BadRequest($"itemcategory {id} was found but failed to delete");
+            }
+        }
+    // Patch api/ItemCategories/5
+    [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> update(int id, [FromBody] ItemCategory i)
+        public async Task<IActionResult> PatchItemCategory(int id, [FromBody] ItemCategory i)
         {
             if (i == null || i.ItemCategoryId != id)
             {
@@ -35,12 +93,12 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var existing = await repo.RetriveAsync(id);
+            var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await repo.UpdateAsync(i);
+            await _repo.UpdateAsync(i);
             return new NoContentResult();
 
         }

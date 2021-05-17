@@ -8,10 +8,10 @@ using Talbat.Models;
 
 namespace Talbat.Controllers
 {
-    public class ClientsOffersController : GenericController<ClientOffer>
+    public class ClientsOffersController : ControllerBase
     {
         private IGenericService<ClientOffer> repo;
-        public ClientsOffersController(IGenericService<ClientOffer> repo) : base(repo)
+        public ClientsOffersController(IGenericService<ClientOffer> repo) 
         {
             this.repo = repo;
         }
