@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Talbat.Controllers
     {
         private IGenericService<Store> _repo;
         private TalabatContext _db;
-
+        
         public StoresController(IGenericService<Store> repo, TalabatContext db)
         {
             _repo = repo;

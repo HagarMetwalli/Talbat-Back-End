@@ -49,7 +49,7 @@ namespace Talbat
             });
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddScoped<IGenericService<City>, CityService>();
+            //services.AddScoped<IGenericService<City>, CityService>();
             services.AddScoped<IGenericService<Client>, ClientService>();
             //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGenericService<AddressType>, AddressTypeService>();

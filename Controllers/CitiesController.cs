@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Talbat.IServices;
-using Talbat.Models;
+﻿//using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Mvc;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using Talbat.IServices;
+//using Talbat.Models;
 
 namespace Talbat.Controllers
 {
@@ -101,5 +101,5 @@ namespace Talbat.Controllers
             }
         }
 
-    }
-}
+//    }
+//}
