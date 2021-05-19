@@ -12,7 +12,7 @@ namespace Talbat.Services
 {
     public class ClientService: IGenericService<Client>
     {
-        private static ConcurrentDictionary<int,Client> ClientsCache;
+       // private static ConcurrentDictionary<int,Client> ClientsCache;
         private TalabatContext _db;
         public ClientService(TalabatContext db)
         {
