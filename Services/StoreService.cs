@@ -8,7 +8,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class StoreService : IGenericService<Store>
+    public class StoreService : IStoreService
     {
         private TalabatContext _db;
         public StoreService(TalabatContext db)
@@ -42,6 +42,11 @@ namespace Talbat.Services
             return Task.Run(() => _db.Stores.Find(id));
         }
 
+        public Task<IEnumerable<String>> RetriveMostCommonAsync()
+        {
+            var stores = _db.Stores.OrderByDescending(s => s.StoreOrdersNumber).Take(3).Select(s=>s.StoreName).ToList();
+            return Task<IEnumerable>.Run<IEnumerable<String>>(() => stores);
+        }
         public async Task<Store> UpdateAsync(Store Store)
         {
             _db = new TalabatContext();

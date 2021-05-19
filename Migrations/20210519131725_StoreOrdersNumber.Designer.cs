@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210511093842_Models")]
-    partial class Models
+    [Migration("20210519131725_StoreOrdersNumber")]
+    partial class StoreOrdersNumber
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1017,6 +1017,9 @@ namespace Talbat.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Store_Name");
+
+                    b.Property<int?>("StoreOrdersNumber")
+                        .HasColumnType("int");
 
                     b.Property<int?>("StorePaymentOnDeliverCash")
                         .HasColumnType("int")

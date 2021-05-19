@@ -29,6 +29,7 @@ namespace Talbat.Models
         public int? StorePaymentVisa { get; set; }
         public string StoreCuisine { get; set; }
         public int? StoreTypeId { get; set; }
+        public int StoreOrdersNumber { get; set; }
 
         public virtual StoreType StoreType { get; set; }
         public virtual ICollection<Item> Items { get; set; }

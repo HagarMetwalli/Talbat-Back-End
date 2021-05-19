@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class StoresController : ControllerBase
     {
-        private IGenericService<Store> _repo;
+        private IStoreService _repo;
         private TalabatContext _db;
 
-        public StoresController(IGenericService<Store> repo, TalabatContext db)
+        public StoresController(IStoreService repo , TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -37,6 +37,15 @@ namespace Talbat.Controllers
                 return NotFound();
             return Ok(Store);
         }
+        // GET: api/MostCommonStores
+        [HttpGet]
+        [Route("MostCommonStores")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Store>))]
+        public async Task<IEnumerable<String>> MostCommonStores()
+        {
+
+            return await _repo.RetriveMostCommonAsync();
+        }
 
         // POST api/Stores
         [HttpPost]
@@ -46,7 +55,7 @@ namespace Talbat.Controllers
         {
             var CountryId = _db.Cities.Find(Store.CountryId);
             var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            
+
             if (Store == null || CountryId == null || StoreTypeId == null)
                 return BadRequest();
 
@@ -91,7 +100,7 @@ namespace Talbat.Controllers
         {
             var CountryId = _db.Cities.Find(Store.CountryId);
             var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            if (Store == null  || CountryId == null || StoreTypeId == null || Store.StoreId != id)
+            if (Store == null || CountryId == null || StoreTypeId == null || Store.StoreId != id)
             {
                 return BadRequest();
             }
@@ -107,6 +116,6 @@ namespace Talbat.Controllers
             await _repo.UpdateAsync(Store);
             return new NoContentResult();
 
-        }
+        }  
     }
 }

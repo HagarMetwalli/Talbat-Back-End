@@ -65,15 +65,14 @@ namespace Talbat
             services.AddScoped<IGenericService<SubItem>, SubItemsService>();
             services.AddScoped<IGenericService<StoreWorkingHour>, StoreWorkingHourService>();
             services.AddScoped<IGenericService<StoreType>, StoreTypeService>();
-            services.AddScoped<IGenericService<Store>, StoreService>();
             services.AddScoped<IGenericService<ReviewCategory>, ReviewCategoryService>();
             services.AddScoped<IGenericService<Review>, ReviewService>();
             services.AddScoped<IGenericService<Region>, RegionService>();
             services.AddScoped<IGenericService<RateStatus>, RateStatusService>();
             services.AddScoped<IGenericService<Partner>, PartnerService>();
             services.AddScoped<IGenericService<OrderReview>, OrderReviewService>();
+            services.AddScoped<IStoreService, StoreService>();
 
-         
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Talbat", Version = "v1" });

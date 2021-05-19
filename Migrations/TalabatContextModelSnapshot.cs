@@ -1016,6 +1016,9 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Store_Name");
 
+                    b.Property<int?>("StoreOrdersNumber")
+                        .HasColumnType("int");
+
                     b.Property<int?>("StorePaymentOnDeliverCash")
                         .HasColumnType("int")
                         .HasColumnName("Store_PaymentOnDeliverCash");

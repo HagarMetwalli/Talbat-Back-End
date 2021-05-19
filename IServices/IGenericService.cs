@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Talbat.Models;
 
 namespace Talbat.IServices
 {
@@ -13,6 +14,5 @@ namespace Talbat.IServices
         Task<T> CreatAsync(T item);
         Task<T> UpdateAsync(T item);
         Task<bool?> DeleteAsync(int id);
-
     }
 }
