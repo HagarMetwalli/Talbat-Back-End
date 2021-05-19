@@ -17,6 +17,7 @@ namespace Talbat.Models
         {
         }
 
+        public virtual DbSet<AddressType> AddressTypes { get; set; }
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<ClientAddress> ClientAddresses { get; set; }
@@ -41,6 +42,7 @@ namespace Talbat.Models
         public virtual DbSet<OrderItem> OrderItems { get; set; }
         public virtual DbSet<OrderReview> OrderReviews { get; set; }
         public virtual DbSet<Partner> Partners { get; set; }
+        public virtual DbSet<RateStatus> RateStatuses { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<ReviewCategory> ReviewCategories { get; set; }
@@ -56,13 +58,24 @@ namespace Talbat.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=.;Database=Talabat;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=.;Database=Talabat41;Trusted_Connection=True;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<AddressType>(entity =>
+            {
+                entity.ToTable("AddressType");
+
+                entity.Property(e => e.AddressTypeId).HasColumnName("AddressType_Id");
+
+                entity.Property(e => e.AddressTypeName)
+                    .HasMaxLength(50)
+                    .HasColumnName("AddressType_Name");
+            });
 
             modelBuilder.Entity<City>(entity =>
             {
@@ -99,10 +112,7 @@ namespace Talbat.Models
                     .IsUnicode(false)
                     .HasColumnName("Client_Fname");
 
-                entity.Property(e => e.ClientGender)
-                    .IsRequired()
-                    .HasMaxLength(6)
-                    .HasColumnName("Client_Gender");
+                entity.Property(e => e.ClientGenderIsMale).HasColumnName("Client_Gender_IsMale");
 
                 entity.Property(e => e.ClientLname)
                     .IsRequired()
@@ -177,10 +187,7 @@ namespace Talbat.Models
                     .IsUnicode(false)
                     .HasColumnName("ClientAddress_Street");
 
-                entity.Property(e => e.ClientAddressType)
-                    .IsRequired()
-                    .HasMaxLength(9)
-                    .HasColumnName("ClientAddress_Type");
+                entity.Property(e => e.ClientAddressTypeId).HasColumnName("ClientAddress_Type_Id");
 
                 entity.Property(e => e.ClientId).HasColumnName("Client_Id");
 
@@ -191,6 +198,12 @@ namespace Talbat.Models
                     .HasForeignKey(d => d.CityId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ClientAddress_City");
+
+                entity.HasOne(d => d.ClientAddressType)
+                    .WithMany(p => p.ClientAddresses)
+                    .HasForeignKey(d => d.ClientAddressTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ClientAddress_AddressType");
 
                 entity.HasOne(d => d.Client)
                     .WithMany(p => p.ClientAddresses)
@@ -437,9 +450,15 @@ namespace Talbat.Models
                     .ValueGeneratedNever()
                     .HasColumnName("Item_Id");
 
-                entity.Property(e => e.ItemStatus).HasColumnName("Item_Status");
-
                 entity.Property(e => e.OrderReviewId).HasColumnName("OrderReview_Id");
+
+                entity.Property(e => e.RateStatusId).HasColumnName("RateStatus_Id");
+
+                entity.HasOne(d => d.RateStatus)
+                    .WithMany(p => p.ItemReviews)
+                    .HasForeignKey(d => d.RateStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemReview_RateStatus");
             });
 
             modelBuilder.Entity<Job>(entity =>
@@ -591,9 +610,7 @@ namespace Talbat.Models
                     .HasColumnName("Offer_StartDate")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.OfferType)
-                    .IsRequired()
-                    .HasMaxLength(9);
+                entity.Property(e => e.OfferTypeIsCoupon).HasColumnName("OfferType_IsCoupon");
             });
 
             modelBuilder.Entity<OfferItem>(entity =>
@@ -641,9 +658,15 @@ namespace Talbat.Models
                     .ValueGeneratedNever()
                     .HasColumnName("Offer_Id");
 
-                entity.Property(e => e.OfferStatus).HasColumnName("Offer_Status");
-
                 entity.Property(e => e.OrderReviewId).HasColumnName("OrderReview_Id");
+
+                entity.Property(e => e.RateStatusId).HasColumnName("RateStatus_Id");
+
+                entity.HasOne(d => d.RateStatus)
+                    .WithMany(p => p.OfferReviews)
+                    .HasForeignKey(d => d.RateStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OfferReview_RateStatus");
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -724,9 +747,7 @@ namespace Talbat.Models
 
                 entity.HasIndex(e => e.OrderId, "IX_OrderReview_Order_Id");
 
-                entity.Property(e => e.OrderReviewId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("OrderReview_Id");
+                entity.Property(e => e.OrderReviewId).HasColumnName("OrderReview_Id");
 
                 entity.Property(e => e.OfferReviewBody)
                     .IsUnicode(false)
@@ -736,11 +757,35 @@ namespace Talbat.Models
 
                 entity.Property(e => e.QualityOffood).HasColumnName("QualityOFFood");
 
+                entity.HasOne(d => d.DeliveryTimeNavigation)
+                    .WithMany(p => p.InverseDeliveryTimeNavigation)
+                    .HasForeignKey(d => d.DeliveryTime)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderReview_OrderReview2");
+
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.OrderReviews)
                     .HasForeignKey(d => d.OrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OrderReview_Order");
+
+                entity.HasOne(d => d.OrderPackagingNavigation)
+                    .WithMany(p => p.InverseOrderPackagingNavigation)
+                    .HasForeignKey(d => d.OrderPackaging)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderReview_OrderReview");
+
+                entity.HasOne(d => d.QualityOffoodNavigation)
+                    .WithMany(p => p.InverseQualityOffoodNavigation)
+                    .HasForeignKey(d => d.QualityOffood)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderReview_OrderReview3");
+
+                entity.HasOne(d => d.ValueForMoneyNavigation)
+                    .WithMany(p => p.InverseValueForMoneyNavigation)
+                    .HasForeignKey(d => d.ValueForMoney)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderReview_OrderReview1");
             });
 
             modelBuilder.Entity<Partner>(entity =>
@@ -775,6 +820,17 @@ namespace Talbat.Models
                     .WithMany(p => p.Partners)
                     .HasForeignKey(d => d.StoreId)
                     .HasConstraintName("FK_Partner_Store");
+            });
+
+            modelBuilder.Entity<RateStatus>(entity =>
+            {
+                entity.ToTable("RateStatus");
+
+                entity.Property(e => e.RateStatusId).HasColumnName("RateStatus_Id");
+
+                entity.Property(e => e.RateStatusName)
+                    .HasMaxLength(50)
+                    .HasColumnName("RateStatus_Name");
             });
 
             modelBuilder.Entity<Region>(entity =>

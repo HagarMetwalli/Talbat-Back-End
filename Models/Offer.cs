@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -16,7 +17,8 @@ namespace Talbat.Models
         public int OfferId { get; set; }
         public string OfferImage { get; set; }
         public string OfferName { get; set; }
-        public string OfferType { get; set; }
+        [Range(0, 1, ErrorMessage = "OfferType Must be between 0 or 1")]
+        public int OfferTypeIsCoupon { get; set; }
         public string OfferDescription { get; set; }
         public DateTime OfferStartDate { get; set; }
         public int OfferQuantity { get; set; }
