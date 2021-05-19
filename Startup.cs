@@ -51,9 +51,9 @@ namespace Talbat
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IGenericService<City>, CityService>();
             services.AddScoped<IGenericService<Client>, ClientService>();
-            //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGenericService<AddressType>, AddressTypeService>();
             services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
+         // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGenericService<Country>, CountryService>();
             services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();

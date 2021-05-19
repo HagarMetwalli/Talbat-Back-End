@@ -8,37 +8,96 @@ using Talbat.Models;
 
 namespace Talbat.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class ClientsOffersController : ControllerBase
     {
-        private IGenericService<ClientOffer> repo;
+        private IGenericService<ClientOffer> _repo;
         public ClientsOffersController(IGenericService<ClientOffer> repo) 
         {
-            this.repo = repo;
+            _repo = repo;
         }
-        // Patch api/ClientsOffers/5
+        // GET: api/ClientsOffers
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ClientOffer>))]
+        public async Task<IEnumerable<ClientOffer>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/ClientsOffers/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetById(int id)
+        {
+            ClientOffer clientOffer = await _repo.RetriveAsync(id);
+            if (clientOffer == null)
+                return NotFound();
+            return Ok(clientOffer);
+        }
+
+        // POST api/ClientsOffers
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Post([FromBody] ClientOffer clientOffer)
+        {
+            if (clientOffer == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            ClientOffer added = await _repo.CreatAsync(clientOffer);
+            if (added == null)
+                return BadRequest();
+            return Ok();
+        }
+
+        //Patch api/ClientsOffers/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-
-        public async Task<IActionResult> update(int id, [FromBody] ClientOffer c)
+        public async Task<ActionResult<City>> PatchClientOffer(int id, [FromBody] ClientOffer clientOffer)
         {
-            if (c == null || c.UserId != id)
-            {
+            if (clientOffer == null || clientOffer.OfferId != id)
                 return BadRequest();
-            }
+
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
-            var existing = await repo.RetriveAsync(c.UserId);
+
+            var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await repo.UpdateAsync(c);
-            return new NoContentResult();
+            var _clientOffer = await _repo.UpdateAsync(clientOffer);
+            if (_clientOffer == null)
+                return BadRequest();
 
+            return new NoContentResult();
+        }
+        // DELETE api/ClientsOffers/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            bool? deleted = await _repo.DeleteAsync(id);
+            if (deleted.HasValue && deleted.Value)
+            {
+                return new NoContentResult();//204 No Content
+            }
+            else
+            {
+                return BadRequest($"ClientsOffers {id} was found but failed to delete");
+            }
         }
     }
 }

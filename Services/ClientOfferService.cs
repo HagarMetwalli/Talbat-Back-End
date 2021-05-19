@@ -12,74 +12,43 @@ namespace Talbat.Services
 {
     public class ClientOfferService
     {
-        private static ConcurrentDictionary<string, ClientOffer> ClientOffersCache;
-        private TalabatContext db;
-        public ClientOfferService()
+        private TalabatContext _db;
+        public ClientOfferService (TalabatContext db)
         {
-            this.db = db;
-            if (ClientOffersCache == null)
-            {
-                ClientOffersCache = new ConcurrentDictionary<string, ClientOffer>(
-                    db.ClientOffers.ToDictionary(c => c.UserId.ToString()));
-            }
+            _db = db;
         }
-        public async Task<ClientOffer> CreatAsync(ClientOffer c)
+        public async Task<ClientOffer> CreatAsync(ClientOffer clientOffer)
         {
-            EntityEntry<ClientOffer> added = await db.ClientOffers.AddAsync(c);
-            int affected = await db.SaveChangesAsync();
+            await _db.ClientOffers.AddAsync(clientOffer);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return ClientOffersCache.AddOrUpdate(c.UserId.ToString(), c, UpdateCache);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        private ClientOffer UpdateCache(string id, ClientOffer c)
-        {
-            ClientOffer old;
-            if (ClientOffersCache.TryGetValue(id, out old))
-            {
-                if (ClientOffersCache.TryUpdate(id, c, old))
-                {
-                    return c;
-                }
-            }
+                return clientOffer;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            ClientOffer c = db.ClientOffers.Find(id);
-            db.ClientOffers.Remove(c);
-            int affected = await db.SaveChangesAsync();
+            ClientOffer clientOffer = await RetriveAsync(id);
+            _db.ClientOffers.Remove(clientOffer);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return ClientOffersCache.TryRemove(id.ToString(), out c);
-            }
-            else
-            {
-                return null;
-            }
+                return true;
+            return null;
         }
-        public Task<IEnumerable<ClientOffer>> RetriveAllAsync() => 
-            Task<IEnumerable>.Run<IEnumerable<ClientOffer>>(() => ClientOffersCache.Values);
-        public Task<ClientOffer> RetriveAsync(string id)
+        public Task<IEnumerable<ClientOffer>> RetriveAllAsync()
         {
-            return Task.Run(() =>
-            {
-                ClientOffersCache.TryGetValue(id, out ClientOffer c);
-                return c;
-            });
+            return Task<IEnumerable>.Run<IEnumerable<ClientOffer>>(() => _db.ClientOffers);
         }
-        public async Task<ClientOffer> UpdateAsync(string id, ClientOffer c)
+        public Task<ClientOffer> RetriveAsync(int id)
         {
-            db.ClientOffers.Update(c);
-            int affected = await db.SaveChangesAsync();
+            return Task.Run(() => _db.ClientOffers.Find(id));
+        }
+        public async Task<ClientOffer> UpdateAsync(ClientOffer clientOffer)
+        {
+            _db = new TalabatContext();
+            _db.ClientOffers.Update(clientOffer);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return UpdateCache(id, c);
-            }
+                return clientOffer;
             return null;
         }
 
