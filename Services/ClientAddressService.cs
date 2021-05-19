@@ -11,75 +11,46 @@ namespace Talbat.Services
 {
     public class ClientAddressService: IGenericService<ClientAddress>
     {
-        private static ConcurrentDictionary<int, ClientAddress> ClientAddressessCache;
-        private TalabatContext db;
+
+        private TalabatContext _db;
         public ClientAddressService(TalabatContext db)
         {
-            this.db = db;
-            if (ClientAddressessCache == null)
-            {
-                ClientAddressessCache = new ConcurrentDictionary<int, ClientAddress>(
-                    db.ClientAddresses.ToDictionary(c =>c.ClientAddressId));
-            }
-
+           _db = db;
         }
-        public async Task<ClientAddress> CreatAsync(ClientAddress c)
+        public async Task<ClientAddress> CreatAsync(ClientAddress clientAddress)
         {
-            EntityEntry<ClientAddress> added = await db.ClientAddresses.AddAsync(c);
-            int affected = await db.SaveChangesAsync();
+            await _db.ClientAddresses.AddAsync(clientAddress);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return ClientAddressessCache.AddOrUpdate(c.ClientAddressId, c, UpdateCache);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        private ClientAddress UpdateCache(int id, ClientAddress c)
-        {
-            ClientAddress old;
-            if (ClientAddressessCache.TryGetValue(id, out old))
-            {
-                if (ClientAddressessCache.TryUpdate(id, c, old))
-                {
-                    return c;
-                }
-            }
+                return clientAddress;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            ClientAddress c = db.ClientAddresses.Find(id);
-            db.ClientAddresses.Remove(c);
-            int affected = await db.SaveChangesAsync();
+            ClientAddress clientAddress = await RetriveAsync(id);
+            _db.ClientAddresses.Remove(clientAddress);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return ClientAddressessCache.TryRemove(id, out c);
-            }
-            else
-            {
-                return null;
-            }
+                return true;
+            return null;
         }
-        public Task<IEnumerable<ClientAddress>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<ClientAddress>>(() => ClientAddressessCache.Values);
+        public Task<IEnumerable<ClientAddress>> RetriveAllAsync()
+
+        {
+            return Task<IEnumerable>.Run<IEnumerable<ClientAddress>>(() => _db.ClientAddresses);
+        }
 
         public Task<ClientAddress> RetriveAsync(int id)
         {
-            return Task.Run(() =>
-            {
-                ClientAddressessCache.TryGetValue(id, out ClientAddress c);
-                return c;
-            });
+            return Task.Run(() => _db.ClientAddresses.Find(id));
         }
-        public async Task<ClientAddress> UpdateAsync(int id, ClientAddress c)
+        public async Task<ClientAddress> UpdateAsync(ClientAddress clientAddress)
         {
-            db.ClientAddresses.Update(c);
-            int affected = await db.SaveChangesAsync();
+            _db = new TalabatContext();
+            _db.ClientAddresses.Update(clientAddress);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return UpdateCache(id, c);
-            }
+                return clientAddress;
             return null;
         }
     }

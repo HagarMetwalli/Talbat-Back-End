@@ -1,67 +1,69 @@
-﻿//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Talbat.IServices;
-//using Talbat.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Talbat.IServices;
+using Talbat.Models;
 
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CitiesController : ControllerBase
+    public class SubItemCategoriesController : ControllerBase
     {
-        private IGenericService<City> _repo;
-        public CitiesController(IGenericService<City> repo) 
+        private IGenericService<SubItemCategory> _repo;
+
+        public SubItemCategoriesController(IGenericService<SubItemCategory> repo)
         {
             _repo = repo;
         }
-        // GET: api/cities
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<City>))]
-        public async Task<IEnumerable<City>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/cities/5
+        // GET: api/SubItemCategories
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<SubItemCategory>))]
+        public async Task<IEnumerable<SubItemCategory>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/SubItemCategories/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            City city = await _repo.RetriveAsync(id);
-            if (city == null)
+            SubItemCategory SubItemCategory = await _repo.RetriveAsync(id);
+            if (SubItemCategory == null)
                 return NotFound();
-            return Ok(city);
+            return Ok(SubItemCategory);
         }
 
-        // POST api/cities
+        // POST api/SubItemCategories
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] City city)
+        public async Task<IActionResult> Post([FromBody] SubItemCategory SubItemCategory)
         {
-            if (city == null)
+            if (SubItemCategory == null)
                 return BadRequest();
-                      
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            City added = await _repo.CreatAsync(city);
+            SubItemCategory added = await _repo.CreatAsync(SubItemCategory);
             if (added == null)
-               return BadRequest();
+                return BadRequest();
+
             return Ok();
         }
 
-        //Patch api/cities/5
+        //Patch api/SubItemCategories/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchCity(int id, [FromBody] City city)
+        public async Task<ActionResult<SubItemCategory>> PatchSubItemCategory(int id, [FromBody] SubItemCategory SubItemCategory)
         {
-            if (city == null||city.CityId != id)
+            if (SubItemCategory == null || SubItemCategory.SubItemCategoryId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -72,13 +74,13 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var c =  await _repo.UpdateAsync(city);
-            if (c == null)
-               return BadRequest();
+            var _client = await _repo.UpdateAsync(SubItemCategory);
+            if (_client == null)
+                return BadRequest();
 
             return new NoContentResult();
         }
-        // DELETE api/cities/5
+        // DELETE api/SubItemCategories/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -97,9 +99,8 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"city {id} was found but failed to delete");
+                return BadRequest($"SubItemCategory {id} was found but failed to delete");
             }
         }
-
-//    }
-//}
+    }
+}

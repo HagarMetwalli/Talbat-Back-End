@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,56 +10,53 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StoresController : ControllerBase
+    public class RegionsController : ControllerBase
     {
-        private IGenericService<Store> _repo;
+        private IGenericService<Region> _repo;
         private TalabatContext _db;
-        
-        public StoresController(IGenericService<Store> repo, TalabatContext db)
+
+        public RegionsController(IGenericService<Region> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
         }
-        // GET: api/Stores
+        // GET: api/Regions
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Store>))]
-        public async Task<IEnumerable<Store>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Region>))]
+        public async Task<IEnumerable<Region>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/Stores/5
+        // GET api/Regions/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            Store Store = await _repo.RetriveAsync(id);
-            if (Store == null)
+            Region Region = await _repo.RetriveAsync(id);
+            if (Region == null)
                 return NotFound();
-            return Ok(Store);
+            return Ok(Region);
         }
 
-        // POST api/Stores
+        // POST api/Regions
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] Store Store)
+        public async Task<IActionResult> Post([FromBody] Region Region)
         {
-            var CountryId = _db.Cities.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            
-            if (Store == null || CountryId == null || StoreTypeId == null)
+            if (Region == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Store added = await _repo.CreatAsync(Store);
+            Region added = await _repo.CreatAsync(Region);
             if (added == null)
                 return BadRequest();
             return Ok();
         }
 
-        // DELETE api/Stores/5
+        // DELETE api/Regions/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -79,20 +75,19 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"Store {id} was found but failed to delete");
+                return BadRequest($"Region {id} was found but failed to delete");
             }
         }
-        // Patch api/ Stores/5
+        // Patch api/ Regions/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> Patch(int id, [FromBody] Store Store)
+        public async Task<IActionResult> PatchRegion(int id, [FromBody] Region Region)
         {
-            var CountryId = _db.Cities.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            if (Store == null  || CountryId == null || StoreTypeId == null || Store.StoreId != id)
+            
+            if (Region == null  || Region.RegionId != id)
             {
                 return BadRequest();
             }
@@ -105,7 +100,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(Store);
+            await _repo.UpdateAsync(Region);
             return new NoContentResult();
 
         }

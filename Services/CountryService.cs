@@ -11,75 +11,44 @@ namespace Talbat.Services
 {
     public class CountryService : IGenericService<Country>
     {
-        private static ConcurrentDictionary<int, Country> CountriesCache;
-        private TalabatContext db;
+        private TalabatContext _db;
         public CountryService(TalabatContext db)
         {
-            this.db = db;
-            if (CountriesCache == null)
-            {
-                CountriesCache = new ConcurrentDictionary<int, Country>(
-                    db.Countries.ToDictionary(c => c.CountryId));
-            }
+            _db = db;
         }
-        public async Task<Country> CreatAsync(Country c)
+        public async Task<Country> CreatAsync(Country country)
         {
-            EntityEntry<Country> added = await db.Countries.AddAsync(c);
-            int affected = await db.SaveChangesAsync();
+            await _db.Countries.AddAsync(country);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return CountriesCache.AddOrUpdate(c.CountryId, c, UpdateCache);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        private Country UpdateCache(int id, Country c)
-        {
-            Country old;
-            if (CountriesCache.TryGetValue(id, out old))
-            {
-                if (CountriesCache.TryUpdate(id, c, old))
-                {
-                    return c;
-                }
-            }
+                return country;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            Country c = db.Countries.Find(id);
-            db.Countries.Remove(c);
-            int affected = await db.SaveChangesAsync();
+            Country country = await RetriveAsync(id);
+            _db.Countries.Remove(country);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return CountriesCache.TryRemove(id, out c);
-            }
-            else
-            {
-                return null;
-            }
+                return true;
+            return null;
         }
-        public Task<IEnumerable<Country>> RetriveAllAsync() => 
-            Task<IEnumerable>.Run<IEnumerable<Country>>(() => CountriesCache.Values);
+        public Task<IEnumerable<Country>> RetriveAllAsync()
+        {
+            return Task<IEnumerable>.Run<IEnumerable<Country>>(() => _db.Countries);
+        }
         public Task<Country> RetriveAsync(int id)
         {
-            return Task.Run(() =>
-            {
-                CountriesCache.TryGetValue(id, out Country c);
-                return c;
-            });
+            return Task.Run(() => _db.Countries.Find(id));
         }
 
-        public async Task<Country> UpdateAsync(int id, Country c)
+        public async Task<Country> UpdateAsync(Country country)
         {
-            db.Countries.Update(c);
-            int affected = await db.SaveChangesAsync();
+            _db = new TalabatContext();
+            _db.Countries.Update(country);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return UpdateCache(id, c);
-            }
+                return country;
             return null;
         }
     }

@@ -8,50 +8,51 @@ using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
 
+
 namespace Talbat.Services
 {
-    public class CityService : IGenericService<City>
+    public class ItemReviewService : IGenericService<ItemReview>
     {
         private TalabatContext _db;
-        public CityService(TalabatContext db)
+        public ItemReviewService(TalabatContext db)
         {
             _db = db;
         }
-        public async Task<City> CreatAsync(City city)
+        public async Task<ItemReview> CreatAsync(ItemReview itemReview)
         {
-            await _db.Cities.AddAsync(city);
+            await _db.ItemReviews.AddAsync(itemReview);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return city;
+                return itemReview;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            City c = await RetriveAsync(id);
-            _db.Cities.Remove(c);
+            ItemReview itemReview = await RetriveAsync(id);
+            _db.ItemReviews.Remove(itemReview);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
-             return null;
+            return null;
         }
 
-        public Task<IEnumerable<City>> RetriveAllAsync()
+        public Task<IEnumerable<ItemReview>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<City>>(() => _db.Cities);
+            return Task<IEnumerable>.Run<IEnumerable<ItemReview>>(() => _db.ItemReviews);
         }
 
-        public Task<City> RetriveAsync(int id)
+        public Task<ItemReview> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Cities.Find(id));
+            return Task.Run(() => _db.ItemReviews.Find(id));
         }
 
-        public async Task<City> UpdateAsync(City city)
+        public async Task<ItemReview> UpdateAsync(ItemReview itemReview)
         {
             _db = new TalabatContext();
-            _db.Cities.Update(city);
+            _db.ItemReviews.Update(itemReview);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return city;   
+                return itemReview;
             return null;
         }
     }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,56 +10,54 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StoresController : ControllerBase
+    public class ReviewCategoriesController : ControllerBase
     {
-        private IGenericService<Store> _repo;
+        private IGenericService<ReviewCategory> _repo;
         private TalabatContext _db;
-        
-        public StoresController(IGenericService<Store> repo, TalabatContext db)
+
+        public ReviewCategoriesController(IGenericService<ReviewCategory> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
         }
-        // GET: api/Stores
+        // GET: api/ReviewCategories
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Store>))]
-        public async Task<IEnumerable<Store>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewCategory>))]
+        public async Task<IEnumerable<ReviewCategory>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/Stores/5
+        // GET api/ReviewCategories/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            Store Store = await _repo.RetriveAsync(id);
-            if (Store == null)
+            ReviewCategory ReviewCategory = await _repo.RetriveAsync(id);
+            if (ReviewCategory == null)
                 return NotFound();
-            return Ok(Store);
+            return Ok(ReviewCategory);
         }
 
-        // POST api/Stores
+        // POST api/ReviewCategories
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] Store Store)
+        public async Task<IActionResult> Post([FromBody] ReviewCategory ReviewCategory)
         {
-            var CountryId = _db.Cities.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            
-            if (Store == null || CountryId == null || StoreTypeId == null)
+           
+            if (ReviewCategory == null )
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Store added = await _repo.CreatAsync(Store);
+            ReviewCategory added = await _repo.CreatAsync(ReviewCategory);
             if (added == null)
                 return BadRequest();
             return Ok();
         }
 
-        // DELETE api/Stores/5
+        // DELETE api/ReviewCategories/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -79,20 +76,19 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"Store {id} was found but failed to delete");
+                return BadRequest($"ReviewCategory {id} was found but failed to delete");
             }
         }
-        // Patch api/ Stores/5
+        // Patch api/ ReviewCategories/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> Patch(int id, [FromBody] Store Store)
+        public async Task<IActionResult> Patch(int id, [FromBody] ReviewCategory ReviewCategory)
         {
-            var CountryId = _db.Cities.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            if (Store == null  || CountryId == null || StoreTypeId == null || Store.StoreId != id)
+            
+            if (ReviewCategory == null || ReviewCategory.ReviewCategoryId != id)
             {
                 return BadRequest();
             }
@@ -105,7 +101,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(Store);
+            await _repo.UpdateAsync(ReviewCategory);
             return new NoContentResult();
 
         }

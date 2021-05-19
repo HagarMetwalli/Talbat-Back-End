@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,47 +8,47 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class InvoiceService : IGenericService<Invoice>
+    public class RegionService : IGenericService<Region>
     {
         private TalabatContext _db;
-        public InvoiceService(TalabatContext db)
+        public RegionService(TalabatContext db)
         {
             _db = db;
         }
-        public async Task<Invoice> CreatAsync(Invoice invoice)
+        public async Task<Region> CreatAsync(Region Region)
         {
-            await _db.Invoices.AddAsync(invoice);
+            await _db.Regions.AddAsync(Region);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return Region;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            Invoice invoice = await RetriveAsync(id);
-            _db.Invoices.Remove(invoice);
+            Region Region = await RetriveAsync(id);
+            _db.Regions.Remove(Region);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
             return null;
         }
 
-        public Task<IEnumerable<Invoice>> RetriveAllAsync()
+        public Task<IEnumerable<Region>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Invoice>>(() => _db.Invoices);
+            return Task<IEnumerable>.Run<IEnumerable<Region>>(() => _db.Regions);
         }
-        public Task<Invoice> RetriveAsync(int id)
+        public Task<Region> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Invoices.Find(id));
+            return Task.Run(() => _db.Regions.Find(id));
         }
 
-        public async Task<Invoice> UpdateAsync(Invoice invoice)
+        public async Task<Region> UpdateAsync(Region Region)
         {
             _db = new TalabatContext();
-            _db.Invoices.Update(invoice);
+            _db.Regions.Update(Region);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return Region;
             return null;
         }
 

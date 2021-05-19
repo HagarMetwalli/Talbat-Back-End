@@ -1,67 +1,67 @@
-﻿//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Talbat.IServices;
-//using Talbat.Models;
-
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Talbat.IServices;
+using Talbat.Models;
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CitiesController : ControllerBase
+    public class AddressTypesController : ControllerBase
     {
-        private IGenericService<City> _repo;
-        public CitiesController(IGenericService<City> repo) 
+        private IGenericService<AddressType> _repo;
+        public AddressTypesController(IGenericService<AddressType> repo)
         {
             _repo = repo;
         }
-        // GET: api/cities
+        // GET: api/addresstypes
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<City>))]
-        public async Task<IEnumerable<City>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<AddressType>))]
+        public async Task<IEnumerable<AddressType>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/cities/5
+        // GET api/addresstypes/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            City city = await _repo.RetriveAsync(id);
-            if (city == null)
+            AddressType addressType = await _repo.RetriveAsync(id);
+            if (addressType == null)
                 return NotFound();
-            return Ok(city);
+            return Ok(addressType);
         }
 
-        // POST api/cities
+        // POST api/addresstypes
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] City city)
+        public async Task<IActionResult> Post([FromBody] AddressType addressType)
         {
-            if (city == null)
+            if (addressType == null)
                 return BadRequest();
-                      
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            City added = await _repo.CreatAsync(city);
+            AddressType added = await _repo.CreatAsync(addressType);
             if (added == null)
-               return BadRequest();
-            return Ok();
+                return BadRequest();
+
+            return Ok(addressType);
         }
 
-        //Patch api/cities/5
+        //Patch api/addresstypes/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchCity(int id, [FromBody] City city)
+        public async Task<ActionResult<AddressType>> PatchAddressType(int id, [FromBody] AddressType addressType)
         {
-            if (city == null||city.CityId != id)
+            if (addressType == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -72,13 +72,13 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var c =  await _repo.UpdateAsync(city);
-            if (c == null)
-               return BadRequest();
+            var _addressType = await _repo.UpdateAsync(addressType);
+            if (_addressType == null)
+                return BadRequest();
 
             return new NoContentResult();
         }
-        // DELETE api/cities/5
+        // DELETE api/addresstypes/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -97,9 +97,9 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"city {id} was found but failed to delete");
+                return BadRequest($"AddressType {id} was found but failed to delete");
             }
         }
 
-//    }
-//}
+    }
+}

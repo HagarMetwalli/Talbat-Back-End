@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,56 +10,56 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StoresController : ControllerBase
+    public class SubItemsController : ControllerBase
     {
-        private IGenericService<Store> _repo;
+        private IGenericService<SubItem> _repo;
         private TalabatContext _db;
-        
-        public StoresController(IGenericService<Store> repo, TalabatContext db)
+
+        public SubItemsController(IGenericService<SubItem> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
         }
-        // GET: api/Stores
+        // GET: api/SubItems
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Store>))]
-        public async Task<IEnumerable<Store>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<SubItem>))]
+        public async Task<IEnumerable<SubItem>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/Stores/5
+        // GET api/SubItems/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            Store Store = await _repo.RetriveAsync(id);
-            if (Store == null)
+            SubItem SubItem = await _repo.RetriveAsync(id);
+            if (SubItem == null)
                 return NotFound();
-            return Ok(Store);
+            return Ok(SubItem);
         }
 
-        // POST api/Stores
+        // POST api/SubItems
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] Store Store)
+        public async Task<IActionResult> Post([FromBody] SubItem SubItem)
         {
-            var CountryId = _db.Cities.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            
-            if (Store == null || CountryId == null || StoreTypeId == null)
+            var SubItemCategory = _db.SubItemCategories.Find(SubItem.SubItemCategoryId);
+            var Item = _db.Items.Find(SubItem.ItemId);
+
+            if (SubItem == null || SubItemCategory == null || Item == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Store added = await _repo.CreatAsync(Store);
+            SubItem added = await _repo.CreatAsync(SubItem);
             if (added == null)
                 return BadRequest();
             return Ok();
         }
 
-        // DELETE api/Stores/5
+        // DELETE api/SubItems/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -79,20 +78,20 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"Store {id} was found but failed to delete");
+                return BadRequest($"SubItem {id} was found but failed to delete");
             }
         }
-        // Patch api/ Stores/5
+        // Patch api/ SubItems/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> Patch(int id, [FromBody] Store Store)
+        public async Task<IActionResult> PatchSubItem(int id, [FromBody] SubItem SubItem)
         {
-            var CountryId = _db.Cities.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            if (Store == null  || CountryId == null || StoreTypeId == null || Store.StoreId != id)
+            var SubItemCategory = _db.SubItemCategories.Find(SubItem.SubItemCategoryId);
+            var Item = _db.Items.Find(SubItem.ItemId);
+            if (SubItem == null || SubItemCategory == null || Item == null || SubItem.SubItemId != id)
             {
                 return BadRequest();
             }
@@ -105,7 +104,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(Store);
+            await _repo.UpdateAsync(SubItem);
             return new NoContentResult();
 
         }

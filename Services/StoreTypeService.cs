@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,49 +8,50 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class InvoiceService : IGenericService<Invoice>
+    public class StoreTypeService : IGenericService<StoreType>
     {
         private TalabatContext _db;
-        public InvoiceService(TalabatContext db)
+        public StoreTypeService(TalabatContext db)
         {
             _db = db;
         }
-        public async Task<Invoice> CreatAsync(Invoice invoice)
+        public async Task<StoreType> CreatAsync(StoreType StoreType)
         {
-            await _db.Invoices.AddAsync(invoice);
+            await _db.StoreTypes.AddAsync(StoreType);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return StoreType;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            Invoice invoice = await RetriveAsync(id);
-            _db.Invoices.Remove(invoice);
+            StoreType StoreType = await RetriveAsync(id);
+            _db.StoreTypes.Remove(StoreType);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
             return null;
         }
 
-        public Task<IEnumerable<Invoice>> RetriveAllAsync()
+        public Task<IEnumerable<StoreType>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Invoice>>(() => _db.Invoices);
+            return Task<IEnumerable>.Run<IEnumerable<StoreType>>(() => _db.StoreTypes);
         }
-        public Task<Invoice> RetriveAsync(int id)
+        public Task<StoreType> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Invoices.Find(id));
+            return Task.Run(() => _db.StoreTypes.Find(id));
         }
 
-        public async Task<Invoice> UpdateAsync(Invoice invoice)
+        public async Task<StoreType> UpdateAsync(StoreType StoreType)
         {
             _db = new TalabatContext();
-            _db.Invoices.Update(invoice);
+            _db.StoreTypes.Update(StoreType);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return StoreType;
             return null;
         }
 
     }
 }
+

@@ -52,26 +52,28 @@ namespace Talbat
             //services.AddScoped<IGenericService<City>, CityService>();
             services.AddScoped<IGenericService<Client>, ClientService>();
             //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
+            services.AddScoped<IGenericService<AddressType>, AddressTypeService>();
             services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
             services.AddScoped<IGenericService<Country>, CountryService>();
             services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();
             services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
             services.AddScoped<IGenericService<Item>, ItemService>();
-            services.AddScoped<IGenericService<Order>, OrderService>();
-            services.AddScoped<IGenericService<Offer>, OfferService>();
-            services.AddScoped<IGenericService<JobCategory>, JobCategoryService>();
-            services.AddScoped<IGenericService<JobPeriod>, JobPeriodService>();
-            services.AddScoped<IGenericService<JobLocation>, JobLocationService>();
-            services.AddScoped<IGenericService<JobType>, JobTypeService>();
-            services.AddScoped<IGenericService<Job>, JobService>();
-            services.AddScoped<IGenericService<Store>, StoreService>();
+            services.AddScoped< IGenericService<ItemReview>, ItemReviewService>();
+            services.AddScoped<IGenericService<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
+            services.AddScoped<IGenericService<SubItemCategory>, SubItemCategoryService>();
+            services.AddScoped<IGenericService<SubItem>, SubItemsService>();
+            services.AddScoped<IGenericService<StoreWorkingHour>, StoreWorkingHourService>();
             services.AddScoped<IGenericService<StoreType>, StoreTypeService>();
+            services.AddScoped<IGenericService<Store>, StoreService>();
+            services.AddScoped<IGenericService<ReviewCategory>, ReviewCategoryService>();
+            services.AddScoped<IGenericService<Review>, ReviewService>();
+            services.AddScoped<IGenericService<Region>, RegionService>();
+            services.AddScoped<IGenericService<RateStatus>, RateStatusService>();
+            services.AddScoped<IGenericService<Partner>, PartnerService>();
+            services.AddScoped<IGenericService<OrderReview>, OrderReviewService>();
 
-
-            services.AddScoped<IGenericService<City>, City1Service>();
-
-
+         
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Talbat", Version = "v1" });

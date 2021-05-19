@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,49 +8,50 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class InvoiceService : IGenericService<Invoice>
+    public class RateStatusService : IGenericService<RateStatus>
     {
         private TalabatContext _db;
-        public InvoiceService(TalabatContext db)
+        public RateStatusService(TalabatContext db)
         {
             _db = db;
         }
-        public async Task<Invoice> CreatAsync(Invoice invoice)
+        public async Task<RateStatus> CreatAsync(RateStatus RateStatus)
         {
-            await _db.Invoices.AddAsync(invoice);
+            await _db.RateStatuses.AddAsync(RateStatus);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return RateStatus;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            Invoice invoice = await RetriveAsync(id);
-            _db.Invoices.Remove(invoice);
+            RateStatus RateStatus = await RetriveAsync(id);
+            _db.RateStatuses.Remove(RateStatus);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
             return null;
         }
 
-        public Task<IEnumerable<Invoice>> RetriveAllAsync()
+        public Task<IEnumerable<RateStatus>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Invoice>>(() => _db.Invoices);
+            return Task<IEnumerable>.Run<IEnumerable<RateStatus>>(() => _db.RateStatuses);
         }
-        public Task<Invoice> RetriveAsync(int id)
+        public Task<RateStatus> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Invoices.Find(id));
+            return Task.Run(() => _db.RateStatuses.Find(id));
         }
 
-        public async Task<Invoice> UpdateAsync(Invoice invoice)
+        public async Task<RateStatus> UpdateAsync(RateStatus RateStatus)
         {
             _db = new TalabatContext();
-            _db.Invoices.Update(invoice);
+            _db.RateStatuses.Update(RateStatus);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return RateStatus;
             return null;
         }
 
     }
 }
+

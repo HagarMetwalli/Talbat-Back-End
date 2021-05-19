@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,86 +11,48 @@ namespace Talbat.Services
 {
     public class StoreService : IGenericService<Store>
     {
-        private static ConcurrentDictionary<int, Store> StoresCache;
-        private TalabatContext db;
-
+        private TalabatContext _db;
         public StoreService(TalabatContext db)
         {
-            this.db = db;
-            if (StoresCache == null)
-            {
-                StoresCache = new ConcurrentDictionary<int, Store>(
-                    db.Stores.ToDictionary(o => o.StoreId));
+            _db = db;
             }
-        }
-
-        public async Task<Store> CreatAsync(Store o)
+        public async Task<Store> CreatAsync(Store Store)
         {
-            EntityEntry<Store> added = await db.Stores.AddAsync(o);
-            int affected = await db.SaveChangesAsync();
-
+            await _db.Stores.AddAsync(Store);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return StoresCache.AddOrUpdate(o.StoreId, o, UpdateCache);
-            }
-
-            else
-            {
+                return Store;
                 return null;
             }
-        }
-
-        private Store UpdateCache(int id, Store o)
+        public async Task<bool?> DeleteAsync(int id)
         {
-            Store old;
-            if (StoresCache.TryGetValue(id, out old))
-            {
-                if (StoresCache.TryUpdate(id, o, old))
-                {
-                    return o;
-                }
-            }
+            Store Store = await RetriveAsync(id);
+            _db.Stores.Remove(Store);
+            int affected = await _db.SaveChangesAsync();
+            if (affected == 1)
+                return true;
             return null;
         }
 
-        public async Task<bool?> DeleteAsync(int id)
-        {
-            Store c = db.Stores.Find(id);
-
-            db.Stores.Remove(c);
-
-            int affected = await db.SaveChangesAsync();
-            if (affected == 1)
+        public Task<IEnumerable<Store>> RetriveAllAsync()
             {
-                return StoresCache.TryRemove(id, out c);
-            }
-            else
-            {
-                return null;
-            }
+            return Task<IEnumerable>.Run<IEnumerable<Store>>(() => _db.Stores);
         }
 
         public Task<IEnumerable<Store>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Store>>(() => StoresCache.Values);
 
         public Task<Store> RetriveAsync(int id)
         {
-            return Task.Run(() =>
-            {
-                StoresCache.TryGetValue(id, out Store c);
-                return c;
-            });
+            return Task.Run(() => _db.Stores.Find(id));
         }
 
-        public async Task<Store> UpdateAsync(int id, Store c)
+        public async Task<Store> UpdateAsync(Store Store)
         {
-            db.Stores.Update(c);
-            db.Stores.Update(c);
-
-            int affected = await db.SaveChangesAsync();
+            _db = new TalabatContext();
+            _db.Stores.Update(Store);
+            int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-            {
-                return UpdateCache(id, c);
-            }
+                return Store;
             return null;
         }
 
