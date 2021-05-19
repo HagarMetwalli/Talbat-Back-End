@@ -17,7 +17,7 @@ namespace Talbat.Models
             Orders = new HashSet<Order>();
             Reviews = new HashSet<Review>();
         }
-
+        
         public int ClientId { get; set; }
         public string ClientFname { get; set; }
         public string ClientLname { get; set; }

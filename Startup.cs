@@ -49,7 +49,7 @@ namespace Talbat
             });
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddScoped<IGenericService<City>, CityService>();
+            //services.AddScoped<IGenericService<City>, CityService>();
             services.AddScoped<IGenericService<Client>, ClientService>();
             //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
@@ -67,6 +67,9 @@ namespace Talbat
             services.AddScoped<IGenericService<Job>, JobService>();
             services.AddScoped<IGenericService<Store>, StoreService>();
             services.AddScoped<IGenericService<StoreType>, StoreTypeService>();
+
+
+            services.AddScoped<IGenericService<City>, City1Service>();
 
 
             services.AddSwaggerGen(c =>
