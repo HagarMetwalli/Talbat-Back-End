@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talbat.Models;
 
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    partial class TalabatContextModelSnapshot : ModelSnapshot
+    [Migration("20210519185505_CuisineTable")]
+    partial class CuisineTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -992,9 +994,6 @@ namespace Talbat.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Country_Id");
 
-                    b.Property<int?>("CuisineId")
-                        .HasColumnType("int");
-
                     b.Property<string>("StoreAddress")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1056,8 +1055,6 @@ namespace Talbat.Migrations
                         .HasColumnName("StoreType_Id");
 
                     b.HasKey("StoreId");
-
-                    b.HasIndex("CuisineId");
 
                     b.HasIndex("StoreTypeId");
 
@@ -1594,16 +1591,10 @@ namespace Talbat.Migrations
 
             modelBuilder.Entity("Talbat.Models.Store", b =>
                 {
-                    b.HasOne("Talbat.Models.Cuisine", "Cuisine")
-                        .WithMany()
-                        .HasForeignKey("CuisineId");
-
                     b.HasOne("Talbat.Models.StoreType", "StoreType")
                         .WithMany("Stores")
                         .HasForeignKey("StoreTypeId")
                         .HasConstraintName("FK_Store_StoreType");
-
-                    b.Navigation("Cuisine");
 
                     b.Navigation("StoreType");
                 });

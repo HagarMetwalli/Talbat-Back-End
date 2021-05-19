@@ -48,6 +48,7 @@ namespace Talbat.Models
         public virtual DbSet<ReviewCategory> ReviewCategories { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
         public virtual DbSet<StoreType> StoreTypes { get; set; }
+        public virtual DbSet<Cuisine> Cuisines { get; set; }
         public virtual DbSet<StoreWorkingHour> StoreWorkingHours { get; set; }
         public virtual DbSet<SubItem> SubItems { get; set; }
         public virtual DbSet<SubItemCategory> SubItemCategories { get; set; }

@@ -44,7 +44,16 @@ namespace Talbat.Controllers
         public async Task<IEnumerable<String>> MostCommonStores()
         {
 
-            return await _repo.RetriveMostCommonAsync();
+            return await _repo.RetriveMostCommonStoreAsync();
+        }
+        //// GET: api/RetriveMostCommonCuisine
+        [HttpGet]
+        [Route("RetriveMostCommonCuisine")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<object>))]
+        public async Task<IEnumerable<object>> MostCommonCuisine()
+        {
+
+            return await _repo.RetriveMostCommonCuisineAsync();
         }
 
         // POST api/Stores
