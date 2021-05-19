@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
@@ -14,7 +12,7 @@ namespace Talbat.Controllers
     public class CitiesController : ControllerBase
     {
         private IGenericService<City> _repo;
-        public CitiesController(IGenericService<City> repo) 
+        public CitiesController(IGenericService<City> repo)
         {
             _repo = repo;
         }
@@ -44,13 +42,13 @@ namespace Talbat.Controllers
         {
             if (city == null)
                 return BadRequest();
-                      
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             City added = await _repo.CreatAsync(city);
             if (added == null)
-               return BadRequest();
+                return BadRequest();
             return Ok();
         }
 
@@ -61,7 +59,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<City>> PatchCity(int id, [FromBody] City city)
         {
-            if (city == null||city.CityId != id)
+            if (city == null || city.CityId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -72,9 +70,9 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var c =  await _repo.UpdateAsync(city);
+            var c = await _repo.UpdateAsync(city);
             if (c == null)
-               return BadRequest();
+                return BadRequest();
 
             return new NoContentResult();
         }
@@ -100,6 +98,5 @@ namespace Talbat.Controllers
                 return BadRequest($"city {id} was found but failed to delete");
             }
         }
-
     }
 }
