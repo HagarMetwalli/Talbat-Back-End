@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,52 +10,55 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeliveryMenController : ControllerBase
+    public class PartnersController : ControllerBase
     {
-        private IGenericService<DeliveryMan> _repo;
-        public DeliveryMenController(IGenericService<DeliveryMan> repo) 
+        private IGenericService<Partner> _repo;
+        private TalabatContext _db;
+
+        public PartnersController(IGenericService<Partner> repo, TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
-        // GET: api/DeliveryMen
+        // GET: api/Partners
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<DeliveryMan>))]
-        public async Task<IEnumerable<DeliveryMan>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Partner>))]
+        public async Task<IEnumerable<Partner>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/DeliveryMen/5
+        // GET api/Partners/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            DeliveryMan deliveryMan = await _repo.RetriveAsync(id);
-            if (deliveryMan == null)
+            Partner Partner = await _repo.RetriveAsync(id);
+            if (Partner == null)
                 return NotFound();
-            return Ok(deliveryMan);
+            return Ok(Partner);
         }
 
-        // POST api/DeliveryMen
+        // POST api/Partners
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> Post([FromBody] Partner Partner)
         {
-            if (deliveryMan == null)
+            var StoreId = _db.Stores.Find(Partner.StoreId);
+
+            if (Partner == null || StoreId == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            DeliveryMan added = await _repo.CreatAsync(deliveryMan);
+            Partner added = await _repo.CreatAsync(Partner);
             if (added == null)
                 return BadRequest();
-
             return Ok();
         }
 
-
-        // DELETE api/DeliveryMen/5
+        // DELETE api/Partners/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -75,19 +77,19 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"DeliveryMan {id} was found but failed to delete");
+                return BadRequest($"Partner {id} was found but failed to delete");
             }
         }
-
-        // Patch api/deliveryMen/5
+        // Patch api/ Partners/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchDeliveryMan(int id, [FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> PatchPartner(int id, [FromBody] Partner Partner)
         {
-            if (deliveryMan == null || deliveryMan.DeliveryManId != id)
+            var StoreId = _db.Stores.Find(Partner.StoreId);
+            if (Partner == null || StoreId == null || Partner.PartnerId != id)
             {
                 return BadRequest();
             }
@@ -100,10 +102,9 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(deliveryMan);
+            await _repo.UpdateAsync(Partner);
             return new NoContentResult();
 
         }
-
     }
 }

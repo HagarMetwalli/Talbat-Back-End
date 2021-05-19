@@ -34,7 +34,7 @@ namespace Talbat
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<TalabatContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Talbaltconn")));
+            services.AddDbContext<TalabatContext>(options => options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("Talbaltconn")));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
             services.AddCors(options =>
@@ -51,13 +51,15 @@ namespace Talbat
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             //services.AddScoped<IGenericService<City>, CityService>();
             services.AddScoped<IGenericService<Client>, ClientService>();
-            //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
+            services.AddScoped<IGenericService<AddressType>, AddressTypeService>();
             services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
+         // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGenericService<Country>, CountryService>();
             services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();
             services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
             services.AddScoped<IGenericService<Item>, ItemService>();
+<<<<<<< HEAD
             services.AddScoped<IGenericService<Order>, OrderService>();
             services.AddScoped<IGenericService<Offer>, OfferService>();
             services.AddScoped<IGenericService<JobCategory>, JobCategoryService>();
@@ -71,6 +73,21 @@ namespace Talbat
 
             services.AddScoped<IGenericService<City>, City1Service>();
 
+=======
+            services.AddScoped< IGenericService<ItemReview>, ItemReviewService>();
+            services.AddScoped<IGenericService<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
+            services.AddScoped<IGenericService<SubItemCategory>, SubItemCategoryService>();
+            services.AddScoped<IGenericService<SubItem>, SubItemsService>();
+            services.AddScoped<IGenericService<StoreWorkingHour>, StoreWorkingHourService>();
+            services.AddScoped<IGenericService<StoreType>, StoreTypeService>();
+            services.AddScoped<IGenericService<ReviewCategory>, ReviewCategoryService>();
+            services.AddScoped<IGenericService<Review>, ReviewService>();
+            services.AddScoped<IGenericService<Region>, RegionService>();
+            services.AddScoped<IGenericService<RateStatus>, RateStatusService>();
+            services.AddScoped<IGenericService<Partner>, PartnerService>();
+            services.AddScoped<IGenericService<OrderReview>, OrderReviewService>();
+            services.AddScoped<IStoreService, StoreService>();
+>>>>>>> Hajar
 
             services.AddSwaggerGen(c =>
             {

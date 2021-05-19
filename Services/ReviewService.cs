@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,49 +8,50 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class InvoiceService : IGenericService<Invoice>
+    public class ReviewService : IGenericService<Review>
     {
         private TalabatContext _db;
-        public InvoiceService(TalabatContext db)
+        public ReviewService(TalabatContext db)
         {
             _db = db;
         }
-        public async Task<Invoice> CreatAsync(Invoice invoice)
+        public async Task<Review> CreatAsync(Review Review)
         {
-            await _db.Invoices.AddAsync(invoice);
+            await _db.Reviews.AddAsync(Review);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return Review;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            Invoice invoice = await RetriveAsync(id);
-            _db.Invoices.Remove(invoice);
+            Review Review = await RetriveAsync(id);
+            _db.Reviews.Remove(Review);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
             return null;
         }
 
-        public Task<IEnumerable<Invoice>> RetriveAllAsync()
+        public Task<IEnumerable<Review>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Invoice>>(() => _db.Invoices);
+            return Task<IEnumerable>.Run<IEnumerable<Review>>(() => _db.Reviews);
         }
-        public Task<Invoice> RetriveAsync(int id)
+        public Task<Review> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Invoices.Find(id));
+            return Task.Run(() => _db.Reviews.Find(id));
         }
 
-        public async Task<Invoice> UpdateAsync(Invoice invoice)
+        public async Task<Review> UpdateAsync(Review Review)
         {
             _db = new TalabatContext();
-            _db.Invoices.Update(invoice);
+            _db.Reviews.Update(Review);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return Review;
             return null;
         }
 
     }
 }
+

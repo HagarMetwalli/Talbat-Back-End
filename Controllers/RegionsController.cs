@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,52 +10,53 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeliveryMenController : ControllerBase
+    public class RegionsController : ControllerBase
     {
-        private IGenericService<DeliveryMan> _repo;
-        public DeliveryMenController(IGenericService<DeliveryMan> repo) 
+        private IGenericService<Region> _repo;
+        private TalabatContext _db;
+
+        public RegionsController(IGenericService<Region> repo, TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
-        // GET: api/DeliveryMen
+        // GET: api/Regions
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<DeliveryMan>))]
-        public async Task<IEnumerable<DeliveryMan>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Region>))]
+        public async Task<IEnumerable<Region>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/DeliveryMen/5
+        // GET api/Regions/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            DeliveryMan deliveryMan = await _repo.RetriveAsync(id);
-            if (deliveryMan == null)
+            Region Region = await _repo.RetriveAsync(id);
+            if (Region == null)
                 return NotFound();
-            return Ok(deliveryMan);
+            return Ok(Region);
         }
 
-        // POST api/DeliveryMen
+        // POST api/Regions
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> Post([FromBody] Region Region)
         {
-            if (deliveryMan == null)
+            if (Region == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            DeliveryMan added = await _repo.CreatAsync(deliveryMan);
+            Region added = await _repo.CreatAsync(Region);
             if (added == null)
                 return BadRequest();
-
             return Ok();
         }
 
-
-        // DELETE api/DeliveryMen/5
+        // DELETE api/Regions/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -75,19 +75,19 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"DeliveryMan {id} was found but failed to delete");
+                return BadRequest($"Region {id} was found but failed to delete");
             }
         }
-
-        // Patch api/deliveryMen/5
+        // Patch api/ Regions/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchDeliveryMan(int id, [FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> PatchRegion(int id, [FromBody] Region Region)
         {
-            if (deliveryMan == null || deliveryMan.DeliveryManId != id)
+            
+            if (Region == null  || Region.RegionId != id)
             {
                 return BadRequest();
             }
@@ -100,10 +100,9 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(deliveryMan);
+            await _repo.UpdateAsync(Region);
             return new NoContentResult();
 
         }
-
     }
 }

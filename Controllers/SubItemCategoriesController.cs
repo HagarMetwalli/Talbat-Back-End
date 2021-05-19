@@ -10,57 +10,60 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsOffersController : ControllerBase
+    public class SubItemCategoriesController : ControllerBase
     {
-        private IGenericService<ClientOffer> _repo;
-        public ClientsOffersController(IGenericService<ClientOffer> repo) 
+        private IGenericService<SubItemCategory> _repo;
+
+        public SubItemCategoriesController(IGenericService<SubItemCategory> repo)
         {
             _repo = repo;
         }
-        // GET: api/ClientsOffers
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ClientOffer>))]
-        public async Task<IEnumerable<ClientOffer>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/ClientsOffers/5
+        // GET: api/SubItemCategories
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<SubItemCategory>))]
+        public async Task<IEnumerable<SubItemCategory>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/SubItemCategories/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            ClientOffer clientOffer = await _repo.RetriveAsync(id);
-            if (clientOffer == null)
+            SubItemCategory SubItemCategory = await _repo.RetriveAsync(id);
+            if (SubItemCategory == null)
                 return NotFound();
-            return Ok(clientOffer);
+            return Ok(SubItemCategory);
         }
 
-        // POST api/ClientsOffers
+        // POST api/SubItemCategories
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] ClientOffer clientOffer)
+        public async Task<IActionResult> Post([FromBody] SubItemCategory SubItemCategory)
         {
-            if (clientOffer == null)
+            if (SubItemCategory == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            ClientOffer added = await _repo.CreatAsync(clientOffer);
+            SubItemCategory added = await _repo.CreatAsync(SubItemCategory);
             if (added == null)
                 return BadRequest();
+
             return Ok();
         }
 
-        //Patch api/ClientsOffers/5
+        //Patch api/SubItemCategories/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchClientOffer(int id, [FromBody] ClientOffer clientOffer)
+        public async Task<ActionResult<SubItemCategory>> PatchSubItemCategory(int id, [FromBody] SubItemCategory SubItemCategory)
         {
-            if (clientOffer == null || clientOffer.OfferId != id)
+            if (SubItemCategory == null || SubItemCategory.SubItemCategoryId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -71,13 +74,13 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _clientOffer = await _repo.UpdateAsync(clientOffer);
-            if (_clientOffer == null)
+            var _client = await _repo.UpdateAsync(SubItemCategory);
+            if (_client == null)
                 return BadRequest();
 
             return new NoContentResult();
         }
-        // DELETE api/ClientsOffers/5
+        // DELETE api/SubItemCategories/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -96,7 +99,7 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"ClientsOffers {id} was found but failed to delete");
+                return BadRequest($"SubItemCategory {id} was found but failed to delete");
             }
         }
     }

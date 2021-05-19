@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,57 +11,62 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsOffersController : ControllerBase
+    public class ItemReviewsController : ControllerBase
     {
-        private IGenericService<ClientOffer> _repo;
-        public ClientsOffersController(IGenericService<ClientOffer> repo) 
+        private IGenericService<ItemReview> _repo;
+        private TalabatContext _db;
+
+        public ItemReviewsController(IGenericService<ItemReview> repo,TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
-        // GET: api/ClientsOffers
+        // GET: api/itemreviews
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ClientOffer>))]
-        public async Task<IEnumerable<ClientOffer>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ItemReview>))]
+        public async Task<IEnumerable<ItemReview>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/ClientsOffers/5
+        // GET api/itemreviews/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            ClientOffer clientOffer = await _repo.RetriveAsync(id);
-            if (clientOffer == null)
+            ItemReview itemReview = await _repo.RetriveAsync(id);
+            if (itemReview == null)
                 return NotFound();
-            return Ok(clientOffer);
+            return Ok(itemReview);
         }
 
-        // POST api/ClientsOffers
+        // POST api/itemreviews
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] ClientOffer clientOffer)
+        public async Task<IActionResult> Post([FromBody] ItemReview itemReview)
         {
-            if (clientOffer == null)
+            var ratestatusId = _db.RateStatuses.Find(itemReview.RateStatusId);
+            if (itemReview == null || ratestatusId == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            ClientOffer added = await _repo.CreatAsync(clientOffer);
+            ItemReview added = await _repo.CreatAsync(itemReview);
             if (added == null)
                 return BadRequest();
             return Ok();
         }
 
-        //Patch api/ClientsOffers/5
+        //Patch api/itemreviews/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchClientOffer(int id, [FromBody] ClientOffer clientOffer)
+        public async Task<ActionResult<ItemReview>> PatchItemReview(int id, [FromBody] ItemReview itemReview)
         {
-            if (clientOffer == null || clientOffer.OfferId != id)
+            var ratestatusId = _db.RateStatuses.Find(itemReview.RateStatusId);
+            if (itemReview == null ||ratestatusId ==null || itemReview.ItemId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -71,13 +77,13 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _clientOffer = await _repo.UpdateAsync(clientOffer);
-            if (_clientOffer == null)
+            var _itemReview = await _repo.UpdateAsync(itemReview);
+            if (_itemReview == null)
                 return BadRequest();
 
             return new NoContentResult();
         }
-        // DELETE api/ClientsOffers/5
+        // DELETE api/itemreviews/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -96,8 +102,9 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"ClientsOffers {id} was found but failed to delete");
+                return BadRequest($"itemreview {id} was found but failed to delete");
             }
         }
+
     }
 }

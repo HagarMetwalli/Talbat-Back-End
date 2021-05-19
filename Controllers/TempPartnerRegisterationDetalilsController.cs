@@ -10,57 +10,60 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsOffersController : ControllerBase
+    public class TempPartnerRegisterationDetailsController : ControllerBase
     {
-        private IGenericService<ClientOffer> _repo;
-        public ClientsOffersController(IGenericService<ClientOffer> repo) 
+        private IGenericService<TempPartnerRegisterationDetail> _repo;
+
+        public TempPartnerRegisterationDetailsController(IGenericService<TempPartnerRegisterationDetail> repo)
         {
             _repo = repo;
         }
-        // GET: api/ClientsOffers
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ClientOffer>))]
-        public async Task<IEnumerable<ClientOffer>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/ClientsOffers/5
+        // GET: api/TempPartnerRegisterationDetails
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TempPartnerRegisterationDetail>))]
+        public async Task<IEnumerable<TempPartnerRegisterationDetail>> Get() => await _repo.RetriveAllAsync();
+
+        // GET api/TempPartnerRegisterationDetails/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            ClientOffer clientOffer = await _repo.RetriveAsync(id);
-            if (clientOffer == null)
+            TempPartnerRegisterationDetail TempPartnerRegisterationDetail = await _repo.RetriveAsync(id);
+            if (TempPartnerRegisterationDetail == null)
                 return NotFound();
-            return Ok(clientOffer);
+            return Ok(TempPartnerRegisterationDetail);
         }
 
-        // POST api/ClientsOffers
+        // POST api/TempPartnerRegisterationDetails
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] ClientOffer clientOffer)
+        public async Task<IActionResult> Post([FromBody] TempPartnerRegisterationDetail TempPartnerRegisterationDetail)
         {
-            if (clientOffer == null)
+            if (TempPartnerRegisterationDetail == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            ClientOffer added = await _repo.CreatAsync(clientOffer);
+            TempPartnerRegisterationDetail added = await _repo.CreatAsync(TempPartnerRegisterationDetail);
             if (added == null)
                 return BadRequest();
+
             return Ok();
         }
 
-        //Patch api/ClientsOffers/5
+        //Patch api/TempPartnerRegisterationDetails/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchClientOffer(int id, [FromBody] ClientOffer clientOffer)
+        public async Task<ActionResult<TempPartnerRegisterationDetail>> PatchTempPartnerRegisterationDetail(int id, [FromBody] TempPartnerRegisterationDetail TempPartnerRegisterationDetail)
         {
-            if (clientOffer == null || clientOffer.OfferId != id)
+            if (TempPartnerRegisterationDetail == null || TempPartnerRegisterationDetail.TempPartnerStoreId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -71,13 +74,13 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _clientOffer = await _repo.UpdateAsync(clientOffer);
-            if (_clientOffer == null)
+            var _client = await _repo.UpdateAsync(TempPartnerRegisterationDetail);
+            if (_client == null)
                 return BadRequest();
 
             return new NoContentResult();
         }
-        // DELETE api/ClientsOffers/5
+        // DELETE api/TempPartnerRegisterationDetails/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -96,7 +99,7 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"ClientsOffers {id} was found but failed to delete");
+                return BadRequest($"TempPartnerRegisterationDetails {id} was found but failed to delete");
             }
         }
     }

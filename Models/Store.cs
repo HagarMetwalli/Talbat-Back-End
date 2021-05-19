@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -30,11 +31,15 @@ namespace Talbat.Models
         public string StoreCuisine { get; set; }
         public int? StoreTypeId { get; set; }
 
+        [ForeignKey("Cuisine")]
+        public int? CuisineId { get; set; }
+        public int StoreOrdersNumber { get; set; }
         public virtual StoreType StoreType { get; set; }
         public virtual ICollection<Item> Items { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Partner> Partners { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<StoreWorkingHour> StoreWorkingHours { get; set; }
+        public virtual Cuisine Cuisine { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,52 +10,55 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeliveryMenController : ControllerBase
+    public class OrderReviewsController : ControllerBase
     {
-        private IGenericService<DeliveryMan> _repo;
-        public DeliveryMenController(IGenericService<DeliveryMan> repo) 
+        private IGenericService<OrderReview> _repo;
+        private TalabatContext _db;
+
+        public OrderReviewsController(IGenericService<OrderReview> repo, TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
-        // GET: api/DeliveryMen
+        // GET: api/OrderReviews
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<DeliveryMan>))]
-        public async Task<IEnumerable<DeliveryMan>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<OrderReview>))]
+        public async Task<IEnumerable<OrderReview>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/DeliveryMen/5
+        // GET api/OrderReviews/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            DeliveryMan deliveryMan = await _repo.RetriveAsync(id);
-            if (deliveryMan == null)
+            OrderReview OrderReview = await _repo.RetriveAsync(id);
+            if (OrderReview == null)
                 return NotFound();
-            return Ok(deliveryMan);
+            return Ok(OrderReview);
         }
 
-        // POST api/DeliveryMen
+        // POST api/OrderReviews
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> Post([FromBody] OrderReview OrderReview)
         {
-            if (deliveryMan == null)
+            var orderId = _db.Orders.Find(OrderReview.OrderId);
+
+            if (OrderReview == null || orderId == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            DeliveryMan added = await _repo.CreatAsync(deliveryMan);
+            OrderReview added = await _repo.CreatAsync(OrderReview);
             if (added == null)
                 return BadRequest();
-
             return Ok();
         }
 
-
-        // DELETE api/DeliveryMen/5
+        // DELETE api/OrderReviews/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -75,19 +77,19 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"DeliveryMan {id} was found but failed to delete");
+                return BadRequest($"OrderReview {id} was found but failed to delete");
             }
         }
-
-        // Patch api/deliveryMen/5
+        // Patch api/ OrderReviews/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchDeliveryMan(int id, [FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> PatchOrderReview(int id, [FromBody] OrderReview OrderReview)
         {
-            if (deliveryMan == null || deliveryMan.DeliveryManId != id)
+            var orderId = _db.Orders.Find(OrderReview.OrderId);
+            if (OrderReview == null || orderId == null || OrderReview.OrderReviewId != id)
             {
                 return BadRequest();
             }
@@ -100,10 +102,9 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(deliveryMan);
+            await _repo.UpdateAsync(OrderReview);
             return new NoContentResult();
 
         }
-
     }
 }

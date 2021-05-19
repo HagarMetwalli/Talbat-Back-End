@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,52 +10,57 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeliveryMenController : ControllerBase
+    public class ReviewsController : ControllerBase
     {
-        private IGenericService<DeliveryMan> _repo;
-        public DeliveryMenController(IGenericService<DeliveryMan> repo) 
+        private IGenericService<Review> _repo;
+        private TalabatContext _db;
+
+        public ReviewsController(IGenericService<Review> repo, TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
-        // GET: api/DeliveryMen
+        // GET: api/Reviews
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<DeliveryMan>))]
-        public async Task<IEnumerable<DeliveryMan>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
+        public async Task<IEnumerable<Review>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/DeliveryMen/5
+        // GET api/Reviews/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            DeliveryMan deliveryMan = await _repo.RetriveAsync(id);
-            if (deliveryMan == null)
+            Review Review = await _repo.RetriveAsync(id);
+            if (Review == null)
                 return NotFound();
-            return Ok(deliveryMan);
+            return Ok(Review);
         }
 
-        // POST api/DeliveryMen
+        // POST api/Reviews
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> Post([FromBody] Review Review)
         {
-            if (deliveryMan == null)
+            var ReviewCategoryId = _db.ReviewCategories.Find(Review.ReviewCategoryId);
+            var UserId = _db.Cities.Find(Review.UserId);
+            var StoreId = _db.Stores.Find(Review.StoreId);
+
+            if (Review == null || ReviewCategoryId == null || UserId == null || StoreId == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            DeliveryMan added = await _repo.CreatAsync(deliveryMan);
+            Review added = await _repo.CreatAsync(Review);
             if (added == null)
                 return BadRequest();
-
             return Ok();
         }
 
-
-        // DELETE api/DeliveryMen/5
+        // DELETE api/Reviews/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -75,19 +79,22 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"DeliveryMan {id} was found but failed to delete");
+                return BadRequest($"Review {id} was found but failed to delete");
             }
         }
-
-        // Patch api/deliveryMen/5
+        // Patch api/ Reviews/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchDeliveryMan(int id, [FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> Patch(int id, [FromBody] Review Review)
         {
-            if (deliveryMan == null || deliveryMan.DeliveryManId != id)
+            var ReviewCategoryId = _db.ReviewCategories.Find(Review.ReviewCategoryId);
+            var UserId = _db.Cities.Find(Review.UserId);
+            var StoreId = _db.Stores.Find(Review.StoreId);
+
+            if (Review == null || ReviewCategoryId == null || UserId == null || StoreId == null|| Review.ReviewId != id)
             {
                 return BadRequest();
             }
@@ -100,10 +107,9 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(deliveryMan);
+            await _repo.UpdateAsync(Review);
             return new NoContentResult();
 
         }
-
     }
 }

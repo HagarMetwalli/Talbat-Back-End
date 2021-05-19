@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,47 +8,47 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class InvoiceService : IGenericService<Invoice>
+    public class SubItemsService : IGenericService<SubItem>
     {
         private TalabatContext _db;
-        public InvoiceService(TalabatContext db)
+        public SubItemsService(TalabatContext db)
         {
             _db = db;
         }
-        public async Task<Invoice> CreatAsync(Invoice invoice)
+        public async Task<SubItem> CreatAsync(SubItem SubItem)
         {
-            await _db.Invoices.AddAsync(invoice);
+            await _db.SubItems.AddAsync(SubItem);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return SubItem;
             return null;
         }
         public async Task<bool?> DeleteAsync(int id)
         {
-            Invoice invoice = await RetriveAsync(id);
-            _db.Invoices.Remove(invoice);
+            SubItem SubItem = await RetriveAsync(id);
+            _db.SubItems.Remove(SubItem);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
             return null;
         }
 
-        public Task<IEnumerable<Invoice>> RetriveAllAsync()
+        public Task<IEnumerable<SubItem>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Invoice>>(() => _db.Invoices);
+            return Task<IEnumerable>.Run<IEnumerable<SubItem>>(() => _db.SubItems);
         }
-        public Task<Invoice> RetriveAsync(int id)
+        public Task<SubItem> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Invoices.Find(id));
+            return Task.Run(() => _db.SubItems.Find(id));
         }
 
-        public async Task<Invoice> UpdateAsync(Invoice invoice)
+        public async Task<SubItem> UpdateAsync(SubItem SubItem)
         {
             _db = new TalabatContext();
-            _db.Invoices.Update(invoice);
+            _db.SubItems.Update(SubItem);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return invoice;
+                return SubItem;
             return null;
         }
 

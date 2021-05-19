@@ -1,66 +1,67 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
-
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsOffersController : ControllerBase
+    public class AddressTypesController : ControllerBase
     {
-        private IGenericService<ClientOffer> _repo;
-        public ClientsOffersController(IGenericService<ClientOffer> repo) 
+        private IGenericService<AddressType> _repo;
+        public AddressTypesController(IGenericService<AddressType> repo)
         {
             _repo = repo;
         }
-        // GET: api/ClientsOffers
+        // GET: api/addresstypes
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ClientOffer>))]
-        public async Task<IEnumerable<ClientOffer>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(200, Type = typeof(IEnumerable<AddressType>))]
+        public async Task<IEnumerable<AddressType>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/ClientsOffers/5
+        // GET api/addresstypes/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            ClientOffer clientOffer = await _repo.RetriveAsync(id);
-            if (clientOffer == null)
+            AddressType addressType = await _repo.RetriveAsync(id);
+            if (addressType == null)
                 return NotFound();
-            return Ok(clientOffer);
+            return Ok(addressType);
         }
 
-        // POST api/ClientsOffers
+        // POST api/addresstypes
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] ClientOffer clientOffer)
+        public async Task<IActionResult> Post([FromBody] AddressType addressType)
         {
-            if (clientOffer == null)
+            if (addressType == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            ClientOffer added = await _repo.CreatAsync(clientOffer);
+            AddressType added = await _repo.CreatAsync(addressType);
             if (added == null)
                 return BadRequest();
-            return Ok();
+
+            return Ok(addressType);
         }
 
-        //Patch api/ClientsOffers/5
+        //Patch api/addresstypes/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchClientOffer(int id, [FromBody] ClientOffer clientOffer)
+        public async Task<ActionResult<AddressType>> PatchAddressType(int id, [FromBody] AddressType addressType)
         {
-            if (clientOffer == null || clientOffer.OfferId != id)
+            if (addressType == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -71,13 +72,13 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _clientOffer = await _repo.UpdateAsync(clientOffer);
-            if (_clientOffer == null)
+            var _addressType = await _repo.UpdateAsync(addressType);
+            if (_addressType == null)
                 return BadRequest();
 
             return new NoContentResult();
         }
-        // DELETE api/ClientsOffers/5
+        // DELETE api/addresstypes/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -96,8 +97,9 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"ClientsOffers {id} was found but failed to delete");
+                return BadRequest($"AddressType {id} was found but failed to delete");
             }
         }
+
     }
 }

@@ -48,6 +48,7 @@ namespace Talbat.Models
         public virtual DbSet<ReviewCategory> ReviewCategories { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
         public virtual DbSet<StoreType> StoreTypes { get; set; }
+        public virtual DbSet<Cuisine> Cuisines { get; set; }
         public virtual DbSet<StoreWorkingHour> StoreWorkingHours { get; set; }
         public virtual DbSet<SubItem> SubItems { get; set; }
         public virtual DbSet<SubItemCategory> SubItemCategories { get; set; }
@@ -57,8 +58,13 @@ namespace Talbat.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+<<<<<<< HEAD
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=.;Database=Talabat41;Trusted_Connection=True;");
+=======
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=.;Database=TalabatDB;Trusted_Connection=True;");
+>>>>>>> Hajar
             }
         }
 

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talbat.Models;
 
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    partial class TalabatContextModelSnapshot : ModelSnapshot
+    [Migration("20210519185505_CuisineTable")]
+    partial class CuisineTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -301,8 +303,6 @@ namespace Talbat.Migrations
                     b.ToTable("Country");
                 });
 
-<<<<<<< HEAD
-=======
             modelBuilder.Entity("Talbat.Models.Cuisine", b =>
                 {
                     b.Property<int>("CuisineId")
@@ -318,7 +318,6 @@ namespace Talbat.Migrations
                     b.ToTable("Cuisines");
                 });
 
->>>>>>> Hajar
             modelBuilder.Entity("Talbat.Models.DeliveryMan", b =>
                 {
                     b.Property<int>("DeliveryManId")
@@ -995,12 +994,6 @@ namespace Talbat.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Country_Id");
 
-<<<<<<< HEAD
-=======
-                    b.Property<int?>("CuisineId")
-                        .HasColumnType("int");
-
->>>>>>> Hajar
                     b.Property<string>("StoreAddress")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1040,12 +1033,9 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Store_Name");
 
-<<<<<<< HEAD
-=======
                     b.Property<int>("StoreOrdersNumber")
                         .HasColumnType("int");
 
->>>>>>> Hajar
                     b.Property<int?>("StorePaymentOnDeliverCash")
                         .HasColumnType("int")
                         .HasColumnName("Store_PaymentOnDeliverCash");
@@ -1066,11 +1056,6 @@ namespace Talbat.Migrations
 
                     b.HasKey("StoreId");
 
-<<<<<<< HEAD
-=======
-                    b.HasIndex("CuisineId");
-
->>>>>>> Hajar
                     b.HasIndex("StoreTypeId");
 
                     b.ToTable("Store");
@@ -1606,23 +1591,11 @@ namespace Talbat.Migrations
 
             modelBuilder.Entity("Talbat.Models.Store", b =>
                 {
-<<<<<<< HEAD
-=======
-                    b.HasOne("Talbat.Models.Cuisine", "Cuisine")
-                        .WithMany()
-                        .HasForeignKey("CuisineId");
-
->>>>>>> Hajar
                     b.HasOne("Talbat.Models.StoreType", "StoreType")
                         .WithMany("Stores")
                         .HasForeignKey("StoreTypeId")
                         .HasConstraintName("FK_Store_StoreType");
 
-<<<<<<< HEAD
-=======
-                    b.Navigation("Cuisine");
-
->>>>>>> Hajar
                     b.Navigation("StoreType");
                 });
 
