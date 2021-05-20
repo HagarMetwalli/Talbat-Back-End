@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,14 +15,15 @@ namespace Talbat.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private IGenericService<Client> _repo;
+        private IClientService _repo;
 
-        public ClientsController(IGenericService<Client> repo)
+        public ClientsController(IClientService repo)
         {
             _repo = repo;
         }
 
         // GET: api/clients
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Client>))]
         public async Task<IEnumerable<Client>> Get() => await _repo.RetriveAllAsync();
@@ -103,6 +105,22 @@ namespace Talbat.Controllers
             {
                 return BadRequest($"client {id} was found but failed to delete");
             }
+        }
+        // POST api/clients/login
+        [HttpPost]
+        [Route("login")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Login([FromBody] LoginService obj)
+        {
+            if (obj.Email== null || obj.Password == null)
+                return BadRequest();
+            var token =await  _repo.Login(obj); 
+
+            if (token == null)
+                return Unauthorized();
+
+            return Ok(new {Token =token});
         }
     }
 }

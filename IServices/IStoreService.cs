@@ -6,10 +6,10 @@ using Talbat.Models;
 
 namespace Talbat.IServices
 {
-    public interface IStoreService : IGenericService<Store>
+    public interface IStoreService<T> : IGenericService<T>
     {
-        public Task<IEnumerable<String>> RetriveMostCommonStoreAsync();
-        public Task<IEnumerable<object>> RetriveMostCommonCuisineAsync();
+        public Task<IEnumerable<String>> RetriveMostCommonAsync();
+        public Task<T> RetriveByNameAsync(string name);
 
     }
 }

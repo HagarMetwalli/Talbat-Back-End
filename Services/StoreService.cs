@@ -9,7 +9,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class StoreService : IStoreService
+    public class StoreService : IStoreService<Store>
     {
         private TalabatContext _db;
         public StoreService(TalabatContext db)
@@ -43,50 +43,16 @@ namespace Talbat.Services
             return Task.Run(() => _db.Stores.Find(id));
         }
 
-        public Task<IEnumerable<String>> RetriveMostCommonStoreAsync()
+        public Task<IEnumerable<String>> RetriveMostCommonAsync()
         {
             var stores = _db.Stores.OrderByDescending(s => s.StoreOrdersNumber).Take(3).Select(s=>s.StoreName).ToList();
             return Task<IEnumerable>.Run<IEnumerable<String>>(() => stores);
         }
-        public Task<IEnumerable<object>> RetriveMostCommonCuisineAsync()
+        public Task<Store> RetriveByNameAsync(string storename)
         {
-            //select Top(2) CuisineId ,sum(StoreOrdersNumber) as total from Store
-            //Group by CuisineId
-            //Order by total desc
-            //var cuisine = _db.Stores.GroupBy(c => c.CuisineId);
-            //List<int> CusineTotelNumber = new List<int>();
-            //List<int?> Cusinekeys = new List<int?>();
-            //foreach (var item in cuisine)
-            //{ 
-            //    Cusinekeys.Add(item.Key);
-               
-            //    foreach (var c in item)
-            //    {
-            //        CusineTotelNumber[Cusinekeys.Count] += c.StoreOrdersNumber;
-            //    }
-            //}
-                  
-            //return ;
-            var c = new List<object>();
-            var cuisine = _db.Stores.AsEnumerable()
-                .GroupBy(c => c.CuisineId)
-                .ToDictionary(e => e.Key, e => e.ToList());
+            var store = _db.Stores.FirstOrDefault(s=>s.StoreName==storename);
 
-            foreach (var blabla in cuisine)
-            {
-                int total = 0;
-                foreach (var bla in blabla.Value)
-                {
-                   
-                    total += bla.StoreOrdersNumber;
-                }//end bla
-                var ol =new  { c= blabla.Key, Total = total };
-            c.Add(ol);
-            }//end blabla
-
-            return Task<IEnumerable>.Run<IEnumerable<Object>>(() => c);
-            //return Task<IEnumerable>.Run<IEnumerable<Object>>(() => c.OrderByDescending(c=>c["item2"]));
-
+            return Task<Store>.Run<Store>(() => store);
         }
         public async Task<Store> UpdateAsync(Store Store)
         {
