@@ -90,7 +90,7 @@ namespace Talbat.Controllers
         {
             Store store = await _repo.RetriveByNameAsync(StoreName); 
             ItemCategory itemCategory = await _itemCategoryRepo.RetriveByNameAsync(CategoryName);
-            if (store == null)
+            if (store == null || itemCategory==null)
                 return NotFound();
             IEnumerable<Item> ItemsList = await _repo.RetriveCategoryItemsAsync(store.StoreId,itemCategory.ItemCategoryId);
             if (ItemsList == null)
