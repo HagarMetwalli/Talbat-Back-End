@@ -14,8 +14,8 @@ namespace Talbat.Controllers
     [ApiController]
     public class ItemCategoriesController : ControllerBase
     {
-        private IGenericService<ItemCategory> _repo;
-        public ItemCategoriesController(IGenericService<ItemCategory> repo) 
+        private IItemCategoryService _repo;
+        public ItemCategoriesController(IItemCategoryService repo) 
         {
             _repo = repo;
         }
@@ -35,6 +35,19 @@ namespace Talbat.Controllers
             if (itemCategory == null)
                 return NotFound();
             return Ok(itemCategory);
+        }
+        // GET api/ItemCategories/Name
+        [HttpGet]
+        [Route("GetByName/{itemCategory}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetByName(string itemCategory)
+        {
+            ItemCategory _itemCategory = await _repo.RetriveByNameAsync(itemCategory);
+            if (_itemCategory == null)
+                return NotFound();
+            return Ok(_itemCategory);
         }
 
         // POST api/ItemCategories

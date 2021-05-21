@@ -13,10 +13,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class CuisinesController : ControllerBase
     {
-        private IStoreService<Cuisine> _repo;
+        private ICuisienSevice _repo;
         private TalabatContext _db;
 
-        public CuisinesController(IStoreService<Cuisine> repo, TalabatContext db)
+        public CuisinesController(ICuisienSevice repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;

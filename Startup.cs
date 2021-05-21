@@ -58,7 +58,7 @@ namespace Talbat
             services.AddScoped<IGenericService<Country>, CountryService>();
             services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();
-            services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
+            services.AddScoped<IRetriveByNameService<ItemCategory>, ItemCategoryService>();
             services.AddScoped<IGenericService<Item>, ItemService>();
             services.AddScoped<IGenericService<ItemReview>, ItemReviewService>();
             services.AddScoped<IGenericService<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
@@ -72,8 +72,9 @@ namespace Talbat
             services.AddScoped<IGenericService<RateStatus>, RateStatusService>();
             services.AddScoped<IGenericService<Partner>, PartnerService>();
             services.AddScoped<IGenericService<OrderReview>, OrderReviewService>();
-            services.AddScoped<IStoreService<Store>, StoreService>();
-            services.AddScoped<IStoreService<Cuisine>, CuisineService>();
+            services.AddScoped<IItemCategoryService, ItemCategoryService>();
+            services.AddScoped<IStoreService, StoreService>();
+            services.AddScoped<ICuisienSevice, CuisineService>();
             services.AddScoped<IClientService, ClientService>();
 
             // Adding Authentication  

@@ -9,7 +9,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class StoreService : IStoreService<Store>
+    public class StoreService :IStoreService
     {
         private TalabatContext _db;
         public StoreService(TalabatContext db)
@@ -54,6 +54,23 @@ namespace Talbat.Services
 
             return Task<Store>.Run<Store>(() => store);
         }
+        public Task<List<String>> RetriveCategoriesAsync(int storeId)
+        {
+            var Categories = _db.Items.Where(c => c.StoreId == storeId).ToList();
+            List<string> CategriesNames = new List<string>();
+            ItemCategory category = new ItemCategory();
+            foreach (var item in Categories)
+            {
+                category = _db.ItemCategories.FirstOrDefault(c => c.ItemCategoryId == item.ItemCategoryId);
+                CategriesNames.Add(category.ItemCategoryName);
+            }
+            return Task.Run(() => CategriesNames);
+        }
+        public Task<List<Item>> RetriveMenuAsync(int storeId)
+        {
+            var items = _db.Items.Where(c => c.StoreId == storeId).ToList();
+            return Task.Run(() => items);
+        }
         public async Task<Store> UpdateAsync(Store Store)
         {
             _db = new TalabatContext();
@@ -64,5 +81,12 @@ namespace Talbat.Services
             return null;
         }
 
+        public Task<IEnumerable<Item>> RetriveCategoryItemsAsync(int StoreId, int itemCategoryId)
+        {
+
+            var CategoryItems = _db.Items.Where(x => x.StoreId == StoreId && x.ItemCategoryId == itemCategoryId);
+            return Task<IEnumerable>.Run<IEnumerable<Item>>(() => CategoryItems);
+
+        }
     }
 }

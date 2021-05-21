@@ -8,7 +8,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class CuisineService : IStoreService<Cuisine>
+    public class CuisineService : ICuisienSevice
     {
         private TalabatContext _db;
         public CuisineService(TalabatContext db)
@@ -65,6 +65,9 @@ namespace Talbat.Services
             return null;
         }
 
-
+        public Task<List<string>> RetriveCategoriesAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
