@@ -75,6 +75,9 @@ namespace Talbat
             services.AddScoped<IStoreService<Store>, StoreService>();
             services.AddScoped<IStoreService<Cuisine>, CuisineService>();
             services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<IOfferService, OfferService>();
+
+
 
             // Adding Authentication  
             services.AddAuthentication(options =>

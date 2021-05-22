@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -25,6 +26,11 @@ namespace Talbat.Models
         public int OfferDaysNumber { get; set; }
         public string OfferPrice { get; set; }
 
+
+        [ForeignKey("store")]
+        public int StoreId { get; set; }
+
+        public virtual Store Store { get; set; }
         public virtual ICollection<ClientOffer> ClientOffers { get; set; }
         public virtual ICollection<OfferItem> OfferItems { get; set; }
     }

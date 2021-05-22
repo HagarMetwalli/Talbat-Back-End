@@ -31,6 +31,8 @@ namespace Talbat.Models
         public string StoreCuisine { get; set; }
         public int? StoreTypeId { get; set; }
 
+
+
         [ForeignKey("Cuisine")]
         public int? CuisineId { get; set; }
         public int StoreOrdersNumber { get; set; }

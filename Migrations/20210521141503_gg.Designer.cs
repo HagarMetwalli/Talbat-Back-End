@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talbat.Models;
 
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    partial class TalabatContextModelSnapshot : ModelSnapshot
+    [Migration("20210521141503_gg")]
+    partial class gg
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -662,12 +664,7 @@ namespace Talbat.Migrations
                         .HasColumnType("int")
                         .HasColumnName("OfferType_IsCoupon");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
                     b.HasKey("OfferId");
-
-                    b.HasIndex("StoreId");
 
                     b.ToTable("Offer");
                 });
@@ -1446,17 +1443,6 @@ namespace Talbat.Migrations
                     b.Navigation("JobPeriod");
 
                     b.Navigation("JobType");
-                });
-
-            modelBuilder.Entity("Talbat.Models.Offer", b =>
-                {
-                    b.HasOne("Talbat.Models.Store", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Talbat.Models.OfferItem", b =>
