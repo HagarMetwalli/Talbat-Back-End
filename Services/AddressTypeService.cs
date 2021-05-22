@@ -34,10 +34,6 @@ namespace Talbat.Services
             return null;
         }
 
-        public Task<IEnumerable<AddressType>> RetriveAllAsync()
-        {
-            return Task<IEnumerable>.Run<IEnumerable<AddressType>>(() => _db.AddressTypes);
-        }
 
         public Task<AddressType> RetriveAsync(int id)
         {
@@ -52,6 +48,12 @@ namespace Talbat.Services
             if (affected == 1)
                 return addressType;
             return null;
+        }
+
+        Task<IList<AddressType>> IGenericService<AddressType>.RetriveAllAsync()
+        {
+            return Task<IList>.Run<IList<AddressType>>(() => _db.AddressTypes.ToList());
+
         }
     }
 }

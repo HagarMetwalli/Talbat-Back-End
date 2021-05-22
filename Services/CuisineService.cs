@@ -34,9 +34,9 @@ namespace Talbat.Services
         }
 
 
-        public Task<IEnumerable<Cuisine>>  RetriveAllAsync()
+        public Task<IList<Cuisine>>  RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Cuisine>>(() => _db.Cuisines);
+            return Task<IList>.Run<IList<Cuisine>>(() => _db.Cuisines.ToList());
         }
         public Task<Cuisine> RetriveAsync(int id)
         {
@@ -65,9 +65,5 @@ namespace Talbat.Services
             return null;
         }
 
-        public Task<List<string>> RetriveCategoriesAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

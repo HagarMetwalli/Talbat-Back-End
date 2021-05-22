@@ -33,9 +33,9 @@ namespace Talbat.Services
             return null;
         }
 
-        public Task<IEnumerable<StoreWorkingHour>> RetriveAllAsync()
+        public Task<IList<StoreWorkingHour>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<StoreWorkingHour>>(() => _db.StoreWorkingHours);
+            return Task<IList>.Run<IList<StoreWorkingHour>>(() => _db.StoreWorkingHours.ToList());
         }
         public Task<StoreWorkingHour> RetriveAsync(int id)
         {

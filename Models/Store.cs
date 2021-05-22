@@ -34,6 +34,7 @@ namespace Talbat.Models
         [ForeignKey("Cuisine")]
         public int? CuisineId { get; set; }
         public int StoreOrdersNumber { get; set; }
+       
         public virtual StoreType StoreType { get; set; }
         public virtual ICollection<Item> Items { get; set; }
         public virtual ICollection<Order> Orders { get; set; }

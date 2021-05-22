@@ -22,8 +22,15 @@ namespace Talbat.Controllers
         }
         // GET: api/StoreTypes
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<StoreType>))]
-        public async Task<IEnumerable<StoreType>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<StoreType>>))]
+        public async Task<ActionResult<IList<StoreType>>> Get()
+        {
+            IList<StoreType> storeTypes = await _repo.RetriveAllAsync();
+            if (storeTypes == null)
+                return NotFound();
+            return Ok(storeTypes);
+        }
 
         // GET api/StoreTypes/5
         [HttpGet("{id}")]

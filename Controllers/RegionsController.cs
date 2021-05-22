@@ -22,8 +22,15 @@ namespace Talbat.Controllers
         }
         // GET: api/Regions
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Region>))]
-        public async Task<IEnumerable<Region>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Region>>))]
+        public async Task<ActionResult<IList<Region>>> Get()
+        {
+            IList<Region> regions = await _repo.RetriveAllAsync();
+            if (regions.Count == 0)
+                return NoContent();
+            return Ok(regions);
+        }
 
         // GET api/Regions/5
         [HttpGet("{id}")]

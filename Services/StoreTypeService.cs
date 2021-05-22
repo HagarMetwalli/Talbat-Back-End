@@ -33,9 +33,9 @@ namespace Talbat.Services
             return null;
         }
 
-        public Task<IEnumerable<StoreType>> RetriveAllAsync()
+        public Task<IList<StoreType>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<StoreType>>(() => _db.StoreTypes);
+            return Task<IEnumerable>.Run<IList<StoreType>>(() => _db.StoreTypes.ToList());
         }
         public Task<StoreType> RetriveAsync(int id)
         {

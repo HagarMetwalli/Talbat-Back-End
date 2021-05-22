@@ -23,8 +23,15 @@ namespace Talbat.Controllers
         }
         // GET: api/Cuisines
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Cuisine>))]
-        public async Task<IEnumerable<Cuisine>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Cuisine>>))]
+        public async Task<ActionResult<IList<Client>>> Get()
+        {
+            IList<Cuisine> cuisines = await _repo.RetriveAllAsync();
+            if (cuisines.Count == 0)
+                return NoContent();
+            return Ok(cuisines);
+        }
 
         // GET api/Cuisines/5
         [HttpGet("{id}")]

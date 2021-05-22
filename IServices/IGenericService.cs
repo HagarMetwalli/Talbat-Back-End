@@ -9,7 +9,7 @@ namespace Talbat.IServices
 {
     public interface IGenericService<T>
     {
-        Task<IEnumerable<T>> RetriveAllAsync();
+        Task<IList<T>> RetriveAllAsync();
         Task<T> RetriveAsync(int id);
         Task<T> CreatAsync(T item);
         Task<T> UpdateAsync(T item);
