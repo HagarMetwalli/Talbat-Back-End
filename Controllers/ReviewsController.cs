@@ -45,7 +45,7 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Post([FromBody] Review Review)
         {
             var ReviewCategoryId = _db.ReviewCategories.Find(Review.ReviewCategoryId);
-            var UserId = _db.Cities.Find(Review.UserId);
+            var UserId = _db.Clients.Find(Review.UserId);
             var StoreId = _db.Stores.Find(Review.StoreId);
 
             if (Review == null || ReviewCategoryId == null || UserId == null || StoreId == null)
@@ -91,7 +91,7 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Patch(int id, [FromBody] Review Review)
         {
             var ReviewCategoryId = _db.ReviewCategories.Find(Review.ReviewCategoryId);
-            var UserId = _db.Cities.Find(Review.UserId);
+            var UserId = _db.Clients.Find(Review.UserId);
             var StoreId = _db.Stores.Find(Review.StoreId);
 
             if (Review == null || ReviewCategoryId == null || UserId == null || StoreId == null|| Review.ReviewId != id)
