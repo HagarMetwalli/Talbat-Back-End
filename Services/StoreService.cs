@@ -1,113 +1,15 @@
-<<<<<<< HEAD
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-=======
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Transactions;
->>>>>>> Hajar
 using Talbat.IServices;
 using Talbat.Models;
 
 namespace Talbat.Services
 {
-<<<<<<< HEAD
-    public class StoreService : IGenericService<Store>
-    {
-        private static ConcurrentDictionary<int, Store> StoresCache;
-        private TalabatContext db;
-
-        public StoreService(TalabatContext db)
-        {
-            this.db = db;
-            if (StoresCache == null)
-            {
-                StoresCache = new ConcurrentDictionary<int, Store>(
-                    db.Stores.ToDictionary(o => o.StoreId));
-            }
-        }
-
-        public async Task<Store> CreatAsync(Store o)
-        {
-            EntityEntry<Store> added = await db.Stores.AddAsync(o);
-            int affected = await db.SaveChangesAsync();
-
-            if (affected == 1)
-            {
-                return StoresCache.AddOrUpdate(o.StoreId, o, UpdateCache);
-            }
-
-            else
-            {
-                return null;
-            }
-        }
-
-        private Store UpdateCache(int id, Store o)
-        {
-            Store old;
-            if (StoresCache.TryGetValue(id, out old))
-            {
-                if (StoresCache.TryUpdate(id, o, old))
-                {
-                    return o;
-                }
-            }
-            return null;
-        }
-
-        public async Task<bool?> DeleteAsync(int id)
-        {
-            Store c = db.Stores.Find(id);
-
-            db.Stores.Remove(c);
-
-            int affected = await db.SaveChangesAsync();
-            if (affected == 1)
-            {
-                return StoresCache.TryRemove(id, out c);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public Task<IEnumerable<Store>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Store>>(() => StoresCache.Values);
-
-        public Task<Store> RetriveAsync(int id)
-        {
-            return Task.Run(() =>
-            {
-                StoresCache.TryGetValue(id, out Store c);
-                return c;
-            });
-        }
-
-        public async Task<Store> UpdateAsync(int id, Store c)
-        {
-            db.Stores.Update(c);
-            db.Stores.Update(c);
-
-            int affected = await db.SaveChangesAsync();
-            if (affected == 1)
-            {
-                return UpdateCache(id, c);
-            }
-            return null;
-        }
-
-
-    }
-}
-=======
     public class StoreService : IStoreService
     {
         private TalabatContext _db;
@@ -142,10 +44,10 @@ namespace Talbat.Services
             return Task.Run(() => _db.Stores.Find(id));
         }
 
-        public Task<IEnumerable<String>> RetriveMostCommonStoreAsync()
+        public Task<IEnumerable<string>> RetriveMostCommonStoreAsync()
         {
             var stores = _db.Stores.OrderByDescending(s => s.StoreOrdersNumber).Take(3).Select(s=>s.StoreName).ToList();
-            return Task<IEnumerable>.Run<IEnumerable<String>>(() => stores);
+            return Task<IEnumerable>.Run<IEnumerable<string>>(() => stores);
         }
         public Task<IEnumerable<object>> RetriveMostCommonCuisineAsync()
         {
@@ -183,7 +85,7 @@ namespace Talbat.Services
             c.Add(ol);
             }//end blabla
 
-            return Task<IEnumerable>.Run<IEnumerable<Object>>(() => c);
+            return Task.Run<IEnumerable<object>>(() => c);
             //return Task<IEnumerable>.Run<IEnumerable<Object>>(() => c.OrderByDescending(c=>c["item2"]));
 
         }
@@ -197,6 +99,24 @@ namespace Talbat.Services
             return null;
         }
 
+        Task<IEnumerable<string>> IStoreService.RetriveMostCommonStoreAsync()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<List<Item>> RetrieveStoreMenuItemsAsync(int id)
+        {
+            using (var db = new TalabatContext())
+            {
+                var storeRequired = db.Stores.Find(id);
+
+                if (storeRequired != null)
+                {
+                    var itemsList = db.Items.Select(item => item).Where(x => x.StoreId == id).ToList();
+                    return Task.Run<List<Item>>(() => itemsList);
+                }
+                return null;
+            }
+        }
     }
 }
->>>>>>> Hajar

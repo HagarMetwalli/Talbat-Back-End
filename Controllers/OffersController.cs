@@ -11,55 +11,91 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StoreTypesController : ControllerBase
+    public class OffersController : ControllerBase
     {
-        private IGenericService<StoreType> _repo;
+        private IOfferRelatedService _repo;
         private TalabatContext _db;
 
-        public StoreTypesController(IGenericService<StoreType> repo, TalabatContext db)
+        public OffersController(IOfferRelatedService repo , TalabatContext db)
         {
             _repo = repo;
             _db = db;
         }
-        // GET: api/StoreTypes
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<StoreType>))]
-        public async Task<IEnumerable<StoreType>> Get() => await _repo.RetriveAllAsync();
 
-        // GET api/StoreTypes/5
+        // GET: api/Offers
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Offer>))]
+        [ProducesResponseType(204)]
+        public async Task<IActionResult> Get()
+        {
+            var offers = await _repo.RetriveAllAsync();
+
+            if (offers== null)
+            {
+                return NoContent();
+            }
+            return Ok(offers);
+        }
+
+        // GET api/Offers/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-
         public async Task<IActionResult> GetById(int id)
         {
-            StoreType StoreType = await _repo.RetriveAsync(id);
-            if (StoreType == null)
+            Offer offer = await _repo.RetriveAsync(id);
+
+            if (offer == null)
+            {
                 return NotFound();
-            return Ok(StoreType);
+            }
+                
+            return Ok(offer);
         }
 
-        // POST api/StoreTypes
+        [HttpGet]
+        [Route("OfferStore")]
+        [ProducesResponseType(200, Type = typeof(Store))]
+        [ProducesResponseType(404)]
+        public IActionResult OfferStore(int Id)
+        {
+            var offerStore = _repo.RetrieveOfferStoreAsync(Id);
+
+            if (offerStore == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(offerStore);
+        }
+
+        // POST api/Offers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] StoreType StoreType)
+        public async Task<IActionResult> Post([FromBody] Offer offer)
         {
-            
-
-            if (StoreType == null )
+            if (offer == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
-            StoreType added = await _repo.CreatAsync(StoreType);
+            Offer added = await _repo.CreatAsync(offer);
+
             if (added == null)
+            {
                 return BadRequest();
+            }
+
             return Ok();
         }
 
-        // DELETE api/StoreTypes/5
+        // DELETE api/Offers/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -67,29 +103,33 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
+
+            //Why nullable boolean?
             bool? deleted = await _repo.DeleteAsync(id);
+            ///////////////////////////////////
+            
             if (deleted.HasValue && deleted.Value)
             {
                 return new NoContentResult();//204 No Content
             }
             else
             {
-                return BadRequest($"StoreType {id} was found but failed to delete");
+                return BadRequest($"Offer {id} was found but failed to delete");
             }
         }
-        // Patch api/StoreTypes/5
+        // Patch api/Offers/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Patch(int id, [FromBody] StoreType StoreType)
+        public async Task<IActionResult> Patch(int id, [FromBody] Offer offer)
         {
-          
-            if (StoreType == null || StoreType.StoreTypeId != id)
+            if (offer == null)
             {
                 return BadRequest();
             }
@@ -102,10 +142,10 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(StoreType);
+            await _repo.PatchAsync(offer);
             return new NoContentResult();
 
-        }
-    }
+        }  
 
+    }//end controller
 }

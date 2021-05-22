@@ -17,7 +17,7 @@ namespace Talbat.Migrations
             modelBuilder
                 .HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.5")
+                .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Talbat.Models.AddressType", b =>
@@ -301,8 +301,6 @@ namespace Talbat.Migrations
                     b.ToTable("Country");
                 });
 
-<<<<<<< HEAD
-=======
             modelBuilder.Entity("Talbat.Models.Cuisine", b =>
                 {
                     b.Property<int>("CuisineId")
@@ -318,7 +316,6 @@ namespace Talbat.Migrations
                     b.ToTable("Cuisines");
                 });
 
->>>>>>> Hajar
             modelBuilder.Entity("Talbat.Models.DeliveryMan", b =>
                 {
                     b.Property<int>("DeliveryManId")
@@ -683,14 +680,14 @@ namespace Talbat.Migrations
                         .HasColumnName("OfferItem_Quantity")
                         .HasDefaultValueSql("((1))");
 
-                    b.Property<double>("OfferItemSaleValue")
+                    b.Property<double?>("OfferItemSaleValue")
                         .HasColumnType("float")
                         .HasColumnName("OfferItem_SaleValue");
 
-                    b.Property<byte[]>("OfferItemTypePercentage")
+                    b.Property<bool?>("OfferItemTypePercentage")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("binary(10)")
+                        .HasColumnType("bit")
                         .HasColumnName("OfferItem_TypePercentage")
                         .IsFixedLength(true);
 
@@ -995,12 +992,9 @@ namespace Talbat.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Country_Id");
 
-<<<<<<< HEAD
-=======
                     b.Property<int?>("CuisineId")
                         .HasColumnType("int");
 
->>>>>>> Hajar
                     b.Property<string>("StoreAddress")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1040,12 +1034,9 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Store_Name");
 
-<<<<<<< HEAD
-=======
                     b.Property<int>("StoreOrdersNumber")
                         .HasColumnType("int");
 
->>>>>>> Hajar
                     b.Property<int?>("StorePaymentOnDeliverCash")
                         .HasColumnType("int")
                         .HasColumnName("Store_PaymentOnDeliverCash");
@@ -1066,11 +1057,8 @@ namespace Talbat.Migrations
 
                     b.HasKey("StoreId");
 
-<<<<<<< HEAD
-=======
                     b.HasIndex("CuisineId");
 
->>>>>>> Hajar
                     b.HasIndex("StoreTypeId");
 
                     b.ToTable("Store");
@@ -1606,23 +1594,17 @@ namespace Talbat.Migrations
 
             modelBuilder.Entity("Talbat.Models.Store", b =>
                 {
-<<<<<<< HEAD
-=======
                     b.HasOne("Talbat.Models.Cuisine", "Cuisine")
                         .WithMany()
                         .HasForeignKey("CuisineId");
 
->>>>>>> Hajar
                     b.HasOne("Talbat.Models.StoreType", "StoreType")
                         .WithMany("Stores")
                         .HasForeignKey("StoreTypeId")
                         .HasConstraintName("FK_Store_StoreType");
 
-<<<<<<< HEAD
-=======
                     b.Navigation("Cuisine");
 
->>>>>>> Hajar
                     b.Navigation("StoreType");
                 });
 

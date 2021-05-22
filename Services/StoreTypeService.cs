@@ -15,6 +15,16 @@ namespace Talbat.Services
         {
             _db = db;
         }
+
+        public Task<IEnumerable<StoreType>> RetriveAllAsync()
+        {
+            return Task<IEnumerable>.Run<IEnumerable<StoreType>>(() => _db.StoreTypes);
+        }
+        public Task<StoreType> RetriveAsync(int id)
+        {
+            return Task.Run(() => _db.StoreTypes.Find(id));
+        }
+
         public async Task<StoreType> CreatAsync(StoreType StoreType)
         {
             await _db.StoreTypes.AddAsync(StoreType);
@@ -33,14 +43,7 @@ namespace Talbat.Services
             return null;
         }
 
-        public Task<IEnumerable<StoreType>> RetriveAllAsync()
-        {
-            return Task<IEnumerable>.Run<IEnumerable<StoreType>>(() => _db.StoreTypes);
-        }
-        public Task<StoreType> RetriveAsync(int id)
-        {
-            return Task.Run(() => _db.StoreTypes.Find(id));
-        }
+        
 
         public async Task<StoreType> UpdateAsync(StoreType StoreType)
         {

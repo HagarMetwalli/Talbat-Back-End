@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-=======
-﻿using Microsoft.AspNetCore.Mvc;
->>>>>>> Hajar
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,18 +11,6 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-<<<<<<< HEAD
-    public class StoresController : GenericController<Store>
-    {
-        private IGenericService<Store> repo_Store;
-        
-        public StoresController(IGenericService<Store> repo_Store) : base(repo_Store)
-        {
-            this.repo_Store = repo_Store;
-        }
-
-        // Patch api/Store/1
-=======
     public class StoresController : ControllerBase
     {
         private IStoreService _repo;
@@ -73,6 +57,22 @@ namespace Talbat.Controllers
             return await _repo.RetriveMostCommonCuisineAsync();
         }
 
+        // GET: api/StoreMenuItems
+        [HttpGet]
+        [Route("StoreMenuItems")]
+        [ProducesResponseType(200, Type = typeof(List<Item>))]
+        [ProducesResponseType(404)]
+        public IActionResult StoreMenuItems(int Id)
+        {
+            var itemsList = _repo.RetrieveStoreMenuItemsAsync(Id);
+            if (itemsList== null)
+            {
+                return NotFound();
+            }
+
+            return Ok(itemsList);
+        }
+
         // POST api/Stores
         [HttpPost]
         [ProducesResponseType(201)]
@@ -116,37 +116,11 @@ namespace Talbat.Controllers
                 return BadRequest($"Store {id} was found but failed to delete");
             }
         }
-        // Patch api/ Stores/5
->>>>>>> Hajar
+        // Patch api/Stores/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-
-<<<<<<< HEAD
-        public async Task<IActionResult> Update(int id, [FromBody] Store o)
-        {
-            if (o == null || o.StoreId != id)
-            {
-                return BadRequest();
-            }
-            else if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var Job_Exist = await repo_Store.RetriveAsync(id);
-        
-            if (Job_Exist == null)
-            {
-                return NotFound();
-            }
-
-            await repo_Store.UpdateAsync(id, o);
-            return new NoContentResult();
-
-        }
-=======
         public async Task<IActionResult> Patch(int id, [FromBody] Store Store)
         {
             var CountryId = _db.Cities.Find(Store.CountryId);
@@ -168,6 +142,5 @@ namespace Talbat.Controllers
             return new NoContentResult();
 
         }  
->>>>>>> Hajar
     }
 }

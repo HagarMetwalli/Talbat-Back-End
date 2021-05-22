@@ -35,6 +35,7 @@ namespace Talbat
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<TalabatContext>(options => options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("Talbaltconn")));
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
             services.AddCors(options =>
@@ -49,32 +50,20 @@ namespace Talbat
             });
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            //services.AddScoped<IGenericService<City>, CityService>();
+
             services.AddScoped<IGenericService<Client>, ClientService>();
             services.AddScoped<IGenericService<AddressType>, AddressTypeService>();
             services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
-         // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGenericService<Country>, CountryService>();
             services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();
             services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
             services.AddScoped<IGenericService<Item>, ItemService>();
-<<<<<<< HEAD
-            services.AddScoped<IGenericService<Order>, OrderService>();
-            services.AddScoped<IGenericService<Offer>, OfferService>();
-            services.AddScoped<IGenericService<JobCategory>, JobCategoryService>();
-            services.AddScoped<IGenericService<JobPeriod>, JobPeriodService>();
-            services.AddScoped<IGenericService<JobLocation>, JobLocationService>();
-            services.AddScoped<IGenericService<JobType>, JobTypeService>();
-            services.AddScoped<IGenericService<Job>, JobService>();
-            services.AddScoped<IGenericService<Store>, StoreService>();
+            //services.AddScoped<IGenericService<Store>, StoreService>();
             services.AddScoped<IGenericService<StoreType>, StoreTypeService>();
 
-
-            services.AddScoped<IGenericService<City>, City1Service>();
-
-=======
-            services.AddScoped< IGenericService<ItemReview>, ItemReviewService>();
+           
+            services.AddScoped<IGenericService<ItemReview>, ItemReviewService>();
             services.AddScoped<IGenericService<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
             services.AddScoped<IGenericService<SubItemCategory>, SubItemCategoryService>();
             services.AddScoped<IGenericService<SubItem>, SubItemsService>();
@@ -87,7 +76,20 @@ namespace Talbat
             services.AddScoped<IGenericService<Partner>, PartnerService>();
             services.AddScoped<IGenericService<OrderReview>, OrderReviewService>();
             services.AddScoped<IStoreService, StoreService>();
->>>>>>> Hajar
+
+            services.AddScoped<IOfferRelatedService, OfferService>();
+
+
+            //services.AddScoped<IGenericService<City>, CityService>();
+            //services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
+            //services.AddScoped<IGenericService<Order>, OrderService>();
+            //services.AddScoped<IGenericService<Offer>, OfferService>();
+            //services.AddScoped<IGenericService<JobCategory>, JobCategoryService>();
+            //services.AddScoped<IGenericService<JobPeriod>, JobPeriodService>();
+            //services.AddScoped<IGenericService<JobLocation>, JobLocationService>();
+            //services.AddScoped<IGenericService<JobType>, JobTypeService>();
+            //services.AddScoped<IGenericService<Job>, JobService>();
+
 
             services.AddSwaggerGen(c =>
             {

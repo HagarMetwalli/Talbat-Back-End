@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class StoreOrdersNumber : Migration
+    public partial class blabla : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -65,6 +65,19 @@ namespace Talbat.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Country", x => x.Country_Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cuisines",
+                columns: table => new
+                {
+                    CuisineId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CuisineName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cuisines", x => x.CuisineId);
                 });
 
             migrationBuilder.CreateTable(
@@ -403,11 +416,18 @@ namespace Talbat.Migrations
                     Store_PaymentVisa = table.Column<int>(type: "int", nullable: true),
                     Store_Cuisine = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     StoreType_Id = table.Column<int>(type: "int", nullable: true),
-                    StoreOrdersNumber = table.Column<int>(type: "int", nullable: true)
+                    CuisineId = table.Column<int>(type: "int", nullable: true),
+                    StoreOrdersNumber = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Store", x => x.Store_Id);
+                    table.ForeignKey(
+                        name: "FK_Store_Cuisines_CuisineId",
+                        column: x => x.CuisineId,
+                        principalTable: "Cuisines",
+                        principalColumn: "CuisineId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Store_StoreType",
                         column: x => x.StoreType_Id,
@@ -954,6 +974,11 @@ namespace Talbat.Migrations
                 column: "User_Id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Store_CuisineId",
+                table: "Store",
+                column: "CuisineId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Store_StoreType_Id",
                 table: "Store",
                 column: "StoreType_Id");
@@ -1082,6 +1107,9 @@ namespace Talbat.Migrations
 
             migrationBuilder.DropTable(
                 name: "Client");
+
+            migrationBuilder.DropTable(
+                name: "Cuisines");
 
             migrationBuilder.DropTable(
                 name: "StoreType");
