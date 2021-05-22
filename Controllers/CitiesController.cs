@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace Talbat.Controllers
         }
         // GET: api/cities
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(204)]
         [ProducesResponseType(200, Type = typeof(ActionResult<IList<City>>))]
         public async Task<ActionResult<IList<City>>> Get()

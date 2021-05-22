@@ -75,7 +75,10 @@ namespace Talbat.Services
                     (
                      issuer: "https://localhost:4200",
                      audience: "https://localhost:4200",
-                     claims: new List<Claim>(),
+                     claims: new List<Claim>() 
+                     {
+                         new Claim(ClaimTypes.Email, obj.Email)
+                     },
                      expires: DateTime.Now.AddMinutes(10),
                      signingCredentials: siginingCerdentials
                     ) ;
