@@ -15,8 +15,13 @@ namespace Talbat.Controllers
     {
         private IStoreService _repo;
         private TalabatContext _db;
+<<<<<<< HEAD
 
         public StoresController(IStoreService repo , TalabatContext db)
+=======
+        
+        public StoresController(IGenericService<Store> repo, TalabatContext db)
+>>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
         {
             _repo = repo;
             _db = db;
@@ -116,11 +121,19 @@ namespace Talbat.Controllers
                 return BadRequest($"Store {id} was found but failed to delete");
             }
         }
+<<<<<<< HEAD
         // Patch api/Stores/5
+=======
+        // Patch api/ Stores/5
+>>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+<<<<<<< HEAD
+=======
+
+>>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
         public async Task<IActionResult> Patch(int id, [FromBody] Store Store)
         {
             var CountryId = _db.Cities.Find(Store.CountryId);

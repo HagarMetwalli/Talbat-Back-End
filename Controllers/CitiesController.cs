@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -6,6 +7,8 @@ using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
 
+=======
+>>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
@@ -99,5 +102,11 @@ namespace Talbat.Controllers
                 return BadRequest($"city {id} was found but failed to delete");
             }
         }
+<<<<<<< HEAD
     }
 }
+=======
+
+//    }
+//}
+>>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8

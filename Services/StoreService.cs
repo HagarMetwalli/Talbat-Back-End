@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
+=======
+﻿using System;
+>>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,15 +20,15 @@ namespace Talbat.Services
         public StoreService(TalabatContext db)
         {
             _db = db;
-        }
+            }
         public async Task<Store> CreatAsync(Store Store)
         {
             await _db.Stores.AddAsync(Store);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return Store;
-            return null;
-        }
+                return null;
+            }
         public async Task<bool?> DeleteAsync(int id)
         {
             Store Store = await RetriveAsync(id);
@@ -36,9 +40,12 @@ namespace Talbat.Services
         }
 
         public Task<IEnumerable<Store>> RetriveAllAsync()
-        {
+            {
             return Task<IEnumerable>.Run<IEnumerable<Store>>(() => _db.Stores);
         }
+
+        public Task<IEnumerable<Store>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Store>>(() => StoresCache.Values);
+
         public Task<Store> RetriveAsync(int id)
         {
             return Task.Run(() => _db.Stores.Find(id));
@@ -99,6 +106,7 @@ namespace Talbat.Services
             return null;
         }
 
+<<<<<<< HEAD
         Task<IEnumerable<string>> IStoreService.RetriveMostCommonStoreAsync()
         {
             throw new System.NotImplementedException();
@@ -118,5 +126,8 @@ namespace Talbat.Services
                 return null;
             }
         }
+=======
+
+>>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
     }
 }
