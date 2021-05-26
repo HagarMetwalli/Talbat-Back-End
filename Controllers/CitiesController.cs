@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
-
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
