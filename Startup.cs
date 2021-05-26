@@ -34,12 +34,10 @@ namespace Talbat
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-<<<<<<< HEAD
-            services.AddDbContext<TalabatContext>(options => options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("Talbaltconn")));
+            //services.AddDbContext<TalabatContext>(options => options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("Talbaltconn")));
 
-=======
             services.AddDbContext<TalabatContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Talbaltconn")));
->>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
             services.AddCors(options =>
@@ -63,15 +61,12 @@ namespace Talbat
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();
             services.AddScoped<IGenericService<ItemCategory>, ItemCategoryService>();
             services.AddScoped<IGenericService<Item>, ItemService>();
-<<<<<<< HEAD
             //services.AddScoped<IGenericService<Store>, StoreService>();
             services.AddScoped<IGenericService<StoreType>, StoreTypeService>();
 
            
             services.AddScoped<IGenericService<ItemReview>, ItemReviewService>();
-=======
-            services.AddScoped< IGenericService<ItemReview>, ItemReviewService>();
->>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
+            //services.AddScoped< IGenericService<ItemReview>, ItemReviewService>();
             services.AddScoped<IGenericService<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
             services.AddScoped<IGenericService<SubItemCategory>, SubItemCategoryService>();
             services.AddScoped<IGenericService<SubItem>, SubItemsService>();
@@ -83,7 +78,6 @@ namespace Talbat
             services.AddScoped<IGenericService<RateStatus>, RateStatusService>();
             services.AddScoped<IGenericService<Partner>, PartnerService>();
             services.AddScoped<IGenericService<OrderReview>, OrderReviewService>();
-<<<<<<< HEAD
             services.AddScoped<IStoreService, StoreService>();
 
             services.AddScoped<IOfferRelatedService, OfferService>();
@@ -99,8 +93,7 @@ namespace Talbat
             //services.AddScoped<IGenericService<JobType>, JobTypeService>();
             //services.AddScoped<IGenericService<Job>, JobService>();
 
-=======
->>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
+
 
             services.AddSwaggerGen(c =>
             {

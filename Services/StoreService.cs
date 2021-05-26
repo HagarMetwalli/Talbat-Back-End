@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System;
-=======
 ﻿using System;
->>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -44,7 +39,7 @@ namespace Talbat.Services
             return Task<IEnumerable>.Run<IEnumerable<Store>>(() => _db.Stores);
         }
 
-        public Task<IEnumerable<Store>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Store>>(() => StoresCache.Values);
+        //public Task<IEnumerable<Store>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Store>>(() => StoresCache.Values);
 
         public Task<Store> RetriveAsync(int id)
         {
@@ -106,7 +101,6 @@ namespace Talbat.Services
             return null;
         }
 
-<<<<<<< HEAD
         Task<IEnumerable<string>> IStoreService.RetriveMostCommonStoreAsync()
         {
             throw new System.NotImplementedException();
@@ -126,8 +120,6 @@ namespace Talbat.Services
                 return null;
             }
         }
-=======
 
->>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
     }
 }

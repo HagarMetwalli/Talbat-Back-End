@@ -59,25 +59,20 @@ namespace Talbat.Services
         {
             using (var db = new TalabatContext())
             {
-                //OfferItem offerItem;
-                //try
-                //{
-                //    offerItem = db.OfferItems.FirstOrDefault(o => o.OfferId == Id);
-                //}
-                //catch (System.Exception)
-                //{
+                var offerItem = _db.OfferItems.FirstOrDefault(o => o.OfferId == Id && o.ItemId == 4);
+                //var ofs = db.OfferItems.ToList();
+                //List<OfferItem> l = new List<OfferItem>(); 
 
-                    
-                //}
-
-                int i = 4;
-
-                //if (offerItem != null)
+                //foreach (var ff in ofs)
                 //{
-                //    i = offerItem.ItemId;
+                //    if (ff.OfferId== Id)
+                //    {
+                //        l.Add(ff);
+                //    }
                 //}
 
-                var item = db.Items.Find(i);
+                var item = db.Items.Find(offerItem.ItemId);
+                //var item = db.Items.Find(l[0].ItemId);
                 if (item != null)
                 {
                     var offerStore = db.Stores.Find(item.StoreId);
@@ -89,6 +84,21 @@ namespace Talbat.Services
 
                 return null;
             }
+
+
+            //catch (System.Exception)
+            //{
+
+
+            //}
+
+            //int i = 4;
+
+            //if (offerItem != null)
+            //{
+            //    i = offerItem.ItemId;
+            //}
+
 
 
             //using (var db = new TalabatContext())
