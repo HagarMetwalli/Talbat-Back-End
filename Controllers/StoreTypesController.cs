@@ -86,10 +86,6 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-<<<<<<< HEAD
-=======
-
->>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
         public async Task<IActionResult> Patch(int id, [FromBody] StoreType StoreType)
         {
           
@@ -111,8 +107,4 @@ namespace Talbat.Controllers
 
         }
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 30dac8f8267978d9263b14aec4563bad16b729f8
 }
