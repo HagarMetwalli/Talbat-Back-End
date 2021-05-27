@@ -25,68 +25,118 @@ namespace Talbat.Services
         {
             _db = db;
         }
-        public Task<IList<Client>> RetriveAllAsync()
+        public Task<List<Client>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<Client>>(() => _db.Clients.ToList());
+            try
+            {
+                return Task<List<Client>>.Run<List<Client>>(() => _db.Clients.ToList());
+
+            }
+            catch 
+            {
+
+                return null;
+            }
         }
 
         public Task<Client> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Clients.Find(id));
+            try
+            {
+                return Task.Run(() => _db.Clients.Find(id));
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
         public async Task<Client> CreatAsync(Client client)
         {
-            await _db.Clients.AddAsync(client);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return client;
-            return null;
+            try
+            {
+                await _db.Clients.AddAsync(client);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return client;
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<Client> UpdateAsync(Client client)
+        public async Task<Client> PatchAsync(Client client)
         {
-            _db = new TalabatContext();
-            _db.Clients.Update(client);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return client;
-            return null;
+            try
+            {
+                _db = new TalabatContext();
+                _db.Clients.Update(client);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                {
+                    return client;
+                }
+                return null;
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            Client client = await RetriveAsync(id);
-            _db.Clients.Remove(client);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                Client client = await RetriveAsync(id);
+                _db.Clients.Remove(client);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch 
+            {
+                return false;
+            }
+
         }
 
         public  Task<string> Login(LoginService obj)
         {
-            Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
-
-            if (client != null && client.ClientPassword == obj.Password)
+            try
             {
-                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"));
-                var siginingCerdentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                var tokenOptions = new JwtSecurityToken
-                    (
-                     issuer: "https://localhost:4200",
-                     audience: "https://localhost:4200",
-                     claims: new List<Claim>() 
-                     {
-                         new Claim(ClaimTypes.Email, obj.Email)
-                     },
-                     expires: DateTime.Now.AddMinutes(10),
-                     signingCredentials: siginingCerdentials
-                    ) ;
-                var tokenString =  new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-                return Task.Run(() =>tokenString);
+                Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
 
+                if (client != null && client.ClientPassword == obj.Password)
+                {
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"));
+                    var siginingCerdentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                    var tokenOptions = new JwtSecurityToken
+                        (
+                         issuer: "https://localhost:4200",
+                         audience: "https://localhost:4200",
+                         claims: new List<Claim>()
+                         {
+                         new Claim(ClaimTypes.Email, obj.Email)
+                         },
+                         expires: DateTime.Now.AddMinutes(10),
+                         signingCredentials: siginingCerdentials
+                        );
+                    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                    return Task.Run(() => tokenString);
+
+                }
+                return null;
             }
-            return null;
+            catch 
+            {
+                return null;
+            }
+
         }
     }
 }

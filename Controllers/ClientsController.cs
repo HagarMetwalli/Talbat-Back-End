@@ -27,8 +27,8 @@ namespace Talbat.Controllers
         // GET: api/clients
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Client>>))]
-        public async Task<ActionResult<IList<Client>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<Client>>))]
+        public async Task<ActionResult<List<Client>>> Get()
         {
             IList<Client> clients = await _repo.RetriveAllAsync();
             if (clients.Count == 0)
@@ -44,19 +44,29 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest();                            
+            }
             Client client = await _repo.RetriveAsync(id);
             string token = Request.Headers["Authorization"];
+
             if (string.IsNullOrEmpty(token) || client == null)
+            {
                 return BadRequest();
-            
-            var tok = token.Replace("Bearer ", "");
-            var jwttoken = new JwtSecurityTokenHandler().ReadJwtToken(tok);
+            }
+
+            var _token = token.Replace("Bearer ", "");
+            var jwttoken = new JwtSecurityTokenHandler().ReadJwtToken(_token);
             var jti = jwttoken.Claims.First(claim => claim.Type == ClaimTypes.Email);
-            if (client.ClientEmail != jti.Value)       
-                    return Unauthorized();
+            if (client.ClientEmail != jti.Value)
+            {
+                return Unauthorized();
+            }
+                
             return Ok(client);
         }
-
+      
         // POST api/clients
         [HttpPost]
         [ProducesResponseType(201)]
@@ -64,15 +74,20 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Post([FromBody] Client client)
         {
             if (client == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             Client added = await _repo.CreatAsync(client);
             if (added == null)
+            {
                 return BadRequest();
-
+            }
             return Ok();
         }
 
@@ -81,22 +96,30 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchClient(int id, [FromBody] Client client)
+        public async Task<ActionResult<City>> Patch(int id, [FromBody] Client client)
         {
-            if (client == null || client.ClientId!=id)
+            if (client == null || client.ClientId != id)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            var _client = await _repo.UpdateAsync(client);
+            var _client = await _repo.PatchAsync(client);
+
             if (_client == null)
+            {
                 return BadRequest();
+            }
 
             return new NoContentResult();
         }
@@ -108,18 +131,20 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
-                return BadRequest($"client {id} was found but failed to delete");
+                return BadRequest($"Client {id} was found but failed to delete");
             }
         }
         // POST api/clients/login
@@ -130,11 +155,15 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Login([FromBody] LoginService obj)
         {
             if (obj.Email== null || obj.Password == null)
+            {
                 return BadRequest();
+            }
             var token =await  _repo.Login(obj); 
 
             if (token == null)
+            {
                 return Unauthorized();
+            }
 
             return Ok(new {Token = token});
         }

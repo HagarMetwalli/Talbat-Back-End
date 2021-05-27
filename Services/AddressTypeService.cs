@@ -17,11 +17,15 @@ namespace Talbat.Services
         }
         public async Task<AddressType> CreatAsync(AddressType addressType)
         {
-            await _db.AddressTypes.AddAsync(addressType);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return addressType;
-            return null;
+            using(var db = new TalabatContext())
+            {
+                await db.AddressTypes.AddAsync(addressType);
+                int affected = await db.SaveChangesAsync();
+                if (affected == 1)
+                    return addressType;
+                return null;
+            }
+
         }
 
         public async Task<bool?> DeleteAsync(int id)

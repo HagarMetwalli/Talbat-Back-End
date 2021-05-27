@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talbat.Models;
 
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    partial class TalabatContextModelSnapshot : ModelSnapshot
+    [Migration("20210527201836_clientdataannotation")]
+    partial class clientdataannotation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,8 +98,8 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(15)")
                         .HasColumnName("Client_Lname");
 
-                    b.Property<int>("ClientNewsletterSubscribe")
-                        .HasColumnType("int")
+                    b.Property<bool>("ClientNewsletterSubscribe")
+                        .HasColumnType("bit")
                         .HasColumnName("Client_NewsletterSubscribe");
 
                     b.Property<string>("ClientPassword")
@@ -107,8 +109,8 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Client_Password");
 
-                    b.Property<int>("ClientSmsSubscribe")
-                        .HasColumnType("int")
+                    b.Property<bool>("ClientSmsSubscribe")
+                        .HasColumnType("bit")
                         .HasColumnName("Client_SmsSubscribe");
 
                     b.HasKey("ClientId");

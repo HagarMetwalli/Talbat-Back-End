@@ -6,7 +6,7 @@ using Talbat.Models;
 
 namespace Talbat.IServices
 {
-    public interface IClientService : IGenericService<Client>
+    public interface IClientService : IGeneric<Client>
     {
         public Task<string> Login(LoginService obj);
     }
