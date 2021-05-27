@@ -1,9 +1,10 @@
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
-
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
@@ -17,8 +18,17 @@ namespace Talbat.Controllers
         }
         // GET: api/cities
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<City>))]
-        public async Task<IEnumerable<City>> Get() => await _repo.RetriveAllAsync();
+        [Authorize]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<City>>))]
+        public async Task<ActionResult<IList<City>>> Get()
+        {
+            IList <City> citires = await _repo.RetriveAllAsync();
+            if (citires.Count == 0)
+                return NoContent();
+            return Ok(citires);
+        }
+           
 
         // GET api/cities/5
         [HttpGet("{id}")]

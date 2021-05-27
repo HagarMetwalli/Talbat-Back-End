@@ -3,21 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talbat.Models;
 
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    partial class TalabatContextModelSnapshot : ModelSnapshot
+    [Migration("20210520103454_TotalOrdersNumberCusine")]
+    partial class TotalOrdersNumberCusine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.6")
+                .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Talbat.Models.AddressType", b =>
@@ -683,13 +685,14 @@ namespace Talbat.Migrations
                         .HasColumnName("OfferItem_Quantity")
                         .HasDefaultValueSql("((1))");
 
-                    b.Property<int>("OfferItemSaleValue")
-                        .HasColumnType("int")
+                    b.Property<double>("OfferItemSaleValue")
+                        .HasColumnType("float")
                         .HasColumnName("OfferItem_SaleValue");
 
-                    b.Property<int>("OfferItemTypePercentage")
+                    b.Property<byte[]>("OfferItemTypePercentage")
+                        .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("int")
+                        .HasColumnType("binary(10)")
                         .HasColumnName("OfferItem_TypePercentage")
                         .IsFixedLength(true);
 

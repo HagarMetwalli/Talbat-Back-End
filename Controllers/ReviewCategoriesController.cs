@@ -22,8 +22,15 @@ namespace Talbat.Controllers
         }
         // GET: api/ReviewCategories
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewCategory>))]
-        public async Task<IEnumerable<ReviewCategory>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<ReviewCategory>>))]
+        public async Task<ActionResult<IList<ReviewCategory>>> Get()
+        {
+            IList<ReviewCategory> reviewCategories = await _repo.RetriveAllAsync();
+            if (reviewCategories.Count == 0)
+                return NoContent();
+            return Ok(reviewCategories);
+        }
 
         // GET api/ReviewCategories/5
         [HttpGet("{id}")]

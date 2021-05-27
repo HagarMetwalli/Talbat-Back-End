@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace Talbat.Controllers
         private IOfferRelatedService _repo;
         private TalabatContext _db;
 
-        public OffersController(IOfferRelatedService repo , TalabatContext db)
+        public OffersController(IOfferRelatedService repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -30,7 +29,7 @@ namespace Talbat.Controllers
         {
             var offers = await _repo.RetriveAllAsync();
 
-            if (offers== null)
+            if (offers == null)
             {
                 return NoContent();
             }
@@ -49,7 +48,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-                
+
             return Ok(offer);
         }
 
@@ -112,7 +111,7 @@ namespace Talbat.Controllers
             //Why nullable boolean?
             bool? deleted = await _repo.DeleteAsync(id);
             ///////////////////////////////////
-            
+
             if (deleted.HasValue && deleted.Value)
             {
                 return new NoContentResult();//204 No Content
@@ -145,7 +144,7 @@ namespace Talbat.Controllers
             await _repo.PatchAsync(offer);
             return new NoContentResult();
 
-        }  
+        }
 
     }//end controller
 }

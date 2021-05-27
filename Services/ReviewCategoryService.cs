@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,9 +33,9 @@ namespace Talbat.Services
             return null;
         }
 
-        public Task<IEnumerable<ReviewCategory>> RetriveAllAsync()
+        public Task<IList<ReviewCategory>> RetriveAllAsync()
         {
-            return Task<ReviewCategory>.Run<IEnumerable<ReviewCategory>>(() => _db.ReviewCategories);
+            return Task<IList>.Run<IList<ReviewCategory>>(() => _db.ReviewCategories.ToList());
         }
         public Task<ReviewCategory> RetriveAsync(int id)
         {

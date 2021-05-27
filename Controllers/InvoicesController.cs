@@ -24,8 +24,15 @@ namespace Talbat.Controllers
         }
         // GET: api/Invoices
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Invoice>))]
-        public async Task<IEnumerable<Invoice>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Invoice>>))]
+        public async Task<ActionResult<IList<Client>>> Get()
+        {
+            IList<Invoice> invoices = await _repo.RetriveAllAsync();
+            if (invoices.Count == 0)
+                return NoContent();
+            return Ok(invoices);
+        }
 
         // GET api/Invoices/5
         [HttpGet("{id}")]

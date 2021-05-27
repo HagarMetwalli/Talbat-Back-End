@@ -13,5 +13,7 @@ namespace Talbat.Models
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int CuisineId { get; set; }
         public string CuisineName { get; set; }
+        public int TotalOrdersNumber { get; set; }
+
     }
 }

@@ -11,59 +11,84 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeliveryMenController : ControllerBase
+    public class CuisinesController : ControllerBase
     {
-        private IGenericService<DeliveryMan> _repo;
-        public DeliveryMenController(IGenericService<DeliveryMan> repo) 
+        private ICuisienSevice _repo;
+        private TalabatContext _db;
+
+        public CuisinesController(ICuisienSevice repo, TalabatContext db)
         {
             _repo = repo;
+            _db = db;
         }
-        // GET: api/DeliveryMen
+        // GET: api/Cuisines
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<DeliveryMan>>))]
-        public async Task<ActionResult<IList<DeliveryMan>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Cuisine>>))]
+        public async Task<ActionResult<IList<Client>>> Get()
         {
-            IList<DeliveryMan> deliveryMen = await _repo.RetriveAllAsync();
-            if (deliveryMen.Count == 0)
+            IList<Cuisine> cuisines = await _repo.RetriveAllAsync();
+            if (cuisines.Count == 0)
                 return NoContent();
-            return Ok(deliveryMen);
+            return Ok(cuisines);
         }
 
-        // GET api/DeliveryMen/5
+        // GET api/Cuisines/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            DeliveryMan deliveryMan = await _repo.RetriveAsync(id);
-            if (deliveryMan == null)
+            Cuisine cuisine = await _repo.RetriveAsync(id);
+            if (cuisine == null)
                 return NotFound();
-            return Ok(deliveryMan);
+            return Ok(cuisine);
+        }
+        // GET api/Cuisines/Chine
+        [HttpGet]
+        [Route("GetByName/{name}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetByName(string name)
+        {
+            Cuisine cuisine = await _repo.RetriveByNameAsync(name);
+            if (cuisine == null)
+                return NotFound();
+            return Ok(cuisine);
         }
 
-        // POST api/DeliveryMen
+
+        //// GET: api/Cuisines/MostCommonCuisine
+        [HttpGet]
+        [Route("MostCommonCuisine")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<String>))]
+        public async Task<IEnumerable<object>> MostCommonCuisine()
+        {
+
+            return await _repo.RetriveMostCommonAsync();
+        }
+
+        // POST api/Cuisines
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> Post([FromBody] Cuisine cuisine)
         {
-            if (deliveryMan == null)
+            if (cuisine == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            DeliveryMan added = await _repo.CreatAsync(deliveryMan);
+            Cuisine added = await _repo.CreatAsync(cuisine);
             if (added == null)
                 return BadRequest();
-
             return Ok();
         }
 
-
-        // DELETE api/DeliveryMen/5
+        // DELETE api/Cuisines/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -78,23 +103,22 @@ namespace Talbat.Controllers
             bool? deleted = await _repo.DeleteAsync(id);
             if (deleted.HasValue && deleted.Value)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();//204 No Content 
             }
             else
             {
-                return BadRequest($"DeliveryMan {id} was found but failed to delete");
+                return BadRequest($"Cuisine {id} was found but failed to delete");
             }
         }
-
-        // Patch api/deliveryMen/5
+        // Patch api/ Cuisines/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchDeliveryMan(int id, [FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> Patch(int id, [FromBody] Cuisine cuisine)
         {
-            if (deliveryMan == null || deliveryMan.DeliveryManId != id)
+            if (cuisine == null )
             {
                 return BadRequest();
             }
@@ -104,13 +128,12 @@ namespace Talbat.Controllers
             }
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
-            {
+            { 
                 return NotFound();
             }
-            await _repo.UpdateAsync(deliveryMan);
+            await _repo.UpdateAsync(cuisine);
             return new NoContentResult();
 
         }
-
     }
 }

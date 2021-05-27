@@ -60,6 +60,7 @@ namespace Talbat.Services
             using (var db = new TalabatContext())
             {
                 var offerItem = _db.OfferItems.FirstOrDefault(o => o.OfferId == Id && o.ItemId == 4);
+<<<<<<< HEAD
                 //var ofs = db.OfferItems.ToList();
                 //List<OfferItem> l = new List<OfferItem>(); 
 
@@ -70,6 +71,8 @@ namespace Talbat.Services
                 //        l.Add(ff);
                 //    }
                 //}
+=======
+>>>>>>> master
 
                 var item = db.Items.Find(offerItem.ItemId);
                 //var item = db.Items.Find(l[0].ItemId);
@@ -85,6 +88,7 @@ namespace Talbat.Services
                 return null;
             }
 
+<<<<<<< HEAD
 
             //catch (System.Exception)
             //{
@@ -138,3 +142,9 @@ namespace Talbat.Services
 
     }//end service
 }
+=======
+        }
+
+    }//end service
+}
+>>>>>>> master

@@ -15,9 +15,9 @@ namespace Talbat.Services
         {
             _db = db;
         }
-        public Task<IEnumerable<TempPartnerRegisterationDetail>> RetriveAllAsync()
+        public Task<IList<TempPartnerRegisterationDetail>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<TempPartnerRegisterationDetail>>(() => _db.TempPartnerRegisterationDetails);
+            return Task<IList>.Run<IList<TempPartnerRegisterationDetail>>(() => _db.TempPartnerRegisterationDetails.ToList());
         }
 
         public Task<TempPartnerRegisterationDetail> RetriveAsync(int id)

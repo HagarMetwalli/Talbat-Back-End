@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Talbat.Models;
 
 namespace Talbat.IServices
 {
-    public interface IGenericService<T>
+    public interface IGeneric<T>
     {
-        Task<IList<T>> RetriveAllAsync();
+        Task<List<T>> RetriveAllAsync();
         Task<T> RetriveAsync(int id);
         Task<T> CreatAsync(T item);
-        Task<T> UpdateAsync(T item);
-        Task<bool?> DeleteAsync(int id);
+        Task<T> PatchAsync(T item);
+        Task<bool> DeleteAsync(int id);
+
     }
 }

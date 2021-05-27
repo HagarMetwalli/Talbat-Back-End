@@ -9,7 +9,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class StoreService : IStoreService
+    public class StoreService :IStoreService
     {
         private TalabatContext _db;
         public StoreService(TalabatContext db)
@@ -34,9 +34,15 @@ namespace Talbat.Services
             return null;
         }
 
+<<<<<<< HEAD
         public Task<IEnumerable<Store>> RetriveAllAsync()
             {
             return Task<IEnumerable>.Run<IEnumerable<Store>>(() => _db.Stores);
+=======
+        public Task<IList<Store>> RetriveAllAsync()
+        {
+            return Task<IList>.Run<IList<Store>>(() => _db.Stores.ToList());
+>>>>>>> master
         }
 
         //public Task<IEnumerable<Store>> RetriveAllAsync() => Task<IEnumerable>.Run<IEnumerable<Store>>(() => StoresCache.Values);
@@ -46,37 +52,29 @@ namespace Talbat.Services
             return Task.Run(() => _db.Stores.Find(id));
         }
 
+<<<<<<< HEAD
         public Task<IEnumerable<string>> RetriveMostCommonStoreAsync()
+=======
+        public Task<IEnumerable<String>> RetriveMostCommonAsync()
+>>>>>>> master
         {
             var stores = _db.Stores.OrderByDescending(s => s.StoreOrdersNumber).Take(3).Select(s=>s.StoreName).ToList();
             return Task<IEnumerable>.Run<IEnumerable<string>>(() => stores);
         }
-        public Task<IEnumerable<object>> RetriveMostCommonCuisineAsync()
+        public Task<Store> RetriveByNameAsync(string storename)
         {
-            //select Top(2) CuisineId ,sum(StoreOrdersNumber) as total from Store
-            //Group by CuisineId
-            //Order by total desc
-            //var cuisine = _db.Stores.GroupBy(c => c.CuisineId);
-            //List<int> CusineTotelNumber = new List<int>();
-            //List<int?> Cusinekeys = new List<int?>();
-            //foreach (var item in cuisine)
-            //{ 
-            //    Cusinekeys.Add(item.Key);
-               
-            //    foreach (var c in item)
-            //    {
-            //        CusineTotelNumber[Cusinekeys.Count] += c.StoreOrdersNumber;
-            //    }
-            //}
-                  
-            //return ;
-            var c = new List<object>();
-            var cuisine = _db.Stores.AsEnumerable()
-                .GroupBy(c => c.CuisineId)
-                .ToDictionary(e => e.Key, e => e.ToList());
+            var store = _db.Stores.FirstOrDefault(s=>s.StoreName==storename);
 
-            foreach (var blabla in cuisine)
+            return Task<Store>.Run<Store>(() => store);
+        }
+        public Task<List<String>> RetriveCategoriesAsync(int storeId)
+        {
+            var Categories = _db.Items.Where(c => c.StoreId == storeId).ToList();
+            List<string> CategriesNames = new List<string>();
+            ItemCategory category = new ItemCategory();
+            foreach (var item in Categories)
             {
+<<<<<<< HEAD
                 int total = 0;
                 foreach (var bla in blabla.Value)
                 {
@@ -90,6 +88,17 @@ namespace Talbat.Services
             return Task.Run<IEnumerable<object>>(() => c);
             //return Task<IEnumerable>.Run<IEnumerable<Object>>(() => c.OrderByDescending(c=>c["item2"]));
 
+=======
+                category = _db.ItemCategories.FirstOrDefault(c => c.ItemCategoryId == item.ItemCategoryId);
+                CategriesNames.Add(category.ItemCategoryName);
+            }
+            return Task.Run(() => CategriesNames);
+        }
+        public Task<List<Item>> RetriveMenuAsync(int storeId)
+        {
+            var items = _db.Items.Where(c => c.StoreId == storeId).ToList();
+            return Task.Run(() => items);
+>>>>>>> master
         }
         public async Task<Store> UpdateAsync(Store Store)
         {
@@ -101,6 +110,7 @@ namespace Talbat.Services
             return null;
         }
 
+<<<<<<< HEAD
         Task<IEnumerable<string>> IStoreService.RetriveMostCommonStoreAsync()
         {
             throw new System.NotImplementedException();
@@ -121,5 +131,14 @@ namespace Talbat.Services
             }
         }
 
+=======
+        public Task<IEnumerable<Item>> RetriveCategoryItemsAsync(int StoreId, int itemCategoryId)
+        {
+
+            var CategoryItems = _db.Items.Where(x => x.StoreId == StoreId && x.ItemCategoryId == itemCategoryId);
+            return Task<IEnumerable>.Run<IEnumerable<Item>>(() => CategoryItems);
+
+        }
+>>>>>>> master
     }
 }

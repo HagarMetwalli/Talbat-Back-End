@@ -1,26 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Castle.Core.Configuration;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
+using System.Security.Claims;
 
 namespace Talbat.Services
 {
-    public class ClientService: IGenericService<Client>
+    public class ClientService: IClientService
     {
-       // private static ConcurrentDictionary<int,Client> ClientsCache;
+
         private TalabatContext _db;
-        public ClientService(TalabatContext db)
+        public ClientService(TalabatContext db )
         {
             _db = db;
         }
-        public Task<IEnumerable<Client>> RetriveAllAsync()
+        public Task<IList<Client>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Client>>(() => _db.Clients);
+            return Task<IList>.Run<IList<Client>>(() => _db.Clients.ToList());
         }
 
         public Task<Client> RetriveAsync(int id)
@@ -53,6 +60,32 @@ namespace Talbat.Services
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
+            return null;
+        }
+
+        public  Task<string> Login(LoginService obj)
+        {
+            Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
+
+            if (client != null && client.ClientPassword == obj.Password)
+            {
+                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"));
+                var siginingCerdentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                var tokenOptions = new JwtSecurityToken
+                    (
+                     issuer: "https://localhost:4200",
+                     audience: "https://localhost:4200",
+                     claims: new List<Claim>() 
+                     {
+                         new Claim(ClaimTypes.Email, obj.Email)
+                     },
+                     expires: DateTime.Now.AddMinutes(10),
+                     signingCredentials: siginingCerdentials
+                    ) ;
+                var tokenString =  new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                return Task.Run(() =>tokenString);
+
+            }
             return null;
         }
     }

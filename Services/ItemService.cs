@@ -34,15 +34,14 @@ namespace Talbat.Services
             return null;
         }
 
-        public Task<IEnumerable<Item>> RetriveAllAsync()
+        public Task<IList<Item>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Item>>(() => _db.Items);
+            return Task<IList>.Run<IList<Item>>(() => _db.Items.ToList());
         }
         public Task<Item> RetriveAsync(int id)
         {
             return Task.Run(() => _db.Items.Find(id));
         }
-
         public async Task<Item> UpdateAsync(Item item)
         {
             _db = new TalabatContext();
