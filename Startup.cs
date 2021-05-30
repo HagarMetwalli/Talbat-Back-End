@@ -51,11 +51,10 @@ namespace Talbat
             });
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddScoped<IGenericService<City>, CityService>();
-            services.AddScoped<IGenericService<AddressType>, AddressTypeService>();
-            services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
+            services.AddScoped<IGeneric<City>, CityService>();
+            services.AddScoped<IGeneric<ClientAddress>, ClientAddressService>();
             // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
-            services.AddScoped<IGenericService<Country>, CountryService>();
+            services.AddScoped<IGeneric<Country>, CountryService>();
             services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
             services.AddScoped<IGenericService<Invoice>, InvoiceService>();
             services.AddScoped<IRetriveByNameService<ItemCategory>, ItemCategoryService>();
@@ -74,6 +73,7 @@ namespace Talbat
             services.AddScoped<IGenericService<Partner>, PartnerService>();
             services.AddScoped<IGenericService<OrderReview>, OrderReviewService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
+            services.AddScoped<IAddressType, AddressTypeService>();
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<ICuisienSevice, CuisineService>();
             services.AddScoped<IClientService, ClientService>();

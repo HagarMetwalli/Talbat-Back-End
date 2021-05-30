@@ -30,18 +30,24 @@ namespace Talbat.Controllers
         [ProducesResponseType(200, Type = typeof(ActionResult<List<Client>>))]
         public async Task<ActionResult<List<Client>>> Get()
         {
-            IList<Client> clients = await _repo.RetriveAllAsync();
+            List<Client> clients = await _repo.RetriveAllAsync();
+            if (clients == null)
+            {
+                return BadRequest();
+            }
+
             if (clients.Count == 0)
+            {
                 return NoContent();
+            }    
             return Ok(clients);
         }
 
         // GET api/clients/5
         [HttpGet("{id}")]
-        [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetById(int id)
         {
             if (id <= 0)
@@ -49,6 +55,11 @@ namespace Talbat.Controllers
                 return BadRequest();                            
             }
             Client client = await _repo.RetriveAsync(id);
+            if (client == null)
+            {
+                return BadRequest();
+            }
+
             string token = Request.Headers["Authorization"];
 
             if (string.IsNullOrEmpty(token) || client == null)
@@ -56,8 +67,7 @@ namespace Talbat.Controllers
                 return BadRequest();
             }
 
-            var _token = token.Replace("Bearer ", "");
-            var jwttoken = new JwtSecurityTokenHandler().ReadJwtToken(_token);
+            var jwttoken = new JwtSecurityTokenHandler().ReadJwtToken(token);
             var jti = jwttoken.Claims.First(claim => claim.Type == ClaimTypes.Email);
             if (client.ClientEmail != jti.Value)
             {
@@ -66,7 +76,26 @@ namespace Talbat.Controllers
                 
             return Ok(client);
         }
-      
+
+        // GET: api/clients/email
+        [HttpGet]
+        [Route("GetClientByEmail/{email}")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(Client))]
+        public async Task<IActionResult> GetClientByEmail(string email)
+        {
+            if (email == null)
+            {
+                return BadRequest();
+            }
+            var client = await _repo.RetriveByEmail(email);
+            if(client == null)
+            {
+                return NotFound();
+            }
+            return Ok(client);
+        }
+
         // POST api/clients
         [HttpPost]
         [ProducesResponseType(201)]
@@ -83,6 +112,12 @@ namespace Talbat.Controllers
                 return BadRequest(ModelState);
             }
 
+            Client _client = await _repo.RetriveByEmail(client.ClientEmail);
+
+            if(_client != null)
+            {
+                return BadRequest("The Email is already exist");
+            }
             Client added = await _repo.CreatAsync(client);
             if (added == null)
             {
@@ -114,13 +149,18 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _client = await _repo.PatchAsync(client);
+            var _client = await _repo.RetriveByEmail(client.ClientEmail);
 
-            if (_client == null)
+            if (_client.ClientId != existing.ClientId)
+            {
+                return BadRequest("The Email is already exist");
+            }
+            var affected = _repo.PatchAsync(client);
+            
+            if (affected == null)
             {
                 return BadRequest();
             }
-
             return new NoContentResult();
         }
         // DELETE api/clients/5
@@ -154,7 +194,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Login([FromBody] LoginService obj)
         {
-            if (obj.Email== null || obj.Password == null)
+            if (obj.clientEmail== null || obj.clientPassword == null)
             {
                 return BadRequest();
             }

@@ -13,10 +13,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class ClientAddressesController : ControllerBase
     {
-        private IGenericService<ClientAddress> _repo;
+        private IGeneric<ClientAddress> _repo;
         private TalabatContext _db;
 
-        public ClientAddressesController(IGenericService<ClientAddress> repo,TalabatContext db)
+        public ClientAddressesController(IGeneric<ClientAddress> repo,TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -42,7 +42,9 @@ namespace Talbat.Controllers
         {
             ClientAddress clientAddress = await _repo.RetriveAsync(id);
             if (clientAddress == null)
+            {
                 return NotFound();
+            }
             return Ok(clientAddress);
         }
 
@@ -52,21 +54,33 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] ClientAddress clientAddress)
         {
+
+            if (clientAddress == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var clientId = _db.Clients.Find(clientAddress.ClientId);
             var addresstypeId = _db.AddressTypes.Find(clientAddress.ClientAddressTypeId);
             var cityId = _db.Cities.Find(clientAddress.CityId);
             var regionId = _db.Regions.Find(clientAddress.RegionId);
 
-            if (clientAddress == null|| clientId==null || addresstypeId ==null ||cityId == null || regionId == null)
+            if (clientId == null || addresstypeId == null || cityId == null || regionId == null)
+            {
                 return BadRequest();
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            }
 
             ClientAddress added = await _repo.CreatAsync(clientAddress);
-            if (added == null)
-                return BadRequest();
 
+            if (added == null)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
 
@@ -77,27 +91,40 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<ClientAddress>> PatchClientAddress(int id, [FromBody] ClientAddress clientAddress)
         {
+            if (id <= 0 || clientAddress == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var clientId = _db.Clients.Find(clientAddress.ClientId);
             var addresstypeId = _db.AddressTypes.Find(clientAddress.ClientAddressTypeId);
             var cityId = _db.Cities.Find(clientAddress.CityId);
             var regionId = _db.Regions.Find(clientAddress.RegionId);
-            if (clientAddress == null || clientId == null || addresstypeId == null || cityId == null || regionId == null || clientAddress.ClientAddressId!=id)
-                return BadRequest();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (clientId == null || addresstypeId == null || cityId == null || regionId == null)
+            {
+                return BadRequest();
+            }
 
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            var c = await _repo.UpdateAsync(clientAddress);
+            var c = await _repo.PatchAsync(clientAddress);
+
             if (c == null)
                 return BadRequest();
 
             return new NoContentResult();
         }
+
         // DELETE api/clientaddresses/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
@@ -106,15 +133,19 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
+
             else
             {
                 return BadRequest($"clientaddress {id} was found but failed to delete");

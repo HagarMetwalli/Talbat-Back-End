@@ -19,9 +19,8 @@ namespace Talbat.Services
 {
     public class ClientService: IClientService
     {
-
-        private TalabatContext _db;
-        public ClientService(TalabatContext db )
+        TalabatContext _db = new TalabatContext();
+        public ClientService(TalabatContext db)
         {
             _db = db;
         }
@@ -30,11 +29,9 @@ namespace Talbat.Services
             try
             {
                 return Task<List<Client>>.Run<List<Client>>(() => _db.Clients.ToList());
-
             }
             catch 
             {
-
                 return null;
             }
         }
@@ -43,23 +40,39 @@ namespace Talbat.Services
         {
             try
             {
-                return Task.Run(() => _db.Clients.Find(id));
+                 return Task.Run(() => _db.Clients.Find(id));  
             }
             catch 
             {
                 return null;
             }
         }
-
+        public Task<Client> RetriveByEmail(string Email)
+        {
+            try
+            {
+                var client = _db.Clients.FirstOrDefault(c=>c.ClientEmail==Email);
+                return Task<Client>.Run<Client>(() => client);
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public async Task<Client> CreatAsync(Client client)
         {
             try
             {
-                await _db.Clients.AddAsync(client);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
-                    return client;
-                return null;
+                using (var db = new TalabatContext())
+                {
+                    await db.Clients.AddAsync(client);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return client;
+                    }
+                    return null;
+                }
             }
             catch
             {
@@ -70,14 +83,16 @@ namespace Talbat.Services
         {
             try
             {
-                _db = new TalabatContext();
-                _db.Clients.Update(client);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
+                using (var db = new TalabatContext())
                 {
-                    return client;
+                    db.Clients.Update(client);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return client;
+                    }
+                    return null;
                 }
-                return null;
             }
             catch 
             {
@@ -89,14 +104,17 @@ namespace Talbat.Services
         {
             try
             {
-                Client client = await RetriveAsync(id);
-                _db.Clients.Remove(client);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
+                using (var db = new TalabatContext())
                 {
-                    return true;
+                    Client client = await RetriveAsync(id);
+                    db.Clients.Remove(client);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
             catch 
             {
@@ -109,28 +127,31 @@ namespace Talbat.Services
         {
             try
             {
-                Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
-
-                if (client != null && client.ClientPassword == obj.Password)
+                using (var db = new TalabatContext())
                 {
-                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"));
-                    var siginingCerdentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                    var tokenOptions = new JwtSecurityToken
-                        (
-                         issuer: "https://localhost:4200",
-                         audience: "https://localhost:4200",
-                         claims: new List<Claim>()
-                         {
-                         new Claim(ClaimTypes.Email, obj.Email)
-                         },
-                         expires: DateTime.Now.AddMinutes(10),
-                         signingCredentials: siginingCerdentials
-                        );
-                    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-                    return Task.Run(() => tokenString);
+                    Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.clientEmail);
 
+                    if (client != null && client.ClientPassword == obj.clientPassword)
+                    {
+                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"));
+                        var siginingCerdentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                        var tokenOptions = new JwtSecurityToken
+                            (
+                             issuer: "https://localhost:4200",
+                             audience: "https://localhost:4200",
+                             claims: new List<Claim>()
+                             {
+                         new Claim(ClaimTypes.Email, obj.clientEmail),
+                             },
+                             expires: DateTime.Now.AddMinutes(10),
+                             signingCredentials: siginingCerdentials
+                            );
+                        var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                        return Task.Run(() => tokenString);
+
+                    }
+                    return null;
                 }
-                return null;
             }
             catch 
             {

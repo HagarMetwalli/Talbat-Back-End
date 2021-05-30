@@ -10,49 +10,105 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class CityService : IGenericService<City>
+    public class CityService : IGeneric<City>
     {
         private TalabatContext _db;
         public CityService(TalabatContext db)
         {
             _db = db;
         }
-        public async Task<City> CreatAsync(City city)
+        public Task<List<City>> RetriveAllAsync()
         {
-            await _db.Cities.AddAsync(city);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return city;
-            return null;
-        }
-        public async Task<bool?> DeleteAsync(int id)
-        {
-            City c = await RetriveAsync(id);
-            _db.Cities.Remove(c);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-             return null;
-        }
-
-        public Task<IList<City>> RetriveAllAsync()
-        {
-            return Task<IList>.Run<IList<City>>(() => _db.Cities.ToList());
+            try
+            {
+                return Task<IList>.Run<List<City>>(() => _db.Cities.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public Task<City> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Cities.Find(id));
+            try
+            {
+                return Task.Run(() => _db.Cities.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public async Task<City> CreatAsync(City city)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    await db.Cities.AddAsync(city);
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return city;
+                    }
+
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
+
         }
 
-        public async Task<City> UpdateAsync(City city)
+        public async Task<bool> DeleteAsync(int id)
         {
-            _db = new TalabatContext();
-            _db.Cities.Update(city);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return city;   
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    City c = await RetriveAsync(id);
+
+                    db.Cities.Remove(c);
+
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+        public async Task<City> PatchAsync(City city)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.Cities.Update(city);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return city;
+                    }
+                    return null;
+                 }
+            }
+            catch 
+            {
+                return null;
+            }
+
         }
     }
 }

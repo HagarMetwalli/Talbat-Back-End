@@ -12,18 +12,18 @@ namespace Talbat.Controllers
     [ApiController]
     public class AddressTypesController : ControllerBase
     {
-        private IGenericService<AddressType> _repo;
-        public AddressTypesController(IGenericService<AddressType> repo)
+        private IAddressType _repo;
+        public AddressTypesController(IAddressType repo)
         {
             _repo = repo;
         }
         //// GET: api/addresstypes
         //[HttpGet]
         //[ProducesResponseType(204)]
-        //[ProducesResponseType(200, Type = typeof(ActionResult<IList<AddressType>>))]
+        //[ProducesResponseType(200, Type = typeof(ActionResult<List<AddressType>>))]
         //public async Task<ActionResult<IList<City>>> Get()
         //{
-        //    IList<AddressType> addressTypes = await _repo.RetriveAllAsync();
+        //    List<AddressType> addressTypes = await _repo.RetriveAllAsync();
         //    if (addressTypes.Count == 0)
         //        return NoContent();
         //    return Ok(addressTypes);
@@ -35,9 +35,15 @@ namespace Talbat.Controllers
         //[ProducesResponseType(404)]
         //public async Task<IActionResult> GetById(int id)
         //{
+        //    if (id <= 0)
+        //    {
+        //        return BadRequest();
+        //    }
         //    AddressType addressType = await _repo.RetriveAsync(id);
         //    if (addressType == null)
+        //    {
         //        return NotFound();
+        //    }
         //    return Ok(addressType);
         //}
 
@@ -47,15 +53,21 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] AddressType addressType)
         {
-            if (addressType == null || String.IsNullOrEmpty(addressType.AddressTypeName))
+            if (addressType == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
-
+            }
+                
             AddressType added = await _repo.CreatAsync(addressType);
             if (added == null)
+            {
                 return BadRequest();
+            }
 
             return Ok(addressType);
         }
@@ -65,25 +77,32 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<AddressType>> PatchAddressType(int id, [FromBody] AddressType addressType)
+        public async Task<ActionResult<AddressType>> Patch(int id, [FromBody] AddressType addressType)
         {
-            if (addressType == null || String.IsNullOrEmpty(addressType.AddressTypeName))
+            if (addressType == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            var _addressType = await _repo.UpdateAsync(addressType);
-            if (_addressType == null)
-                return BadRequest();
+            var _addressType = await _repo.PatchAsync(addressType);
 
+            if (_addressType == null)
+            {
+                return BadRequest();
+            }
             return new NoContentResult();
         }
+
         // DELETE api/addresstypes/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
@@ -92,14 +111,17 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {

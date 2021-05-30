@@ -9,7 +9,7 @@ namespace Talbat.Models
     [NotMapped]
     public class LoginService
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string clientEmail { get; set; }
+        public string clientPassword { get; set; }
     }
 }

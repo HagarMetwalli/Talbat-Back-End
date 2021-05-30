@@ -14,37 +14,45 @@ namespace Talbat.Controllers
     public class CuisinesController : ControllerBase
     {
         private ICuisienSevice _repo;
-        private TalabatContext _db;
 
-        public CuisinesController(ICuisienSevice repo, TalabatContext db)
+        public CuisinesController(ICuisienSevice repo)
         {
             _repo = repo;
-            _db = db;
         }
         // GET: api/Cuisines
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Cuisine>>))]
-        public async Task<ActionResult<IList<Client>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<Cuisine>>))]
+        public async Task<ActionResult<List<Client>>> Get()
         {
-            IList<Cuisine> cuisines = await _repo.RetriveAllAsync();
+            List<Cuisine> cuisines = await _repo.RetriveAllAsync();
             if (cuisines.Count == 0)
+            {
                 return NoContent();
+            }
             return Ok(cuisines);
         }
 
         // GET api/Cuisines/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
+            if(id <= 0)
+            {
+                return BadRequest();
+            }
             Cuisine cuisine = await _repo.RetriveAsync(id);
             if (cuisine == null)
+            {
                 return NotFound();
+            }
             return Ok(cuisine);
         }
+
         // GET api/Cuisines/Chine
         [HttpGet]
         [Route("GetByName/{name}")]
@@ -54,19 +62,21 @@ namespace Talbat.Controllers
         public async Task<IActionResult> GetByName(string name)
         {
             Cuisine cuisine = await _repo.RetriveByNameAsync(name);
+
             if (cuisine == null)
+            {
                 return NotFound();
+            }
             return Ok(cuisine);
         }
 
 
-        //// GET: api/Cuisines/MostCommonCuisine
+        // GET: api/Cuisines/MostCommonCuisine
         [HttpGet]
         [Route("MostCommonCuisine")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<String>))]
         public async Task<IEnumerable<object>> MostCommonCuisine()
         {
-
             return await _repo.RetriveMostCommonAsync();
         }
 
@@ -77,39 +87,23 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Post([FromBody] Cuisine cuisine)
         {
             if (cuisine == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             Cuisine added = await _repo.CreatAsync(cuisine);
             if (added == null)
+            {
                 return BadRequest();
+            }
             return Ok();
         }
 
-        // DELETE api/Cuisines/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var existing = await _repo.RetriveAsync(id);
-            if (existing == null)
-            {
-                return NotFound();
-            }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
-            {
-                return new NoContentResult();//204 No Content 
-            }
-            else
-            {
-                return BadRequest($"Cuisine {id} was found but failed to delete");
-            }
-        }
         // Patch api/ Cuisines/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
@@ -118,7 +112,7 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> Patch(int id, [FromBody] Cuisine cuisine)
         {
-            if (cuisine == null )
+            if (id <= 0 || cuisine == null )
             {
                 return BadRequest();
             }
@@ -131,9 +125,34 @@ namespace Talbat.Controllers
             { 
                 return NotFound();
             }
-            await _repo.UpdateAsync(cuisine);
+            await _repo.PatchAsync(cuisine);
             return new NoContentResult();
 
+        }
+
+        // DELETE api/Cuisines/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existing = await _repo.RetriveAsync(id);
+
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
+            {
+                return new NoContentResult();
+            }
+            else
+            {
+                return BadRequest($"Cuisine {id} was found but failed to delete");
+            }
         }
     }
 }

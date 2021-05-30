@@ -7,7 +7,7 @@ using Talbat.Models;
 namespace Talbat.IServices
 {
 
-    public interface ICuisienSevice : IGenericService<Cuisine>
+    public interface ICuisienSevice : IGeneric<Cuisine>
     {
         public Task<IEnumerable<String>> RetriveMostCommonAsync();
         public Task<Cuisine> RetriveByNameAsync(string name);

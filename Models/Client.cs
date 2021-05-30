@@ -49,11 +49,11 @@ namespace Talbat.Models
         [Range(0, 1, ErrorMessage = "Gender Must be Male = 0 or Female = 1 ")]
         public int ClientGenderIsMale { get; set; }
 
-        [DefaultValue(0)]
+        [Required,DefaultValue(0)]
         [Range(0, 1, ErrorMessage = "ClientNewsletterSubscribe Must be False = 0 or true = 1 ")]
         public int ClientNewsletterSubscribe { get; set; }
 
-        [DefaultValue(0)]
+        [Required,DefaultValue(0)]
         [Range(0, 1, ErrorMessage = "ClientSmsSubscribe Must be False = 0 or true = 1 ")]
         public int ClientSmsSubscribe { get; set; }
 
