@@ -10,7 +10,7 @@ namespace Talbat.Models
     {
         public Country()
         {
-            Items = new HashSet<Item>();
+            //Items = new HashSet<Item>();
         }
         [Key]
         public int CountryId { get; set; }

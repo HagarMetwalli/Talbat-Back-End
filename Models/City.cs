@@ -10,7 +10,7 @@ namespace Talbat.Models
     {
         public City()
         {
-            ClientAddresses = new HashSet<ClientAddress>();
+           // ClientAddresses = new HashSet<ClientAddress>();
         }
 
         [Key]
