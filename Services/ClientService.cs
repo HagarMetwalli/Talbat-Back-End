@@ -130,9 +130,9 @@ namespace Talbat.Services
         {
             try
             {
-                obj.Email = obj.Email.ToLower();
                 using (var db = new TalabatContext())
                 {
+                    obj.Email = obj.Email.ToLower();
                     Client client = db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
 
                     if (client != null && client.ClientPassword == obj.Password)
