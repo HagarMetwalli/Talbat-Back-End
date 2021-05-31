@@ -36,7 +36,7 @@ namespace Talbat.Models
         public string ClientEmail { get; set; }
 
         [Required(ErrorMessage = "Date of Birth is required")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime ClientDateOfBirth { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
