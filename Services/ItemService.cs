@@ -9,7 +9,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class ItemService:IGenericService<Item>
+    public class ItemService:IGeneric<Item>
     {
         private TalabatContext _db;
         public ItemService(TalabatContext db)
@@ -18,38 +18,88 @@ namespace Talbat.Services
         }
         public async Task<Item> CreatAsync(Item item)
         {
-            await _db.Items.AddAsync(item);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return item;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    await _db.Items.AddAsync(item);
+                    int affected = await _db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return item;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            Item item = await RetriveAsync(id);
-            _db.Items.Remove(item);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    Item item = await RetriveAsync(id);
+                    db.Items.Remove(item);
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Task<IList<Item>> RetriveAllAsync()
+        public Task<List<Item>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<Item>>(() => _db.Items.ToList());
+            try
+            {
+                return Task<IList>.Run<List<Item>>(() => _db.Items.ToList());
+            }
+            catch 
+            {
+                return null;
+            }
         }
         public Task<Item> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Items.Find(id));
+            try
+            {
+                return Task.Run(() => _db.Items.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<Item> UpdateAsync(Item item)
+        public async Task<Item> PatchAsync(Item item)
         {
-            _db = new TalabatContext();
-            _db.Items.Update(item);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return item;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.Items.Update(item);
+                    int affected = await _db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return item;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

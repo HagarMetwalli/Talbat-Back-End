@@ -55,11 +55,11 @@ namespace Talbat
             services.AddScoped<IGeneric<ClientAddress>, ClientAddressService>();
             // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGeneric<Country>, CountryService>();
-            services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
-            services.AddScoped<IGenericService<Invoice>, InvoiceService>();
-            services.AddScoped<IRetriveByNameService<ItemCategory>, ItemCategoryService>();
-            services.AddScoped<IGenericService<Item>, ItemService>();
-            services.AddScoped<IGenericService<ItemReview>, ItemReviewService>();
+            services.AddScoped<IGeneric<DeliveryMan>, DeliveryManService>();
+            services.AddScoped<IGeneric<Invoice>, InvoiceService>();
+            services.AddScoped<IItemCategoryService, ItemCategoryService>();
+            services.AddScoped<IGeneric<Item>, ItemService>();
+            services.AddScoped<IGeneric<ItemReview>, ItemReviewService>();
             services.AddScoped<IOfferRelatedService, OfferService>();
             services.AddScoped<IGenericService<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
             services.AddScoped<IGenericService<SubItemCategory>, SubItemCategoryService>();

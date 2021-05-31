@@ -6,7 +6,8 @@ using Talbat.Models;
 
 namespace Talbat.IServices
 {
-    public interface IItemCategoryService:IGenericService<ItemCategory>,IRetriveByNameService<ItemCategory>
+    public interface IItemCategoryService:IGeneric<ItemCategory>
     {
+        public Task<ItemCategory> RetriveByNameAsync(string name);
     }
 }

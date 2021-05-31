@@ -9,7 +9,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class InvoiceService : IGenericService<Invoice>
+    public class InvoiceService : IGeneric<Invoice>
     {
         private TalabatContext _db;
         public InvoiceService(TalabatContext db)
@@ -18,39 +18,91 @@ namespace Talbat.Services
         }
         public async Task<Invoice> CreatAsync(Invoice invoice)
         {
-            await _db.Invoices.AddAsync(invoice);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return invoice;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    await _db.Invoices.AddAsync(invoice);
+                    int affected = await _db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return invoice;
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
+
         }
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            Invoice invoice = await RetriveAsync(id);
-            _db.Invoices.Remove(invoice);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    Invoice invoice = await RetriveAsync(id);
+                    db.Invoices.Remove(invoice);
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Task<IList<Invoice>> RetriveAllAsync()
+        public Task<List<Invoice>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<Invoice>>(() => _db.Invoices.ToList());
+            try
+            {
+                return Task<IList>.Run<List<Invoice>>(() => _db.Invoices.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
         public Task<Invoice> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Invoices.Find(id));
+            try
+            {
+                return Task.Run(() => _db.Invoices.Find(id));
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
-        public async Task<Invoice> UpdateAsync(Invoice invoice)
+        public async Task<Invoice> PatchAsync(Invoice invoice)
         {
-            _db = new TalabatContext();
-            _db.Invoices.Update(invoice);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return invoice;
-            return null;
+ 
+            try
+            {
+                using (var db = new TalabatContext())
+                {     
+                    db.Invoices.Update(invoice);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return invoice;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
 
     }

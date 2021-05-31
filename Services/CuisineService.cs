@@ -39,13 +39,13 @@ namespace Talbat.Services
             }
         }
 
-        public Task<IEnumerable<String>> RetriveMostCommonAsync()
+        public Task<List<string>> RetriveMostCommonAsync()
         {
             try
             {
                 var cuisine = _db.Cuisines.OrderByDescending(c => c.TotalOrdersNumber).Take(3).Select(c => c.CuisineName).ToList();
 
-                return Task<IEnumerable>.Run<IEnumerable<String>>(() => cuisine);
+                return Task<IList>.Run<List<string>>(() => cuisine);
             }
             catch
             {
