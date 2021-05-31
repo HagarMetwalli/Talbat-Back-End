@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Talbat.Models
 {
-    [NotMapped]
-    public class LoginService
+    public class Login
     {
-        public string clientEmail { get; set; }
-        public string clientPassword { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }
