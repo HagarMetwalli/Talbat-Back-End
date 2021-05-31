@@ -9,7 +9,7 @@ namespace Talbat.Models
     {
         public AddressType()
         {
-            ClientAddresses = new HashSet<ClientAddress>();
+           // ClientAddresses = new HashSet<ClientAddress>();
         }
 
         [Key]
