@@ -921,12 +921,6 @@ namespace Talbat.Models
                     .IsUnicode(false)
                     .HasColumnName("Store_Address");
 
-                entity.Property(e => e.StoreCuisine)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("Store_Cuisine");
-
                 entity.Property(e => e.StoreDeliveryFee).HasColumnName("Store_DeliveryFee");
 
                 entity.Property(e => e.StoreDeliveryTime).HasColumnName("Store_DeliveryTime");

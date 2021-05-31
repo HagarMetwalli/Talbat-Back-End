@@ -28,7 +28,6 @@ namespace Talbat.Models
         public string StorePreOrder { get; set; }
         public int? StorePaymentOnDeliverCash { get; set; }
         public int? StorePaymentVisa { get; set; }
-        public string StoreCuisine { get; set; }
         public int? StoreTypeId { get; set; }
 
         [ForeignKey("Cuisine")]

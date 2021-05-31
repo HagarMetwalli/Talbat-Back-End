@@ -40,7 +40,12 @@ namespace Talbat.Services
         }
         public Task<Store> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Stores.Find(id));
+            using(var db= new TalabatContext())
+            {
+                var store= db.Stores.Find(id);
+                return Task.Run(()=> store);
+            }
+            //return Task.Run(() => _db.Stores.Find(id));
         }
 
         public Task<IEnumerable<String>> RetriveMostCommonAsync()
