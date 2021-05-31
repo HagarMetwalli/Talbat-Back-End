@@ -66,6 +66,7 @@ namespace Talbat.Services
             {
                 using (var db = new TalabatContext())
                 {
+                    client.ClientEmail.ToLower();
                     await db.Clients.AddAsync(client);
                     int affected = await db.SaveChangesAsync();
                     if (affected == 1)
@@ -86,6 +87,7 @@ namespace Talbat.Services
             {
                 using (var db = new TalabatContext())
                 {
+                    client.ClientEmail.ToLower();
                     db.Clients.Update(client);
                     int affected = await db.SaveChangesAsync();
                     if (affected == 1)
@@ -128,6 +130,7 @@ namespace Talbat.Services
         {
             try
             {
+                obj.Email = obj.Email.ToLower();
                 using (var db = new TalabatContext())
                 {
                     Client client = db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);

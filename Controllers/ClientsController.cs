@@ -113,12 +113,15 @@ namespace Talbat.Controllers
                 return BadRequest(ModelState);
             }
 
+            client.ClientEmail = client.ClientEmail.ToLower();
+
             Client _client = await _repo.RetriveByEmail(client.ClientEmail);
 
             if(_client != null)
             {
                 return BadRequest("The Email is already exist");
             }
+
             Client added = await _repo.CreatAsync(client);
             if (added == null)
             {
@@ -150,9 +153,11 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
+            client.ClientEmail = client.ClientEmail.ToLower();
+
             var _client = await _repo.RetriveByEmail(client.ClientEmail);
 
-            if (_client.ClientId != existing.ClientId)
+            if (_client != null && _client.ClientId != existing.ClientId)
             {
                 return BadRequest("The Email is already exist");
             }

@@ -32,7 +32,7 @@ namespace Talbat.Models
         public string ClientLname { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
-        [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid email format.")]
+        [RegularExpression("^[a-zA-Z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid email format.")]
         public string ClientEmail { get; set; }
 
         [Required(ErrorMessage = "Date of Birth is required")]
