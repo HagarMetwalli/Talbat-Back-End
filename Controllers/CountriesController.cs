@@ -23,6 +23,7 @@ namespace Talbat.Controllers
         // GET: api/countries
         [HttpGet]
         [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200, Type = typeof(ActionResult<List<Country>>))]
         public async Task<ActionResult<List<Country>>> Get()
         {
@@ -30,6 +31,10 @@ namespace Talbat.Controllers
             if (countries.Count == 0)
             {
                 return NoContent();
+            }
+            if (countries == null)
+            {
+                return BadRequest();
             }
             return Ok(countries);
         }
@@ -79,6 +84,7 @@ namespace Talbat.Controllers
 
             return Ok(country);
         }
+
         // Patch api/countries/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]

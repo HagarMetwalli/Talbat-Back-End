@@ -68,6 +68,7 @@ namespace Talbat.Controllers
             }
 
             var jwttoken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
             var jti = jwttoken.Claims.First(claim => claim.Type == ClaimTypes.Email);
             if (client.ClientEmail != jti.Value)
             {

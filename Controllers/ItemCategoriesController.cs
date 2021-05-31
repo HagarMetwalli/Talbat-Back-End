@@ -22,12 +22,18 @@ namespace Talbat.Controllers
         // GET: api/itemcategories
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<ItemCategory>>))]
-        public async Task<ActionResult<IList<ItemCategory>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<ItemCategory>>))]
+        public async Task<ActionResult<List<ItemCategory>>> Get()
         {
-            IList<ItemCategory> itemCategories = await _repo.RetriveAllAsync();
+            List<ItemCategory> itemCategories = await _repo.RetriveAllAsync();
             if (itemCategories.Count == 0)
+            {
                 return NoContent();
+            }
+            if (itemCategories == null)
+            {
+                return BadRequest();
+            }
             return Ok(itemCategories);
         }
 
@@ -40,7 +46,9 @@ namespace Talbat.Controllers
         {
             ItemCategory itemCategory = await _repo.RetriveAsync(id);
             if (itemCategory == null)
+            {
                 return NotFound();
+            }
             return Ok(itemCategory);
         }
         // GET api/ItemCategories/Name
@@ -53,7 +61,9 @@ namespace Talbat.Controllers
         {
             ItemCategory _itemCategory = await _repo.RetriveByNameAsync(itemCategory);
             if (_itemCategory == null)
+            {
                 return NotFound();
+            }
             return Ok(_itemCategory);
         }
 
@@ -64,15 +74,48 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Post([FromBody] ItemCategory itemCategory)
         {
             if (itemCategory == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             ItemCategory added = await _repo.CreatAsync(itemCategory);
             if (added == null)
+            {
                 return BadRequest();
+            }
             return Ok();
+        }
+
+
+    // Patch api/ItemCategories/5
+    [HttpPatch("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> Patch(int id, [FromBody] ItemCategory itemCategory)
+        {
+            if (id<=0 ||itemCategory == null || itemCategory.ItemCategoryId != id)
+            {
+                return BadRequest();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            await _repo.PatchAsync(itemCategory);
+            return new NoContentResult();
+
         }
 
         // DELETE api/ItemCategories/5
@@ -82,46 +125,26 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+            {
+                return null;
+            }
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
                 return BadRequest($"itemcategory {id} was found but failed to delete");
             }
         }
-    // Patch api/ItemCategories/5
-    [HttpPatch("{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-
-        public async Task<IActionResult> PatchItemCategory(int id, [FromBody] ItemCategory i)
-        {
-            if (i == null || i.ItemCategoryId != id)
-            {
-                return BadRequest();
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var existing = await _repo.RetriveAsync(id);
-            if (existing == null)
-            {
-                return NotFound();
-            }
-            await _repo.UpdateAsync(i);
-            return new NoContentResult();
-
-        }
-
     }
 }

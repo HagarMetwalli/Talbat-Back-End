@@ -13,10 +13,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
-        private IGenericService<Item> _repo;
+        private IGeneric<Item> _repo;
         private TalabatContext _db;
 
-        public ItemsController(IGenericService<Item> repo,TalabatContext db)
+        public ItemsController(IGeneric<Item> repo,TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -24,12 +24,19 @@ namespace Talbat.Controllers
         // GET: api/items
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Country>>))]
-        public async Task<ActionResult<IList<Client>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<Country>>))]
+        public async Task<ActionResult<List<Client>>> Get()
         {
             IList<Item> items = await _repo.RetriveAllAsync();
             if (items.Count == 0)
+            {
                 return NoContent();
+            }
+            if(items == null)
+            {
+                return BadRequest();
+            }
             return Ok(items);
         }
 
@@ -42,7 +49,9 @@ namespace Talbat.Controllers
         {
             Item item = await _repo.RetriveAsync(id);
             if (item == null)
+            {
                 return NotFound();
+            }
             return Ok(item);
         }
 
@@ -52,18 +61,30 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] Item item)
         {
+
+            if (item == null )
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var countryId = _db.Countries.Find(item.CountryId);
             var storeId = _db.Stores.Find(item.StoreId);
 
-            if (item == null || countryId==null || storeId ==null)
+            if (countryId == null || storeId == null)
+            {
                 return BadRequest();
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            }
 
             Item added = await _repo.CreatAsync(item);
             if (added == null)
+            {
                 return BadRequest();
+            }
             return Ok();
         }
 
@@ -74,15 +95,21 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+            {
+                return null;
+            }
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
@@ -96,11 +123,9 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchItem(int id, [FromBody] Item item)
+        public async Task<IActionResult> Patch(int id, [FromBody] Item item)
         {
-            var countryId = _db.Countries.Find(item.CountryId);
-            var storeId = _db.Stores.Find(item.StoreId);
-            if (item == null ||countryId==null|| storeId==null|| item.ItemId != id)
+            if (id <=0 || item == null ||item.ItemId != id)
             {
                 return BadRequest();
             }
@@ -108,12 +133,20 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            var countryId = _db.Countries.Find(item.CountryId);
+            var storeId = _db.Stores.Find(item.StoreId);
+
+            if (countryId == null || storeId == null )
+            {
+                return BadRequest();
+            }
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(item);
+            await _repo.PatchAsync(item);
             return new NoContentResult();
 
         }

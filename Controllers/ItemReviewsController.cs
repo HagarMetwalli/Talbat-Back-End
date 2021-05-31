@@ -13,10 +13,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class ItemReviewsController : ControllerBase
     {
-        private IGenericService<ItemReview> _repo;
+        private IGeneric<ItemReview> _repo;
         private TalabatContext _db;
 
-        public ItemReviewsController(IGenericService<ItemReview> repo,TalabatContext db)
+        public ItemReviewsController(IGeneric<ItemReview> repo,TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -24,12 +24,19 @@ namespace Talbat.Controllers
         // GET: api/itemreviews
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<ItemReview>>))]
-        public async Task<ActionResult<IList<Client>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<ItemReview>>))]
+        public async Task<ActionResult<List<Client>>> Get()
         {
-            IList<ItemReview> itemReviews = await _repo.RetriveAllAsync();
+            List<ItemReview> itemReviews = await _repo.RetriveAllAsync();
             if (itemReviews.Count == 0)
+            {
                 return NoContent();
+            }
+            if (itemReviews == null)
+            {
+                return BadRequest();
+            }
             return Ok(itemReviews);
         }
 
@@ -42,7 +49,9 @@ namespace Talbat.Controllers
         {
             ItemReview itemReview = await _repo.RetriveAsync(id);
             if (itemReview == null)
+            {
                 return NotFound();
+            }
             return Ok(itemReview);
         }
 
@@ -54,14 +63,20 @@ namespace Talbat.Controllers
         {
             var ratestatusId = _db.RateStatuses.Find(itemReview.RateStatusId);
             if (itemReview == null || ratestatusId == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             ItemReview added = await _repo.CreatAsync(itemReview);
             if (added == null)
+            {
                 return BadRequest();
+            }
             return Ok();
         }
 
@@ -70,26 +85,32 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<ItemReview>> PatchItemReview(int id, [FromBody] ItemReview itemReview)
+        public async Task<ActionResult<ItemReview>> Patch(int id, [FromBody] ItemReview itemReview)
         {
             var ratestatusId = _db.RateStatuses.Find(itemReview.RateStatusId);
-            if (itemReview == null ||ratestatusId ==null || itemReview.ItemId != id)
+            if (id <= 0 || itemReview == null ||ratestatusId ==null || itemReview.ItemId != id)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            var _itemReview = await _repo.UpdateAsync(itemReview);
+            var _itemReview = await _repo.PatchAsync(itemReview);
             if (_itemReview == null)
+            {
                 return BadRequest();
-
+            }
             return new NoContentResult();
         }
+
         // DELETE api/itemreviews/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
@@ -97,15 +118,21 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+            {
+                return null;
+            }
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
