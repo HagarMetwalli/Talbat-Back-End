@@ -74,7 +74,7 @@ namespace Talbat.Controllers
             {
                 return Unauthorized();
             }
-                
+        
             return Ok(client);
         }
 
@@ -193,9 +193,9 @@ namespace Talbat.Controllers
         [Route("login")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Login([FromBody] LoginService obj)
+        public async Task<IActionResult> Login([FromBody] Login obj)
         {
-            if (obj.clientEmail== null || obj.clientPassword == null)
+            if (obj.Email== null || obj.Password == null)
             {
                 return BadRequest();
             }
