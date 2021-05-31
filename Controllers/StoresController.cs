@@ -13,18 +13,27 @@ namespace Talbat.Controllers
     [ApiController]
     public class StoresController : ControllerBase
     {
-        private IGenericService<Store> _repo;
+        private IStoreService _repo;
         private TalabatContext _db;
-        
-        public StoresController(IGenericService<Store> repo, TalabatContext db)
+        private IItemCategoryService _itemCategoryRepo;
+
+        public StoresController(IStoreService repo , IItemCategoryService itemCategoryRepo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
+            _itemCategoryRepo = itemCategoryRepo;
         }
         // GET: api/Stores
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Store>))]
-        public async Task<IEnumerable<Store>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Store>>))]
+        public async Task<ActionResult<IList<Store>>> Get()
+        {
+            IList<Store> stores = await _repo.RetriveAllAsync();
+            if (stores.Count == 0)
+                return NoContent();
+            return Ok(stores);
+        }
 
         // GET api/Stores/5
         [HttpGet("{id}")]
@@ -38,6 +47,74 @@ namespace Talbat.Controllers
                 return NotFound();
             return Ok(Store);
         }
+        // GET api/Stores/MC
+        [HttpGet]
+        [Route("GetByName/{name}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetByName(string name)
+        {
+            Store Store = await _repo.RetriveByNameAsync(name);
+            if (Store == null)
+                return NotFound();
+            return Ok(Store);
+        }
+        // GET api/Stores/MC/Categories
+        [HttpGet]
+        [Route("{StoreName}/Categories")]
+        [ProducesResponseType(200, Type = typeof(List<string>))]
+        public async Task<ActionResult<IEnumerable<string>>> StoreCateories(string StoreName)
+        {
+            Store store = await _repo.RetriveByNameAsync(StoreName);
+            if (store == null)
+                return NotFound();
+            IEnumerable<string> CategoriesName = await _repo.RetriveCategoriesAsync(store.StoreId);
+            if (CategoriesName == null)
+                return NotFound();
+            return Ok(CategoriesName);
+        }
+        // GET api/Stores/Menu
+        [HttpGet]
+        [Route("{StoreName}/Menu")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(List<Item>))]
+        public async Task<ActionResult<IEnumerable<Item>>> StoreMenu(string StoreName)
+        {
+            Store store = await _repo.RetriveByNameAsync(StoreName);
+            if (store == null)
+                return NotFound();
+            IEnumerable<Item> ItemsList = await _repo.RetriveMenuAsync(store.StoreId);
+            if (ItemsList == null)
+                return NotFound();
+            return Ok(ItemsList);
+        }
+        // GET api/Stores/MC/Drinks
+        [HttpGet]
+        [Route("{StoreName}/{CategoryName}")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(List<Item>))]
+        public async Task<ActionResult<IEnumerable<Item>>> StoreMenuwithCategries(string StoreName, string CategoryName)
+        {
+            Store store = await _repo.RetriveByNameAsync(StoreName); 
+            ItemCategory itemCategory = await _itemCategoryRepo.RetriveByNameAsync(CategoryName);
+            if (store == null || itemCategory==null)
+                return NotFound();
+            IEnumerable<Item> ItemsList = await _repo.RetriveCategoryItemsAsync(store.StoreId,itemCategory.ItemCategoryId);
+            if (ItemsList == null)
+                return NotFound();
+            return Ok(ItemsList);
+        }
+        // GET: api/MostCommonStores
+        [HttpGet]
+        [Route("MostCommonStores")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Store>))]
+        public async Task<IEnumerable<String>> MostCommonStores()
+        {
+
+            return await _repo.RetriveMostCommonAsync();
+        }
+
 
         // POST api/Stores
         [HttpPost]
@@ -47,7 +124,7 @@ namespace Talbat.Controllers
         {
             var CountryId = _db.Cities.Find(Store.CountryId);
             var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            
+
             if (Store == null || CountryId == null || StoreTypeId == null)
                 return BadRequest();
 
@@ -92,7 +169,7 @@ namespace Talbat.Controllers
         {
             var CountryId = _db.Cities.Find(Store.CountryId);
             var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            if (Store == null  || CountryId == null || StoreTypeId == null || Store.StoreId != id)
+            if (Store == null || CountryId == null || StoreTypeId == null || Store.StoreId != id)
             {
                 return BadRequest();
             }
@@ -108,6 +185,6 @@ namespace Talbat.Controllers
             await _repo.UpdateAsync(Store);
             return new NoContentResult();
 
-        }
+        }  
     }
 }

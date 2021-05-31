@@ -22,8 +22,15 @@ namespace Talbat.Controllers
         }
         // GET: api/SubItems
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<SubItem>))]
-        public async Task<IEnumerable<SubItem>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<SubItem>>))]
+        public async Task<ActionResult<IList<SubItem>>> Get()
+        {
+            IList<SubItem> subItems = await _repo.RetriveAllAsync();
+            if (subItems.Count == 0)
+                return NoContent();
+            return Ok(subItems);
+        }
 
         // GET api/SubItems/5
         [HttpGet("{id}")]

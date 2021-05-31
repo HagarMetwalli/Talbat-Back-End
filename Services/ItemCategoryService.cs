@@ -9,7 +9,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class ItemCategoryService : IGenericService<ItemCategory>
+    public class ItemCategoryService : IItemCategoryService 
     {
         private TalabatContext _db;
         public ItemCategoryService(TalabatContext db)
@@ -35,13 +35,20 @@ namespace Talbat.Services
             return null;
         }
 
-        public Task<IEnumerable<ItemCategory>> RetriveAllAsync()
+        public Task<IList<ItemCategory>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<ItemCategory>>(() => _db.ItemCategories);
+            return Task<IList>.Run<IList<ItemCategory>>(() => _db.ItemCategories.ToList());
         }
         public Task<ItemCategory> RetriveAsync(int id)
         {
             return Task.Run(() => _db.ItemCategories.Find(id));
+        }
+
+        public Task<ItemCategory> RetriveByNameAsync(string itemCategoryName)
+        {
+            var ItemCategory = _db.ItemCategories.FirstOrDefault(s => s.ItemCategoryName == itemCategoryName);
+
+            return Task<ItemCategory>.Run<ItemCategory>(() => ItemCategory);
         }
 
         public async Task<ItemCategory> UpdateAsync(ItemCategory itemCategory)

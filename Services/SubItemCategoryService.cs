@@ -15,9 +15,9 @@ namespace Talbat.Services
         {
             _db = db;
         }
-        public Task<IEnumerable<SubItemCategory>> RetriveAllAsync()
+        public Task<IList<SubItemCategory>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<SubItemCategory>>(() => _db.SubItemCategories);
+            return Task<IList>.Run<IList<SubItemCategory>>(() => _db.SubItemCategories.ToList());
         }
 
         public Task<SubItemCategory> RetriveAsync(int id)

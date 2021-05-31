@@ -22,9 +22,15 @@ namespace Talbat.Controllers
         }
         // GET: api/StoreWorkingHours
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<StoreWorkingHour>))]
-        public async Task<IEnumerable<StoreWorkingHour>> Get() => await _repo.RetriveAllAsync();
-
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<StoreWorkingHour>>))]
+        public async Task<ActionResult<IList<StoreWorkingHour>>> Get()
+        {
+            IList<StoreWorkingHour> storeWorkingHours = await _repo.RetriveAllAsync();
+            if (storeWorkingHours.Count == 0)
+                return NoContent();
+            return Ok(storeWorkingHours);
+        }
         // GET api/StoreWorkingHours/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]

@@ -20,8 +20,15 @@ namespace Talbat.Controllers
         }
         // GET: api/DeliveryMen
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<DeliveryMan>))]
-        public async Task<IEnumerable<DeliveryMan>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<DeliveryMan>>))]
+        public async Task<ActionResult<IList<DeliveryMan>>> Get()
+        {
+            IList<DeliveryMan> deliveryMen = await _repo.RetriveAllAsync();
+            if (deliveryMen.Count == 0)
+                return NoContent();
+            return Ok(deliveryMen);
+        }
 
         // GET api/DeliveryMen/5
         [HttpGet("{id}")]

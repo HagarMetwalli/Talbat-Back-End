@@ -1,59 +1,163 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Castle.Core.Configuration;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
+using System.Security.Claims;
 
 namespace Talbat.Services
 {
-    public class ClientService: IGenericService<Client>
+    public class ClientService: IClientService
     {
-       // private static ConcurrentDictionary<int,Client> ClientsCache;
-        private TalabatContext _db;
+        TalabatContext _db = new TalabatContext();
         public ClientService(TalabatContext db)
         {
             _db = db;
         }
-        public Task<IEnumerable<Client>> RetriveAllAsync()
+        public Task<List<Client>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IEnumerable<Client>>(() => _db.Clients);
+            try
+            {
+                return Task<List<Client>>.Run<List<Client>>(() => _db.Clients.ToList());
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
         public Task<Client> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Clients.Find(id));
+            try
+            {
+                 return Task.Run(() => _db.Clients.Find(id));  
+            }
+            catch 
+            {
+                return null;
+            }
         }
-
+        public Task<Client> RetriveByEmail(string Email)
+        {
+            try
+            {
+                var client = _db.Clients.FirstOrDefault(c=>c.ClientEmail==Email);
+                return Task<Client>.Run<Client>(() => client);
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public async Task<Client> CreatAsync(Client client)
         {
-            await _db.Clients.AddAsync(client);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return client;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    await db.Clients.AddAsync(client);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return client;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<Client> UpdateAsync(Client client)
+        public async Task<Client> PatchAsync(Client client)
         {
-            _db = new TalabatContext();
-            _db.Clients.Update(client);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return client;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.Clients.Update(client);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return client;
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            Client client = await RetriveAsync(id);
-            _db.Clients.Remove(client);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    Client client = await RetriveAsync(id);
+                    db.Clients.Remove(client);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch 
+            {
+                return false;
+            }
+
+        }
+
+        public  Task<string> Login(LoginService obj)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.clientEmail);
+
+                    if (client != null && client.ClientPassword == obj.clientPassword)
+                    {
+                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"));
+                        var siginingCerdentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                        var tokenOptions = new JwtSecurityToken
+                            (
+                             issuer: "https://localhost:4200",
+                             audience: "https://localhost:4200",
+                             claims: new List<Claim>()
+                             {
+                         new Claim(ClaimTypes.Email, obj.clientEmail),
+                             },
+                             expires: DateTime.Now.AddMinutes(10),
+                             signingCredentials: siginingCerdentials
+                            );
+                        var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                        return Task.Run(() => tokenString);
+
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
+
         }
     }
 }

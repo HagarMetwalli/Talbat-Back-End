@@ -9,7 +9,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class ClientAddressService: IGenericService<ClientAddress>
+    public class ClientAddressService: IGeneric<ClientAddress>
     {
 
         private TalabatContext _db;
@@ -17,41 +17,93 @@ namespace Talbat.Services
         {
            _db = db;
         }
-        public async Task<ClientAddress> CreatAsync(ClientAddress clientAddress)
+        public Task<List<ClientAddress>> RetriveAllAsync()
         {
-            await _db.ClientAddresses.AddAsync(clientAddress);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return clientAddress;
-            return null;
-        }
-        public async Task<bool?> DeleteAsync(int id)
-        {
-            ClientAddress clientAddress = await RetriveAsync(id);
-            _db.ClientAddresses.Remove(clientAddress);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
-        }
-        public Task<IEnumerable<ClientAddress>> RetriveAllAsync()
-
-        {
-            return Task<IEnumerable>.Run<IEnumerable<ClientAddress>>(() => _db.ClientAddresses);
+            try
+            {
+                return Task<IList>.Run<List<ClientAddress>>(() => _db.ClientAddresses.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public Task<ClientAddress> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.ClientAddresses.Find(id));
+            try
+            {
+                return Task.Run(() => _db.ClientAddresses.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<ClientAddress> UpdateAsync(ClientAddress clientAddress)
+        public async Task<ClientAddress> CreatAsync(ClientAddress clientAddress)
         {
-            _db = new TalabatContext();
-            _db.ClientAddresses.Update(clientAddress);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return clientAddress;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    await db.ClientAddresses.AddAsync(clientAddress);
+
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return clientAddress;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
+        public async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    ClientAddress clientAddress = await RetriveAsync(id);
+                    db.ClientAddresses.Remove(clientAddress);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1) 
+                    { 
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<ClientAddress> PatchAsync(ClientAddress clientAddress)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.ClientAddresses.Update(clientAddress);
+                    int affected = await _db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return clientAddress;
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
+
         }
     }
 

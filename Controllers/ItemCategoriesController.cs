@@ -14,15 +14,22 @@ namespace Talbat.Controllers
     [ApiController]
     public class ItemCategoriesController : ControllerBase
     {
-        private IGenericService<ItemCategory> _repo;
-        public ItemCategoriesController(IGenericService<ItemCategory> repo) 
+        private IItemCategoryService _repo;
+        public ItemCategoriesController(IItemCategoryService repo) 
         {
             _repo = repo;
         }
         // GET: api/itemcategories
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ItemCategory>))]
-        public async Task<IEnumerable<ItemCategory>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<ItemCategory>>))]
+        public async Task<ActionResult<IList<ItemCategory>>> Get()
+        {
+            IList<ItemCategory> itemCategories = await _repo.RetriveAllAsync();
+            if (itemCategories.Count == 0)
+                return NoContent();
+            return Ok(itemCategories);
+        }
 
         // GET api/ItemCategories/5
         [HttpGet("{id}")]
@@ -35,6 +42,19 @@ namespace Talbat.Controllers
             if (itemCategory == null)
                 return NotFound();
             return Ok(itemCategory);
+        }
+        // GET api/ItemCategories/Name
+        [HttpGet]
+        [Route("GetByName/{itemCategory}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetByName(string itemCategory)
+        {
+            ItemCategory _itemCategory = await _repo.RetriveByNameAsync(itemCategory);
+            if (_itemCategory == null)
+                return NotFound();
+            return Ok(_itemCategory);
         }
 
         // POST api/ItemCategories

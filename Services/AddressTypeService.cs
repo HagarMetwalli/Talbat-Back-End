@@ -7,7 +7,7 @@ using Talbat.IServices;
 using Talbat.Models;
 namespace Talbat.Services
 {
-    public class AddressTypeService : IGenericService<AddressType>
+    public class AddressTypeService :IAddressType
     {
         private TalabatContext _db;
 
@@ -17,41 +17,80 @@ namespace Talbat.Services
         }
         public async Task<AddressType> CreatAsync(AddressType addressType)
         {
-            await _db.AddressTypes.AddAsync(addressType);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return addressType;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    await db.AddressTypes.AddAsync(addressType);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return addressType;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            AddressType addressType = await RetriveAsync(id);
-            _db.AddressTypes.Remove(addressType);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
-        }
+            try
+            {
+                AddressType addressType = await RetriveAsync(id);
+                using (var db = new TalabatContext())
+                {
+                    db.AddressTypes.Remove(addressType);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch 
+            {
+                return false;
+            }
 
-        public Task<IEnumerable<AddressType>> RetriveAllAsync()
-        {
-            return Task<IEnumerable>.Run<IEnumerable<AddressType>>(() => _db.AddressTypes);
         }
 
         public Task<AddressType> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.AddressTypes.Find(id));
+            try
+            {
+                return Task.Run(() => _db.AddressTypes.Find(id)); 
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
-        public async Task<AddressType> UpdateAsync(AddressType addressType)
+        public async Task<AddressType> PatchAsync(AddressType addressType)
         {
-            _db = new TalabatContext();
-            _db.AddressTypes.Update(addressType);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return addressType;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.AddressTypes.Update(addressType);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return addressType;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
         }
     }
 }

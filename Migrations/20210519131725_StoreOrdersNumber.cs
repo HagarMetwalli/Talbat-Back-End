@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class ss : Migration
+    public partial class StoreOrdersNumber : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -402,7 +402,8 @@ namespace Talbat.Migrations
                     Store_PaymentOnDeliverCash = table.Column<int>(type: "int", nullable: true),
                     Store_PaymentVisa = table.Column<int>(type: "int", nullable: true),
                     Store_Cuisine = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    StoreType_Id = table.Column<int>(type: "int", nullable: true)
+                    StoreType_Id = table.Column<int>(type: "int", nullable: true),
+                    StoreOrdersNumber = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

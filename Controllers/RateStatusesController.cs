@@ -22,8 +22,15 @@ namespace Talbat.Controllers
         }
         // GET: api/RateStatuses
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<RateStatus>))]
-        public async Task<IEnumerable<RateStatus>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<RateStatus>>))]
+        public async Task<ActionResult<IList<RateStatus>>> Get()
+        {
+            IList<RateStatus> rateStatuses = await _repo.RetriveAllAsync();
+            if (rateStatuses.Count == 0)
+                return NoContent();
+            return Ok(rateStatuses);
+        }
 
         // GET api/RateStatuses/5
         [HttpGet("{id}")]

@@ -1,27 +1,36 @@
-﻿//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Talbat.IServices;
-//using Talbat.Models;
 
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Talbat.IServices;
+using Talbat.Models;
 namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CitiesController : ControllerBase
     {
-        private IGenericService<City> _repo;
-        public CitiesController(IGenericService<City> repo) 
+        private IGeneric<City> _repo;
+        public CitiesController(IGeneric<City> repo)
         {
             _repo = repo;
         }
+
         // GET: api/cities
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<City>))]
-        public async Task<IEnumerable<City>> Get() => await _repo.RetriveAllAsync();
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<City>>))]
+        public async Task<ActionResult<List<City>>> Get()
+        {
+            List <City> cities = await _repo.RetriveAllAsync();
+            if (cities.Count == 0)
+            {
+                return NoContent();
+            }
+            return Ok(cities);
+        }
+           
 
         // GET api/cities/5
         [HttpGet("{id}")]
@@ -30,9 +39,17 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
             City city = await _repo.RetriveAsync(id);
+
             if (city == null)
+            {
                 return NotFound();
+            } 
             return Ok(city);
         }
 
@@ -43,14 +60,21 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Post([FromBody] City city)
         {
             if (city == null)
+            {
                 return BadRequest();
-                      
+            }
+
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             City added = await _repo.CreatAsync(city);
+
             if (added == null)
-               return BadRequest();
+            {
+                return BadRequest();
+            }
             return Ok();
         }
 
@@ -61,20 +85,27 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<City>> PatchCity(int id, [FromBody] City city)
         {
-            if (city == null||city.CityId != id)
+            if (city == null || city.CityId != id)
+            {
                 return BadRequest();
+            }  
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            var c =  await _repo.UpdateAsync(city);
+
+            var c = await _repo.PatchAsync(city);
             if (c == null)
-               return BadRequest();
+            {
+                return BadRequest();
+            }
 
             return new NoContentResult();
         }
@@ -86,20 +117,21 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
-                return BadRequest($"city {id} was found but failed to delete");
+                return BadRequest($"City {id} was found but failed to delete");
             }
         }
-
-//    }
-//}
+    }
+}
