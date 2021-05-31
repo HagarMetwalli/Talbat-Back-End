@@ -12,9 +12,9 @@ namespace Talbat.Models
     {
         public Item()
         {
-            OfferItems = new HashSet<OfferItem>();
-            OrderItems = new HashSet<OrderItem>();
-            SubItems = new HashSet<SubItem>();
+            //OfferItems = new HashSet<OfferItem>();
+            //OrderItems = new HashSet<OrderItem>();
+            //SubItems = new HashSet<SubItem>();
         }
         [Key]
         public int ItemId { get; set; }

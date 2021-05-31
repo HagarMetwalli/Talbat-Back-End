@@ -11,7 +11,7 @@ namespace Talbat.Models
     {
         public Invoice()
         {
-            ClientDeliveryManOrders = new HashSet<ClientDeliveryManOrder>();
+           // ClientDeliveryManOrders = new HashSet<ClientDeliveryManOrder>();
         }
 
         [Key]
