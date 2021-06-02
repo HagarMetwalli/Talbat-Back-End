@@ -12,11 +12,19 @@ namespace Talbat.Models
     {
         public Store()
         {
+<<<<<<< HEAD
             //    Items = new HashSet<Item>();
             //    Orders = new HashSet<Order>();
             //    Partners = new HashSet<Partner>();
             //    Reviews = new HashSet<Review>();
             //    StoreWorkingHours = new HashSet<StoreWorkingHour>();
+=======
+            //Items = new HashSet<Item>();
+            //Orders = new HashSet<Order>();
+            //Partners = new HashSet<Partner>();
+            //Reviews = new HashSet<Review>();
+            //StoreWorkingHours = new HashSet<StoreWorkingHour>();
+>>>>>>> Hajar
         }
 
         public int StoreId { get; set; }

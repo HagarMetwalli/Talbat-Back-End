@@ -17,48 +17,110 @@ namespace Talbat.Services
             _db = db;
         }
 
-        public async Task<ItemCategory> CreatAsync(ItemCategory itemCategory)
-        {
-            await _db.ItemCategories.AddAsync(itemCategory);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return itemCategory;
-            return null;
-        }
-        public async Task<bool?> DeleteAsync(int id)
-        {
-            ItemCategory itemCategory = await RetriveAsync(id);
-            _db.ItemCategories.Remove(itemCategory);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
-        }
-
-        public Task<IList<ItemCategory>> RetriveAllAsync()
-        {
-            return Task<IList>.Run<IList<ItemCategory>>(() => _db.ItemCategories.ToList());
-        }
         public Task<ItemCategory> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.ItemCategories.Find(id));
+            try
+            {
+                return Task.Run(() => _db.ItemCategories.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public Task<ItemCategory> RetriveByNameAsync(string itemCategoryName)
         {
-            var ItemCategory = _db.ItemCategories.FirstOrDefault(s => s.ItemCategoryName == itemCategoryName);
+            try
+            {
+                var ItemCategory = _db.ItemCategories.FirstOrDefault(s => s.ItemCategoryName == itemCategoryName);
 
-            return Task<ItemCategory>.Run<ItemCategory>(() => ItemCategory);
+                return Task<ItemCategory>.Run<ItemCategory>(() => ItemCategory);
+            }
+            catch
+            {
+                return null;
+            }
+
         }
-
-        public async Task<ItemCategory> UpdateAsync(ItemCategory itemCategory)
+        public async Task<ItemCategory> CreatAsync(ItemCategory itemCategory)
         {
-            _db = new TalabatContext();
-            _db.ItemCategories.Update(itemCategory);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return itemCategory;
-            return null;
+            try
+            {
+                using(var db = new TalabatContext())
+                {
+                    await db.ItemCategories.AddAsync(itemCategory);
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return itemCategory;
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
+
         }
+        public async Task<ItemCategory> PatchAsync(ItemCategory itemCategory)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.ItemCategories.Update(itemCategory);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return itemCategory;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public async Task<bool> DeleteAsync(int id)
+        {
+
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    ItemCategory itemCategory = await RetriveAsync(id);
+                    db.ItemCategories.Remove(itemCategory);
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            
+        }
+
+        public Task<List<ItemCategory>> RetriveAllAsync()
+        {
+            try
+            {
+                return Task<IList>.Run<List<ItemCategory>>(() => _db.ItemCategories.ToList());
+            }
+            catch 
+            {
+                return null;
+            }
+        }
+
     }
 }

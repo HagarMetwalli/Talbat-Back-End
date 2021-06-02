@@ -15,54 +15,122 @@ namespace Talbat.Services
         {
             _db = db;
         }
-        public async Task<Cuisine> CreatAsync(Cuisine cuisine)
-        {
-            await _db.Cuisines.AddAsync(cuisine);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return cuisine;
-            return null;
-        }
-        public async Task<bool?> DeleteAsync(int id)
-        {
-            Cuisine cuisine = await RetriveAsync(id);
-            _db.Cuisines.Remove(cuisine);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
-        }
 
-
-        public Task<IList<Cuisine>>  RetriveAllAsync()
+        public Task<List<Cuisine>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<Cuisine>>(() => _db.Cuisines.ToList());
+            try
+            {
+                return Task<IList>.Run<List<Cuisine>>(() => _db.Cuisines.ToList());
+            }
+            catch 
+            {
+                return null;
+            }
         }
         public Task<Cuisine> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Cuisines.Find(id));
+            try
+            {
+                return Task.Run(() => _db.Cuisines.Find(id));
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
-        public Task<IEnumerable<String>> RetriveMostCommonAsync()
+        public Task<List<string>> RetriveMostCommonAsync()
         {
-            var cuisine = _db.Cuisines.OrderByDescending(c => c.TotalOrdersNumber).Take(3).Select(c => c.CuisineName).ToList();
+            try
+            {
+                var cuisine = _db.Cuisines.OrderByDescending(c => c.TotalOrdersNumber).Take(3).Select(c => c.CuisineName).ToList();
 
-            return Task<IEnumerable>.Run<IEnumerable<String>>(() => cuisine);
+                return Task<IList>.Run<List<string>>(() => cuisine);
+            }
+            catch
+            {
+                return null;
+            }
         }
         public Task<Cuisine> RetriveByNameAsync(string cuisinename)
         {
-            var cuisine = _db.Cuisines.FirstOrDefault(s => s.CuisineName == cuisinename);
+            try
+            {
+                var cuisine = _db.Cuisines.FirstOrDefault(s => s.CuisineName == cuisinename);
 
-            return Task<Cuisine>.Run<Cuisine>(() => cuisine);
+                return Task<Cuisine>.Run<Cuisine>(() => cuisine);
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<Cuisine> UpdateAsync(Cuisine cuisine)
+        public async Task<Cuisine> CreatAsync(Cuisine cuisine)
         {
-            _db = new TalabatContext();
-            _db.Cuisines.Update(cuisine);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return cuisine;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    await db.Cuisines.AddAsync(cuisine);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return cuisine;
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
+
+        }
+        public async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    Cuisine cuisine = await RetriveAsync(id);
+                    db.Cuisines.Remove(cuisine);
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
+ 
+        public async Task<Cuisine> PatchAsync(Cuisine cuisine)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.Cuisines.Update(cuisine);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return cuisine;
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
+
         }
 
     }

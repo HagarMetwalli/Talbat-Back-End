@@ -109,10 +109,10 @@ namespace Talbat.Controllers
             }
 
             //Why nullable boolean?
-            bool? deleted = await _repo.DeleteAsync(id);
+            bool deleted = await _repo.DeleteAsync(id);
             ///////////////////////////////////
 
-            if (deleted.HasValue && deleted.Value)
+            if (deleted)
             {
                 return new NoContentResult();//204 No Content
             }

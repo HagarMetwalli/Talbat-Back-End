@@ -13,20 +13,27 @@ namespace Talbat.Controllers
     [ApiController]
     public class DeliveryMenController : ControllerBase
     {
-        private IGenericService<DeliveryMan> _repo;
-        public DeliveryMenController(IGenericService<DeliveryMan> repo) 
+        private IGeneric<DeliveryMan> _repo;
+        public DeliveryMenController(IGeneric<DeliveryMan> repo) 
         {
             _repo = repo;
         }
         // GET: api/DeliveryMen
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<DeliveryMan>>))]
-        public async Task<ActionResult<IList<DeliveryMan>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<DeliveryMan>>))]
+        public async Task<ActionResult<List<DeliveryMan>>> Get()
         {
-            IList<DeliveryMan> deliveryMen = await _repo.RetriveAllAsync();
+            List<DeliveryMan> deliveryMen = await _repo.RetriveAllAsync();
             if (deliveryMen.Count == 0)
+            {
                 return NoContent();
+            }
+            if(deliveryMen == null)
+            {
+                return BadRequest();
+            }
             return Ok(deliveryMen);
         }
 
@@ -39,7 +46,9 @@ namespace Talbat.Controllers
         {
             DeliveryMan deliveryMan = await _repo.RetriveAsync(id);
             if (deliveryMan == null)
+            {
                 return NotFound();
+            }
             return Ok(deliveryMan);
         }
 
@@ -50,41 +59,24 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Post([FromBody] DeliveryMan deliveryMan)
         {
             if (deliveryMan == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             DeliveryMan added = await _repo.CreatAsync(deliveryMan);
             if (added == null)
+            {
                 return BadRequest();
+            }
 
             return Ok();
         }
 
-
-        // DELETE api/DeliveryMen/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var existing = await _repo.RetriveAsync(id);
-            if (existing == null)
-            {
-                return NotFound();
-            }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
-            {
-                return new NoContentResult();//204 No Content
-            }
-            else
-            {
-                return BadRequest($"DeliveryMan {id} was found but failed to delete");
-            }
-        }
 
         // Patch api/deliveryMen/5
         [HttpPatch("{id}")]
@@ -92,7 +84,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchDeliveryMan(int id, [FromBody] DeliveryMan deliveryMan)
+        public async Task<IActionResult> Patch(int id, [FromBody] DeliveryMan deliveryMan)
         {
             if (deliveryMan == null || deliveryMan.DeliveryManId != id)
             {
@@ -107,10 +99,37 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(deliveryMan);
+            await _repo.PatchAsync(deliveryMan);
             return new NoContentResult();
 
         }
+        // DELETE api/DeliveryMen/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (id <= 0)
+            {
+                return null;
+            }
+            var existing = await _repo.RetriveAsync(id);
 
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
+            {
+                return new NoContentResult();
+            }
+            else
+            {
+                return BadRequest($"DeliveryMan {id} was found but failed to delete");
+            }
+        }
     }
 }

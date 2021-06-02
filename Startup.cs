@@ -51,16 +51,15 @@ namespace Talbat
             });
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddScoped<IGenericService<City>, CityService>();
-            services.AddScoped<IGenericService<AddressType>, AddressTypeService>();
-            services.AddScoped<IGenericService<ClientAddress>, ClientAddressService>();
+            services.AddScoped<IGeneric<City>, CityService>();
+            services.AddScoped<IGeneric<ClientAddress>, ClientAddressService>();
             // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
-            services.AddScoped<IGenericService<Country>, CountryService>();
-            services.AddScoped<IGenericService<DeliveryMan>, DeliveryManService>();
-            services.AddScoped<IGenericService<Invoice>, InvoiceService>();
-            services.AddScoped<IRetriveByNameService<ItemCategory>, ItemCategoryService>();
-            services.AddScoped<IGenericService<Item>, ItemService>();
-            services.AddScoped<IGenericService<ItemReview>, ItemReviewService>();
+            services.AddScoped<IGeneric<Country>, CountryService>();
+            services.AddScoped<IGeneric<DeliveryMan>, DeliveryManService>();
+            services.AddScoped<IGeneric<Invoice>, InvoiceService>();
+            services.AddScoped<IItemCategoryService, ItemCategoryService>();
+            services.AddScoped<IGeneric<Item>, ItemService>();
+            services.AddScoped<IGeneric<ItemReview>, ItemReviewService>();
             services.AddScoped<IOfferRelatedService, OfferService>();
             services.AddScoped<IGeneric<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
             services.AddScoped<IGeneric<SubItemCategory>, SubItemCategoryService>();
@@ -74,6 +73,7 @@ namespace Talbat
             services.AddScoped<IGeneric<Partner>, PartnerService>();
             services.AddScoped<IGeneric<OrderReview>, OrderReviewService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
+            services.AddScoped<IAddressType, AddressTypeService>();
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<ICuisienSevice, CuisineService>();
             services.AddScoped<IClientService, ClientService>();
