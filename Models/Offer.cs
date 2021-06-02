@@ -32,7 +32,7 @@ namespace Talbat.Models
         public string OfferDescription { get; set; }
 
         [Required]
-        [DataType(DataType.Date)]
+        //[DataType(DataType.Date)]
         public DateTime OfferStartDate { get; set; }
 
         [Required]
@@ -44,8 +44,12 @@ namespace Talbat.Models
         public int OfferDaysNumber { get; set; }
 
         [Required]
+        [Range(0, 1)]
+        public int OfferItemTypePercentage { get; set; }
+
+        [Required]
         [Range(1, int.MaxValue)]
-        public string OfferPrice { get; set; }
+        public int OfferItemSaleValue { get; set; }
 
         public virtual ICollection<ClientOffer> ClientOffers { get; set; }
         public virtual ICollection<OfferItem> OfferItems { get; set; }

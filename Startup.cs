@@ -83,7 +83,7 @@ namespace Talbat
             services.AddScoped<IGeneric<JobLocation>, JobLocationService>();
             services.AddScoped<IGeneric<JobPeriod>, JobPeriodService>();
             services.AddScoped<IGeneric<JobType>, JobTypeService>();
-            //services.AddScoped<IGeneric<OrderItem>, OrderItemService>();
+            services.AddScoped<IGenericComposite<OfferItem>, OfferItemService>();
 
 
             // Adding Authentication  
