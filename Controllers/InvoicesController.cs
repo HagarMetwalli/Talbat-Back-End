@@ -14,10 +14,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class InvoicesController : ControllerBase
     {
-        private IGenericService<Invoice> _repo;
+        private IGeneric<Invoice> _repo;
         private TalabatContext _db;
 
-        public InvoicesController(IGenericService<Invoice> repo , TalabatContext db) 
+        public InvoicesController(IGeneric<Invoice> repo , TalabatContext db) 
         {
             _repo = repo;
             _db = db;
@@ -25,12 +25,19 @@ namespace Talbat.Controllers
         // GET: api/Invoices
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Invoice>>))]
-        public async Task<ActionResult<IList<Client>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<Invoice>>))]
+        public async Task<ActionResult<List<Client>>> Get()
         {
-            IList<Invoice> invoices = await _repo.RetriveAllAsync();
+            List<Invoice> invoices = await _repo.RetriveAllAsync();
             if (invoices.Count == 0)
+            {
                 return NoContent();
+            }
+            if(invoices == null)
+            {
+                return BadRequest();
+            }
             return Ok(invoices);
         }
 
@@ -43,7 +50,9 @@ namespace Talbat.Controllers
         {
             Invoice invoice = await _repo.RetriveAsync(id);
             if (invoice == null)
+            {
                 return NotFound();
+            }
             return Ok(invoice);
         }
 
@@ -55,15 +64,21 @@ namespace Talbat.Controllers
         {
             var orderId = _db.Orders.Find(invoice.OrderId);
 
-            if (invoice == null || orderId==null)
+            if (invoice == null || orderId == null)
+            {
                 return BadRequest();
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             Invoice added = await _repo.CreatAsync(invoice);
             if (added == null)
+            {
                 return BadRequest();
+            }
             return Ok();
         }
 
@@ -74,28 +89,35 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+            {
+                return null;
+            }
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
                 return BadRequest($"invoice {id} was found but failed to delete");
             }
         }
+
         // Patch api/ Invoices/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchInvoice(int id, [FromBody] Invoice invoice)
+        public async Task<IActionResult> Patch(int id, [FromBody] Invoice invoice)
         {
             var orderId = _db.Orders.Find(invoice.OrderId);
             if (invoice == null || orderId ==null || invoice.InvoiceId != id)
@@ -111,7 +133,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(invoice);
+            await _repo.PatchAsync(invoice);
             return new NoContentResult();
 
         }

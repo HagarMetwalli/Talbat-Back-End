@@ -9,49 +9,100 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class DeliveryManService:IGenericService<DeliveryMan>
+    public class DeliveryManService:IGeneric<DeliveryMan>
     {
         private TalabatContext _db;
         public DeliveryManService(TalabatContext db)
         {
             _db = db;
         }
-        public async Task<DeliveryMan> CreatAsync(DeliveryMan deliveryMan)
+        public Task<List<DeliveryMan>> RetriveAllAsync()
         {
-            await _db.DeliveryMen.AddAsync(deliveryMan);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return deliveryMan;
-            return null;
-        }
-        public async Task<bool?> DeleteAsync(int id)
-        {
-            DeliveryMan deliveryMan = await RetriveAsync(id);
-            _db.DeliveryMen.Remove(deliveryMan);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
-        }
-
-        public Task<IList<DeliveryMan>> RetriveAllAsync()
-        {
-            return Task<IList>.Run<IList<DeliveryMan>>(() => _db.DeliveryMen.ToList());
+            try
+            {
+                return Task<IList>.Run<List<DeliveryMan>>(() => _db.DeliveryMen.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
         public Task<DeliveryMan> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.DeliveryMen.Find(id));
+            try
+            {
+                return Task.Run(() => _db.DeliveryMen.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public async Task<DeliveryMan> CreatAsync(DeliveryMan deliveryMan)
+        {
+            try
+            {
+                using(var db = new TalabatContext())
+                {
+                    await _db.DeliveryMen.AddAsync(deliveryMan);
+                    int affected = await _db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return deliveryMan;
+                    }
+                    return null;
+                }
+
+            }
+            catch 
+            {
+                return null;
+            }
+        }
+        public async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    DeliveryMan deliveryMan = await RetriveAsync(id);
+                    db.DeliveryMen.Remove(deliveryMan);
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-
-        public async Task<DeliveryMan> UpdateAsync(DeliveryMan deliveryMan)
+        public async Task<DeliveryMan> PatchAsync(DeliveryMan deliveryMan)
         {
-            _db = new TalabatContext();
-            _db.DeliveryMen.Update(deliveryMan);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return deliveryMan;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.DeliveryMen.Update(deliveryMan);
+                    int affected = await _db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return deliveryMan;
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
+
         }
     }
 }

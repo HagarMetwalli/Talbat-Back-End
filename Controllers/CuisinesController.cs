@@ -19,9 +19,11 @@ namespace Talbat.Controllers
         {
             _repo = repo;
         }
+
         // GET: api/Cuisines
         [HttpGet]
         [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200, Type = typeof(ActionResult<List<Cuisine>>))]
         public async Task<ActionResult<List<Client>>> Get()
         {
@@ -29,6 +31,10 @@ namespace Talbat.Controllers
             if (cuisines.Count == 0)
             {
                 return NoContent();
+            }
+            if (cuisines == null)
+            {
+                return BadRequest();
             }
             return Ok(cuisines);
         }
@@ -74,8 +80,8 @@ namespace Talbat.Controllers
         // GET: api/Cuisines/MostCommonCuisine
         [HttpGet]
         [Route("MostCommonCuisine")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<String>))]
-        public async Task<IEnumerable<object>> MostCommonCuisine()
+        [ProducesResponseType(200, Type = typeof(List<string>))]
+        public async Task<List<string>> MostCommonCuisine()
         {
             return await _repo.RetriveMostCommonAsync();
         }
@@ -121,6 +127,7 @@ namespace Talbat.Controllers
                 return BadRequest(ModelState);
             }
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             { 
                 return NotFound();

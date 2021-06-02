@@ -21,21 +21,30 @@ namespace Talbat.Controllers
             _repo = repo;
             _db = db;
         }
+
         // GET: api/clientaddresses
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<ClientAddress>>))]
-        public async Task<ActionResult<IList<City>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<ClientAddress>>))]
+        public async Task<ActionResult<List<City>>> Get()
         {
-            IList<ClientAddress> clientAddresses = await _repo.RetriveAllAsync();
+            List<ClientAddress> clientAddresses = await _repo.RetriveAllAsync();
             if (clientAddresses.Count == 0)
+            {
                 return NoContent();
+            }
+
+            if(clientAddresses == null)
+            {
+                return BadRequest();
+            }
             return Ok(clientAddresses);
         }
 
         // GET api/clientaddresses/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
@@ -89,7 +98,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<ClientAddress>> PatchClientAddress(int id, [FromBody] ClientAddress clientAddress)
+        public async Task<ActionResult<ClientAddress>> Patch(int id, [FromBody] ClientAddress clientAddress)
         {
             if (id <= 0 || clientAddress == null)
             {

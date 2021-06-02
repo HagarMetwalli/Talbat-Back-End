@@ -13,12 +13,12 @@ namespace Talbat.Models
     {
         public Client()
         {
-            ClientAddresses = new HashSet<ClientAddress>();
-            ClientDeliveryManOrders = new HashSet<ClientDeliveryManOrder>();
-            ClientOffers = new HashSet<ClientOffer>();
-            ClientSeekingJobs = new HashSet<ClientSeekingJob>();
-            Orders = new HashSet<Order>();
-            Reviews = new HashSet<Review>();
+            //ClientAddresses = new HashSet<ClientAddress>();
+            //ClientDeliveryManOrders = new HashSet<ClientDeliveryManOrder>();
+            //ClientOffers = new HashSet<ClientOffer>();
+            //ClientSeekingJobs = new HashSet<ClientSeekingJob>();
+            //Orders = new HashSet<Order>();
+            //Reviews = new HashSet<Review>();
         }
         [Key]
         public int ClientId { get; set; }

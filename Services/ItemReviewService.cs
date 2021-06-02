@@ -11,7 +11,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class ItemReviewService : IGenericService<ItemReview>
+    public class ItemReviewService : IGeneric<ItemReview>
     {
         private TalabatContext _db;
         public ItemReviewService(TalabatContext db)
@@ -20,40 +20,91 @@ namespace Talbat.Services
         }
         public async Task<ItemReview> CreatAsync(ItemReview itemReview)
         {
-            await _db.ItemReviews.AddAsync(itemReview);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return itemReview;
-            return null;
-        }
-        public async Task<bool?> DeleteAsync(int id)
-        {
-            ItemReview itemReview = await RetriveAsync(id);
-            _db.ItemReviews.Remove(itemReview);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    await db.ItemReviews.AddAsync(itemReview);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return itemReview;
+                    }
+                    return null;
+                }
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
-        public Task<IList<ItemReview>> RetriveAllAsync()
+        public Task<List<ItemReview>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<ItemReview>>(() => _db.ItemReviews.ToList());
+            try
+            {
+                return Task<IList>.Run<List<ItemReview>>(() => _db.ItemReviews.ToList());
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
         public Task<ItemReview> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.ItemReviews.Find(id));
+            try
+            {
+                return Task.Run(() => _db.ItemReviews.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<ItemReview> UpdateAsync(ItemReview itemReview)
+        public async Task<ItemReview> PatchAsync(ItemReview itemReview)
         {
-            _db = new TalabatContext();
-            _db.ItemReviews.Update(itemReview);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return itemReview;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    db.ItemReviews.Update(itemReview);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return itemReview;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
+        public async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    ItemReview itemReview = await RetriveAsync(id);
+                    db.ItemReviews.Remove(itemReview);
+                    int affected = await db.SaveChangesAsync();
+
+                    if (affected == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

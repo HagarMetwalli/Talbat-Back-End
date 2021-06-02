@@ -20,6 +20,7 @@ namespace Talbat.Controllers
         // GET: api/cities
         [HttpGet]
         [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200, Type = typeof(ActionResult<List<City>>))]
         public async Task<ActionResult<List<City>>> Get()
         {
@@ -27,6 +28,10 @@ namespace Talbat.Controllers
             if (cities.Count == 0)
             {
                 return NoContent();
+            }
+            if(cities==null)
+            {
+                return BadRequest();
             }
             return Ok(cities);
         }
@@ -83,9 +88,9 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchCity(int id, [FromBody] City city)
+        public async Task<ActionResult<City>> Patch(int id, [FromBody] City city)
         {
-            if (city == null || city.CityId != id)
+            if (id <= 0 ||city == null || city.CityId != id)
             {
                 return BadRequest();
             }  
@@ -109,6 +114,7 @@ namespace Talbat.Controllers
 
             return new NoContentResult();
         }
+
         // DELETE api/cities/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
@@ -116,6 +122,10 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if(id <= 0)
+            {
+                return null;
+            }
             var existing = await _repo.RetriveAsync(id);
 
             if (existing == null)
