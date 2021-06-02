@@ -25,14 +25,16 @@ namespace Talbat.Models
 
         [Required(ErrorMessage ="FristName is required") ]
         [StringLength(maximumLength:20,MinimumLength =3)]
+        [RegularExpression("^[A-z]{1}[a-z]*$", ErrorMessage = "Invalid fristname format only alphabetic characters is accepted")]
         public string ClientFname { get; set; }
 
         [Required(ErrorMessage = "LastName is required")]
         [StringLength(maximumLength: 20, MinimumLength = 3)]
+        [RegularExpression("^[A-z]{1}[a-z]*$", ErrorMessage = "Invalid lastname format only alphabetic characters is accepted")]
         public string ClientLname { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
-        [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid email format.")]
+        [RegularExpression("^[a-zA-Z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid email format.")]
         public string ClientEmail { get; set; }
 
         [Required(ErrorMessage = "Date of Birth is required")]

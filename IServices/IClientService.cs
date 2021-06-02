@@ -9,6 +9,6 @@ namespace Talbat.IServices
     public interface IClientService : IGeneric<Client>
     {
         public Task<Client> RetriveByEmail(string Email);
-        public Task<string> Login(LoginService obj);
+        public Task<string> Login(Login obj);
     }
 }

@@ -9,7 +9,7 @@ namespace Talbat.IServices
 
     public interface ICuisienSevice : IGeneric<Cuisine>
     {
-        public Task<List<String>> RetriveMostCommonAsync();
+        public Task<List<string>> RetriveMostCommonAsync();
         public Task<Cuisine> RetriveByNameAsync(string name);
 
     }

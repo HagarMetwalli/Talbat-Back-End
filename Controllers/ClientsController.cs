@@ -74,7 +74,7 @@ namespace Talbat.Controllers
             {
                 return Unauthorized();
             }
-                
+        
             return Ok(client);
         }
 
@@ -113,12 +113,15 @@ namespace Talbat.Controllers
                 return BadRequest(ModelState);
             }
 
+            client.ClientEmail = client.ClientEmail.ToLower();
+
             Client _client = await _repo.RetriveByEmail(client.ClientEmail);
 
             if(_client != null)
             {
                 return BadRequest("The Email is already exist");
             }
+
             Client added = await _repo.CreatAsync(client);
             if (added == null)
             {
@@ -150,9 +153,11 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
+            client.ClientEmail = client.ClientEmail.ToLower();
+
             var _client = await _repo.RetriveByEmail(client.ClientEmail);
 
-            if (_client.ClientId != existing.ClientId)
+            if (_client != null && _client.ClientId != existing.ClientId)
             {
                 return BadRequest("The Email is already exist");
             }
@@ -193,9 +198,9 @@ namespace Talbat.Controllers
         [Route("login")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Login([FromBody] LoginService obj)
+        public async Task<IActionResult> Login([FromBody] Login obj)
         {
-            if (obj.clientEmail== null || obj.clientPassword == null)
+            if (obj.Email== null || obj.Password == null)
             {
                 return BadRequest();
             }

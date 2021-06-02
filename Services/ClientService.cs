@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
+using Talbat.Authentication;
 using System.Security.Claims;
 
 namespace Talbat.Services
@@ -40,7 +41,10 @@ namespace Talbat.Services
         {
             try
             {
-                 return Task.Run(() => _db.Clients.Find(id));  
+                using (var db = new TalabatContext())
+                {
+                    return Task.Run(() => db.Clients.Find(id));  
+                }
             }
             catch 
             {
@@ -65,6 +69,7 @@ namespace Talbat.Services
             {
                 using (var db = new TalabatContext())
                 {
+                    client.ClientEmail.ToLower();
                     await db.Clients.AddAsync(client);
                     int affected = await db.SaveChangesAsync();
                     if (affected == 1)
@@ -85,6 +90,7 @@ namespace Talbat.Services
             {
                 using (var db = new TalabatContext())
                 {
+                    client.ClientEmail.ToLower();
                     db.Clients.Update(client);
                     int affected = await db.SaveChangesAsync();
                     if (affected == 1)
@@ -123,32 +129,19 @@ namespace Talbat.Services
 
         }
 
-        public  Task<string> Login(LoginService obj)
+        public  Task<string> Login(Login obj)
         {
             try
             {
                 using (var db = new TalabatContext())
                 {
-                    Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.clientEmail);
+                    obj.Email = obj.Email.ToLower();
+                    Client client = db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
 
-                    if (client != null && client.ClientPassword == obj.clientPassword)
+                    if (client != null && client.ClientPassword == obj.Password)
                     {
-                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"));
-                        var siginingCerdentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                        var tokenOptions = new JwtSecurityToken
-                            (
-                             issuer: "https://localhost:4200",
-                             audience: "https://localhost:4200",
-                             claims: new List<Claim>()
-                             {
-                         new Claim(ClaimTypes.Email, obj.clientEmail),
-                             },
-                             expires: DateTime.Now.AddMinutes(10),
-                             signingCredentials: siginingCerdentials
-                            );
-                        var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                        var tokenString = UserAuthentication.CreateToken(obj.Email);
                         return Task.Run(() => tokenString);
-
                     }
                     return null;
                 }
