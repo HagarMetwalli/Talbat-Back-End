@@ -41,7 +41,10 @@ namespace Talbat.Services
         {
             try
             {
-                 return Task.Run(() => _db.Clients.Find(id));  
+                using (var db = new TalabatContext())
+                {
+                    return Task.Run(() => db.Clients.Find(id));  
+                }
             }
             catch 
             {
