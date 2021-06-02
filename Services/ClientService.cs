@@ -41,10 +41,8 @@ namespace Talbat.Services
         {
             try
             {
-                using (var db = new TalabatContext())
-                {
-                    return Task.Run(() => db.Clients.Find(id));  
-                }
+
+                return Task.Run(() => _db.Clients.Find(id));  
             }
             catch 
             {
@@ -133,18 +131,17 @@ namespace Talbat.Services
         {
             try
             {
-                using (var db = new TalabatContext())
-                {
-                    obj.Email = obj.Email.ToLower();
-                    Client client = db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
 
-                    if (client != null && client.ClientPassword == obj.Password)
-                    {
-                        var tokenString = UserAuthentication.CreateToken(obj.Email);
-                        return Task.Run(() => tokenString);
-                    }
-                    return null;
+                obj.Email = obj.Email.ToLower();
+                Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
+
+                if (client != null && client.ClientPassword == obj.Password)
+                {
+                    var tokenString = UserAuthentication.CreateToken(obj.Email);
+                    return Task.Run(() => tokenString);
                 }
+                return null;
+                
             }
             catch 
             {
