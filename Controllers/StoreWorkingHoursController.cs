@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class StoreWorkingHoursController : ControllerBase
     {
-        private IGenericService<StoreWorkingHour> _repo;
+        private IGeneric<StoreWorkingHour> _repo;
         private TalabatContext _db;
 
-        public StoreWorkingHoursController(IGenericService<StoreWorkingHour> repo, TalabatContext db)
+        public StoreWorkingHoursController(IGeneric<StoreWorkingHour> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -23,10 +23,13 @@ namespace Talbat.Controllers
         // GET: api/StoreWorkingHours
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<StoreWorkingHour>>))]
-        public async Task<ActionResult<IList<StoreWorkingHour>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<StoreWorkingHour>>))]
+        public async Task<ActionResult<List<StoreWorkingHour>>> Get()
         {
-            IList<StoreWorkingHour> storeWorkingHours = await _repo.RetriveAllAsync();
+            List<StoreWorkingHour> storeWorkingHours = await _repo.RetriveAllAsync();
+            if (storeWorkingHours == null)
+                return BadRequest();
             if (storeWorkingHours.Count == 0)
                 return NoContent();
             return Ok(storeWorkingHours);
@@ -35,9 +38,12 @@ namespace Talbat.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             StoreWorkingHour StoreWorkingHour = await _repo.RetriveAsync(id);
             if (StoreWorkingHour == null)
                 return NotFound();
@@ -50,13 +56,15 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] StoreWorkingHour StoreWorkingHour)
         {
-            var StoreId = _db.Stores.Find(StoreWorkingHour.StoreId);
-
-            if (StoreWorkingHour == null || StoreId == null)
+            if (StoreWorkingHour == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var StoreId = _db.Stores.Find(StoreWorkingHour.StoreId);
+            if ( StoreId == null)
+                return BadRequest();
 
             StoreWorkingHour added = await _repo.CreatAsync(StoreWorkingHour);
             if (added == null)
@@ -76,10 +84,10 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
@@ -94,8 +102,7 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> Patch(int id, [FromBody] StoreWorkingHour StoreWorkingHour)
         {
-            var StoreId = _db.Stores.Find(StoreWorkingHour.StoreId);
-            if (StoreWorkingHour == null || StoreId == null || StoreWorkingHour.StoreWorkingHourId != id)
+            if (StoreWorkingHour == null || StoreWorkingHour.StoreWorkingHourId != id)
             {
                 return BadRequest();
             }
@@ -103,12 +110,22 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var StoreId = _db.Stores.Find(StoreWorkingHour.StoreId);
+            if (StoreId == null)
+            {
+                return BadRequest();
+            }
+        
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(StoreWorkingHour);
+            var affected = await _repo.PatchAsync(StoreWorkingHour);
+            if (affected == null)
+            {
+                return BadRequest();
+            }
             return new NoContentResult();
 
         }

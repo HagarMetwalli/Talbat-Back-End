@@ -12,9 +12,9 @@ namespace Talbat.Controllers
     [ApiController]
     public class TempPartnerRegisterationDetailsController : ControllerBase
     {
-        private IGenericService<TempPartnerRegisterationDetail> _repo;
+        private IGeneric<TempPartnerRegisterationDetail> _repo;
 
-        public TempPartnerRegisterationDetailsController(IGenericService<TempPartnerRegisterationDetail> repo)
+        public TempPartnerRegisterationDetailsController(IGeneric<TempPartnerRegisterationDetail> repo)
         {
             _repo = repo;
         }
@@ -23,9 +23,15 @@ namespace Talbat.Controllers
         [HttpGet]
         [ProducesResponseType(204)]
         [ProducesResponseType(200, Type = typeof(ActionResult<IList<TempPartnerRegisterationDetail>>))]
-        public async Task<ActionResult<IList<TempPartnerRegisterationDetail>>> Get()
+        [ProducesResponseType(400)]
+
+        public async Task<ActionResult<List<TempPartnerRegisterationDetail>>> Get()
         {
-            IList<TempPartnerRegisterationDetail> tempPartnerRegisterationDetails = await _repo.RetriveAllAsync();
+            List<TempPartnerRegisterationDetail> tempPartnerRegisterationDetails = await _repo.RetriveAllAsync();
+            if (tempPartnerRegisterationDetails == null)
+            {
+                return BadRequest();
+            }
             if (tempPartnerRegisterationDetails.Count == 0)
                 return NoContent();
             return Ok(tempPartnerRegisterationDetails);
@@ -37,6 +43,10 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
             TempPartnerRegisterationDetail TempPartnerRegisterationDetail = await _repo.RetriveAsync(id);
             if (TempPartnerRegisterationDetail == null)
                 return NotFound();
@@ -80,7 +90,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _client = await _repo.UpdateAsync(TempPartnerRegisterationDetail);
+            var _client = await _repo.PatchAsync(TempPartnerRegisterationDetail);
             if (_client == null)
                 return BadRequest();
 
@@ -93,13 +103,15 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+                return null;
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
                 return new NoContentResult();//204 No Content
             }

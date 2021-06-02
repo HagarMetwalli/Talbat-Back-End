@@ -8,49 +8,80 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class TempPartnerRegisterationDetailService : IGenericService<TempPartnerRegisterationDetail>
+    public class TempPartnerRegisterationDetailService : IGeneric<TempPartnerRegisterationDetail>
     {
         private TalabatContext _db;
         public TempPartnerRegisterationDetailService(TalabatContext db)
         {
             _db = db;
         }
-        public Task<IList<TempPartnerRegisterationDetail>> RetriveAllAsync()
+        public Task<List<TempPartnerRegisterationDetail>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<TempPartnerRegisterationDetail>>(() => _db.TempPartnerRegisterationDetails.ToList());
-        }
+            try
+            {
+                return Task<List<TempPartnerRegisterationDetail>>.Run<List<TempPartnerRegisterationDetail>>(() => _db.TempPartnerRegisterationDetails.ToList());
+            }
+            catch
+            {
+                return null;
+            }
+            }
 
         public Task<TempPartnerRegisterationDetail> RetriveAsync(int id)
         {
+            try { 
             return Task.Run(() => _db.TempPartnerRegisterationDetails.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<TempPartnerRegisterationDetail> CreatAsync(TempPartnerRegisterationDetail TempPartnerRegisterationDetail)
         {
+            try { 
             await _db.TempPartnerRegisterationDetails.AddAsync(TempPartnerRegisterationDetail);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return TempPartnerRegisterationDetail;
             return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<TempPartnerRegisterationDetail> UpdateAsync(TempPartnerRegisterationDetail TempPartnerRegisterationDetail)
+        public async Task<TempPartnerRegisterationDetail> PatchAsync(TempPartnerRegisterationDetail TempPartnerRegisterationDetail)
         {
+            try { 
             _db = new TalabatContext();
             _db.TempPartnerRegisterationDetails.Update(TempPartnerRegisterationDetail);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return TempPartnerRegisterationDetail;
             return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
+            try { 
             TempPartnerRegisterationDetail TempPartnerRegisterationDetail = await RetriveAsync(id);
             _db.TempPartnerRegisterationDetails.Remove(TempPartnerRegisterationDetail);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
-            return null;
+            return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

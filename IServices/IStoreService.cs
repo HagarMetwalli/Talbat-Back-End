@@ -6,7 +6,7 @@ using Talbat.Models;
 
 namespace Talbat.IServices
 {
-    public interface IStoreService : IGenericService<Store>
+    public interface IStoreService : IGeneric<Store>
     {
         public Task<IEnumerable<String>> RetriveMostCommonAsync();
         public Task<List<String>> RetriveCategoriesAsync(int id);

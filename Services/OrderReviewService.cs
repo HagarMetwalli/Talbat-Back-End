@@ -8,7 +8,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class OrderReviewService : IGenericService<OrderReview>
+    public class OrderReviewService : IGeneric<OrderReview>
     {
         private TalabatContext _db;
         public OrderReviewService(TalabatContext db)
@@ -17,39 +17,74 @@ namespace Talbat.Services
         }
         public async Task<OrderReview> CreatAsync(OrderReview OrderReview)
         {
-            await _db.OrderReviews.AddAsync(OrderReview);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return OrderReview;
-            return null;
+            try
+            {
+                await _db.OrderReviews.AddAsync(OrderReview);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return OrderReview;
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            OrderReview OrderReview = await RetriveAsync(id);
-            _db.OrderReviews.Remove(OrderReview);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                OrderReview OrderReview = await RetriveAsync(id);
+                _db.OrderReviews.Remove(OrderReview);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return true;
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Task<IList<OrderReview>> RetriveAllAsync()
+        public Task<List<OrderReview>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<OrderReview>>(() => _db.OrderReviews.ToList());
+            try
+            {
+                return Task<List<OrderReview>>.Run<List<OrderReview>>(() => _db.OrderReviews.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
         public Task<OrderReview> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.OrderReviews.Find(id));
+            try
+            {
+                return Task.Run(() => _db.OrderReviews.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<OrderReview> UpdateAsync(OrderReview OrderReview)
+        public async Task<OrderReview> PatchAsync(OrderReview OrderReview)
         {
-            _db = new TalabatContext();
-            _db.OrderReviews.Update(OrderReview);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return OrderReview;
-            return null;
+            try
+            {
+                _db = new TalabatContext();
+                _db.OrderReviews.Update(OrderReview);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return OrderReview;
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
     }

@@ -8,7 +8,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class StoreWorkingHourService : IGenericService<StoreWorkingHour>
+    public class StoreWorkingHourService : IGeneric<StoreWorkingHour>
     {
         private TalabatContext _db;
         public StoreWorkingHourService(TalabatContext db)
@@ -17,39 +17,74 @@ namespace Talbat.Services
         }
         public async Task<StoreWorkingHour> CreatAsync(StoreWorkingHour StoreWorkingHour)
         {
-            await _db.StoreWorkingHours.AddAsync(StoreWorkingHour);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return StoreWorkingHour;
-            return null;
+            try
+            {
+                await _db.StoreWorkingHours.AddAsync(StoreWorkingHour);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return StoreWorkingHour;
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            StoreWorkingHour StoreWorkingHour = await RetriveAsync(id);
-            _db.StoreWorkingHours.Remove(StoreWorkingHour);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                StoreWorkingHour StoreWorkingHour = await RetriveAsync(id);
+                _db.StoreWorkingHours.Remove(StoreWorkingHour);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return true;
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Task<IList<StoreWorkingHour>> RetriveAllAsync()
+        public Task<List<StoreWorkingHour>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<StoreWorkingHour>>(() => _db.StoreWorkingHours.ToList());
+            try
+            {
+                return Task<List<StoreWorkingHour>>.Run<List<StoreWorkingHour>>(() => _db.StoreWorkingHours.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
         public Task<StoreWorkingHour> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.StoreWorkingHours.Find(id));
+            try
+            {
+                return Task.Run(() => _db.StoreWorkingHours.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<StoreWorkingHour> UpdateAsync(StoreWorkingHour StoreWorkingHour)
+        public async Task<StoreWorkingHour> PatchAsync(StoreWorkingHour StoreWorkingHour)
         {
-            _db = new TalabatContext();
-            _db.StoreWorkingHours.Update(StoreWorkingHour);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return StoreWorkingHour;
-            return null;
+            try
+            {
+                _db = new TalabatContext();
+                _db.StoreWorkingHours.Update(StoreWorkingHour);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return StoreWorkingHour;
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
     }

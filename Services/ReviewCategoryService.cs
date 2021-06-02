@@ -8,7 +8,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class ReviewCategoryService : IGenericService<ReviewCategory>
+    public class ReviewCategoryService : IGeneric<ReviewCategory>
     {
         private TalabatContext _db;
         public ReviewCategoryService(TalabatContext db)
@@ -17,39 +17,72 @@ namespace Talbat.Services
         }
         public async Task<ReviewCategory> CreatAsync(ReviewCategory ReviewCategory)
         {
-            await _db.ReviewCategories.AddAsync(ReviewCategory);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return ReviewCategory;
-            return null;
+            try
+            {
+                await _db.ReviewCategories.AddAsync(ReviewCategory);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return ReviewCategory;
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            ReviewCategory ReviewCategory = await RetriveAsync(id);
-            _db.ReviewCategories.Remove(ReviewCategory);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                ReviewCategory ReviewCategory = await RetriveAsync(id);
+                _db.ReviewCategories.Remove(ReviewCategory);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return true;
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Task<IList<ReviewCategory>> RetriveAllAsync()
+        public Task<List<ReviewCategory>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<ReviewCategory>>(() => _db.ReviewCategories.ToList());
+            try
+            {
+                return Task<List<ReviewCategory>>.Run<List<ReviewCategory>>(() => _db.ReviewCategories.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
         public Task<ReviewCategory> RetriveAsync(int id)
         {
+            try { 
             return Task.Run(() => _db.ReviewCategories.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<ReviewCategory> UpdateAsync(ReviewCategory ReviewCategory)
+        public async Task<ReviewCategory> PatchAsync(ReviewCategory ReviewCategory)
         {
+            try { 
             _db = new TalabatContext();
             _db.ReviewCategories.Update(ReviewCategory);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return ReviewCategory;
             return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
     }

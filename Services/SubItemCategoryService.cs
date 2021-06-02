@@ -8,49 +8,80 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class SubItemCategoryService : IGenericService<SubItemCategory>
+    public class SubItemCategoryService : IGeneric<SubItemCategory>
     {
         private TalabatContext _db;
         public SubItemCategoryService(TalabatContext db)
         {
             _db = db;
         }
-        public Task<IList<SubItemCategory>> RetriveAllAsync()
+        public Task<List<SubItemCategory>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<SubItemCategory>>(() => _db.SubItemCategories.ToList());
+            try
+            {
+                return Task<List<SubItemCategory>>.Run<List<SubItemCategory>>(() => _db.SubItemCategories.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public Task<SubItemCategory> RetriveAsync(int id)
         {
+            try { 
             return Task.Run(() => _db.SubItemCategories.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<SubItemCategory> CreatAsync(SubItemCategory SubItemCategory)
         {
+            try { 
             await _db.SubItemCategories.AddAsync(SubItemCategory);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return SubItemCategory;
             return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<SubItemCategory> UpdateAsync(SubItemCategory SubItemCategory)
+        public async Task<SubItemCategory> PatchAsync(SubItemCategory SubItemCategory)
         {
+            try { 
             _db = new TalabatContext();
             _db.SubItemCategories.Update(SubItemCategory);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return SubItemCategory;
             return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
+            try { 
             SubItemCategory SubItemCategory = await RetriveAsync(id);
             _db.SubItemCategories.Remove(SubItemCategory);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
-            return null;
+            return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class RateStatusesController : ControllerBase
     {
-        private IGenericService<RateStatus> _repo;
+        private IGeneric<RateStatus> _repo;
         private TalabatContext _db;
 
-        public RateStatusesController(IGenericService<RateStatus> repo, TalabatContext db)
+        public RateStatusesController(IGeneric<RateStatus> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -23,10 +23,12 @@ namespace Talbat.Controllers
         // GET: api/RateStatuses
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<RateStatus>>))]
-        public async Task<ActionResult<IList<RateStatus>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<RateStatus>>))]
+        public async Task<ActionResult<List<RateStatus>>> Get()
         {
-            IList<RateStatus> rateStatuses = await _repo.RetriveAllAsync();
+            List<RateStatus> rateStatuses = await _repo.RetriveAllAsync();
+            if (rateStatuses == null)
+                return BadRequest();
             if (rateStatuses.Count == 0)
                 return NoContent();
             return Ok(rateStatuses);
@@ -34,11 +36,14 @@ namespace Talbat.Controllers
 
         // GET api/RateStatuses/5
         [HttpGet("{id}")]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             RateStatus RateStatus = await _repo.RetriveAsync(id);
             if (RateStatus == null)
                 return NotFound();
@@ -49,10 +54,9 @@ namespace Talbat.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Post([FromBody] RateStatus RateStatus)
         {
-            
-
             if (RateStatus == null)
                 return BadRequest();
 
@@ -72,15 +76,19 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+                return BadRequest();
+
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
@@ -109,7 +117,11 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(RateStatus);
+            var affected= await _repo.PatchAsync(RateStatus);
+            if (affected == null)
+            {
+                return BadRequest();
+            }
             return new NoContentResult();
 
         }

@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class ReviewCategoriesController : ControllerBase
     {
-        private IGenericService<ReviewCategory> _repo;
+        private IGeneric<ReviewCategory> _repo;
         private TalabatContext _db;
 
-        public ReviewCategoriesController(IGenericService<ReviewCategory> repo, TalabatContext db)
+        public ReviewCategoriesController(IGeneric<ReviewCategory> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -23,10 +23,13 @@ namespace Talbat.Controllers
         // GET: api/ReviewCategories
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<ReviewCategory>>))]
-        public async Task<ActionResult<IList<ReviewCategory>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<ReviewCategory>>))]
+        public async Task<ActionResult<List<ReviewCategory>>> Get()
         {
-            IList<ReviewCategory> reviewCategories = await _repo.RetriveAllAsync();
+            List<ReviewCategory> reviewCategories = await _repo.RetriveAllAsync();
+            if (reviewCategories == null)
+                return BadRequest();
             if (reviewCategories.Count == 0)
                 return NoContent();
             return Ok(reviewCategories);
@@ -36,9 +39,12 @@ namespace Talbat.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             ReviewCategory ReviewCategory = await _repo.RetriveAsync(id);
             if (ReviewCategory == null)
                 return NotFound();
@@ -71,15 +77,17 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
@@ -108,7 +116,9 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(ReviewCategory);
+            var affected=await _repo.PatchAsync(ReviewCategory);
+            if (affected == null)
+                return BadRequest();
             return new NoContentResult();
 
         }

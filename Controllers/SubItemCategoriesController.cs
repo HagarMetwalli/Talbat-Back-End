@@ -12,9 +12,9 @@ namespace Talbat.Controllers
     [ApiController]
     public class SubItemCategoriesController : ControllerBase
     {
-        private IGenericService<SubItemCategory> _repo;
+        private IGeneric<SubItemCategory> _repo;
 
-        public SubItemCategoriesController(IGenericService<SubItemCategory> repo)
+        public SubItemCategoriesController(IGeneric<SubItemCategory> repo)
         {
             _repo = repo;
         }
@@ -22,10 +22,13 @@ namespace Talbat.Controllers
         // GET: api/SubItemCategories
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<SubItemCategory>>))]
-        public async Task<ActionResult<IList<SubItemCategory>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<SubItemCategory>>))]
+        public async Task<ActionResult<List<SubItemCategory>>> Get()
         {
-            IList<SubItemCategory> subItemCategories =await _repo.RetriveAllAsync();
+            List<SubItemCategory> subItemCategories =await _repo.RetriveAllAsync();
+            if (subItemCategories == null)
+                return BadRequest();
             if (subItemCategories.Count == 0)
                 return NoContent();
             return Ok(subItemCategories);
@@ -35,9 +38,12 @@ namespace Talbat.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             SubItemCategory SubItemCategory = await _repo.RetriveAsync(id);
             if (SubItemCategory == null)
                 return NotFound();
@@ -81,7 +87,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _client = await _repo.UpdateAsync(SubItemCategory);
+            var _client = await _repo.PatchAsync(SubItemCategory);
             if (_client == null)
                 return BadRequest();
 
@@ -99,8 +105,8 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
                 return new NoContentResult();//204 No Content
             }

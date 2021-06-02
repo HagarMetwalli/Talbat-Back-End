@@ -12,21 +12,24 @@ namespace Talbat.Controllers
     [ApiController]
     public class OrderReviewsController : ControllerBase
     {
-        private IGenericService<OrderReview> _repo;
+        private IGeneric<OrderReview> _repo;
         private TalabatContext _db;
 
-        public OrderReviewsController(IGenericService<OrderReview> repo, TalabatContext db)
+        public OrderReviewsController(IGeneric<OrderReview> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
         }
         // GET: api/OrderReviews
         [HttpGet]
+        [ProducesResponseType(400)]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<OrderReview>>))]
-        public async Task<ActionResult<IList<OrderReview>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<OrderReview>>))]
+        public async Task<ActionResult<List<OrderReview>>> Get()
         {
-            IList<OrderReview> orderReviews = await _repo.RetriveAllAsync();
+            List<OrderReview> orderReviews = await _repo.RetriveAllAsync();
+            if (orderReviews == null)
+                return BadRequest();
             if (orderReviews.Count == 0)
                 return NoContent();
             return Ok(orderReviews);
@@ -34,14 +37,20 @@ namespace Talbat.Controllers
 
         // GET api/OrderReviews/5
         [HttpGet("{id}")]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
+
             OrderReview OrderReview = await _repo.RetriveAsync(id);
+
             if (OrderReview == null)
                 return NotFound();
+
             return Ok(OrderReview);
         }
 
@@ -51,14 +60,17 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] OrderReview OrderReview)
         {
-            var orderId = _db.Orders.Find(OrderReview.OrderId);
-
-            if (OrderReview == null || orderId == null)
+            if (OrderReview == null)
+            {
                 return BadRequest();
-
+            }
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
-
+            }
+            var orderId = _db.Orders.Find(OrderReview.OrderId);
+            if (orderId == null)
+                return BadRequest();
             OrderReview added = await _repo.CreatAsync(OrderReview);
             if (added == null)
                 return BadRequest();
@@ -72,15 +84,18 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+                return BadRequest();
+
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
+                 return NotFound();
+           
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
-                return NotFound();
-            }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
-            {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
@@ -93,10 +108,9 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchOrderReview(int id, [FromBody] OrderReview OrderReview)
+        public async Task<IActionResult> Patch(int id, [FromBody] OrderReview OrderReview)
         {
-            var orderId = _db.Orders.Find(OrderReview.OrderId);
-            if (OrderReview == null || orderId == null || OrderReview.OrderReviewId != id)
+            if (OrderReview == null|| OrderReview.OrderReviewId != id)
             {
                 return BadRequest();
             }
@@ -104,12 +118,21 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var orderId = _db.Orders.Find(OrderReview.OrderId);
+            if (orderId == null )
+            {
+                return BadRequest();
+            }
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(OrderReview);
+            var affected = await _repo.PatchAsync(OrderReview);
+            if (affected == null)
+            {
+                return BadRequest();
+            }
             return new NoContentResult();
 
         }

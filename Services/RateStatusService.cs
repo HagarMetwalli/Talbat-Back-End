@@ -8,7 +8,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class RateStatusService : IGenericService<RateStatus>
+    public class RateStatusService : IGeneric<RateStatus>
     {
         private TalabatContext _db;
         public RateStatusService(TalabatContext db)
@@ -17,39 +17,74 @@ namespace Talbat.Services
         }
         public async Task<RateStatus> CreatAsync(RateStatus RateStatus)
         {
-            await _db.RateStatuses.AddAsync(RateStatus);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return RateStatus;
-            return null;
+            try
+            {
+                await _db.RateStatuses.AddAsync(RateStatus);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return RateStatus;
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            RateStatus RateStatus = await RetriveAsync(id);
-            _db.RateStatuses.Remove(RateStatus);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return true;
-            return null;
+            try
+            {
+                RateStatus RateStatus = await RetriveAsync(id);
+                _db.RateStatuses.Remove(RateStatus);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return true;
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Task<IList<RateStatus>> RetriveAllAsync()
+        public Task<List<RateStatus>> RetriveAllAsync()
         {
-            return Task<IList>.Run<IList<RateStatus>>(() => _db.RateStatuses.ToList());
+            try
+            {
+                return Task<List<RateStatus>>.Run<List<RateStatus>>(() => _db.RateStatuses.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
         public Task<RateStatus> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.RateStatuses.Find(id));
+            try
+            {
+                return Task.Run(() => _db.RateStatuses.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<RateStatus> UpdateAsync(RateStatus RateStatus)
+        public async Task<RateStatus> PatchAsync(RateStatus RateStatus)
         {
-            _db = new TalabatContext();
-            _db.RateStatuses.Update(RateStatus);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return RateStatus;
-            return null;
+            try
+            {
+                _db = new TalabatContext();
+                _db.RateStatuses.Update(RateStatus);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return RateStatus;
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
     }

@@ -758,11 +758,11 @@ namespace Talbat.Models
 
                 entity.Property(e => e.QualityOffood).HasColumnName("QualityOFFood");
 
-                entity.HasOne(d => d.DeliveryTimeNavigation)
-                    .WithMany(p => p.InverseDeliveryTimeNavigation)
-                    .HasForeignKey(d => d.DeliveryTime)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderReview_OrderReview2");
+                //entity.HasOne(d => d.DeliveryTimeNavigation)
+                //    .WithMany(p => p.InverseDeliveryTimeNavigation)
+                //    .HasForeignKey(d => d.DeliveryTime)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK_OrderReview_OrderReview2");
 
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.OrderReviews)
@@ -770,23 +770,23 @@ namespace Talbat.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OrderReview_Order");
 
-                entity.HasOne(d => d.OrderPackagingNavigation)
-                    .WithMany(p => p.InverseOrderPackagingNavigation)
-                    .HasForeignKey(d => d.OrderPackaging)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderReview_OrderReview");
+                //entity.HasOne(d => d.OrderPackagingNavigation)
+                //    .WithMany(p => p.InverseOrderPackagingNavigation)
+                //    .HasForeignKey(d => d.OrderPackaging)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK_OrderReview_OrderReview");
 
-                entity.HasOne(d => d.QualityOffoodNavigation)
-                    .WithMany(p => p.InverseQualityOffoodNavigation)
-                    .HasForeignKey(d => d.QualityOffood)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderReview_OrderReview3");
+                //entity.HasOne(d => d.QualityOffoodNavigation)
+                //    .WithMany(p => p.InverseQualityOffoodNavigation)
+                //    .HasForeignKey(d => d.QualityOffood)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK_OrderReview_OrderReview3");
 
-                entity.HasOne(d => d.ValueForMoneyNavigation)
-                    .WithMany(p => p.InverseValueForMoneyNavigation)
-                    .HasForeignKey(d => d.ValueForMoney)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderReview_OrderReview1");
+                //entity.HasOne(d => d.ValueForMoneyNavigation)
+                //    .WithMany(p => p.InverseValueForMoneyNavigation)
+                //    .HasForeignKey(d => d.ValueForMoney)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK_OrderReview_OrderReview1");
             });
 
             modelBuilder.Entity<Partner>(entity =>
@@ -921,11 +921,6 @@ namespace Talbat.Models
                     .IsUnicode(false)
                     .HasColumnName("Store_Address");
 
-                entity.Property(e => e.StoreCuisine)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("Store_Cuisine");
 
                 entity.Property(e => e.StoreDeliveryFee).HasColumnName("Store_DeliveryFee");
 
@@ -966,12 +961,11 @@ namespace Talbat.Models
                 entity.ToTable("StoreType");
 
                 entity.Property(e => e.StoreTypeId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("StoreType_Id");
+                //.ValueGeneratedOnAdd()
+                 .HasColumnName("StoreType_Id");
 
-                entity.Property(e => e.StoreType1)
-                    .HasMaxLength(50)
-                    .HasColumnName("Store_Type");
+                entity.Property(e => e.StoreTypeName)
+                    .HasMaxLength(50) ;
             });
 
             modelBuilder.Entity<StoreWorkingHour>(entity =>

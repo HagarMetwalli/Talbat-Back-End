@@ -8,7 +8,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class StoreTypeService : IGenericService<StoreType>
+    public class StoreTypeService : IGeneric<StoreType>
     {
         private TalabatContext _db;
         public StoreTypeService(TalabatContext db)
@@ -17,39 +17,71 @@ namespace Talbat.Services
         }
         public async Task<StoreType> CreatAsync(StoreType StoreType)
         {
-            await _db.StoreTypes.AddAsync(StoreType);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return StoreType;
-            return null;
+            //try
+            //{
+                await _db.StoreTypes.AddAsync(StoreType);
+                int affected = await _db.SaveChangesAsync();
+                if (affected == 1)
+                    return StoreType;
+                return null;
+            //}
+            //catch
+            //{
+            //    return null;
+            //}
         }
-        public async Task<bool?> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
+            try { 
             StoreType StoreType = await RetriveAsync(id);
             _db.StoreTypes.Remove(StoreType);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
-            return null;
+            return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Task<IList<StoreType>> RetriveAllAsync()
+        public Task<List<StoreType>> RetriveAllAsync()
         {
-            return Task<IEnumerable>.Run<IList<StoreType>>(() => _db.StoreTypes.ToList());
+            try
+            {
+                return Task<List<StoreType>>.Run<List<StoreType>>(() => _db.StoreTypes.ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
         public Task<StoreType> RetriveAsync(int id)
         {
+            try { 
             return Task.Run(() => _db.StoreTypes.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<StoreType> UpdateAsync(StoreType StoreType)
+        public async Task<StoreType> PatchAsync(StoreType StoreType)
         {
+            try { 
             _db = new TalabatContext();
             _db.StoreTypes.Update(StoreType);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return StoreType;
             return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
     }

@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class StoreTypesController : ControllerBase
     {
-        private IGenericService<StoreType> _repo;
+        private IGeneric<StoreType> _repo;
         private TalabatContext _db;
 
-        public StoreTypesController(IGenericService<StoreType> repo, TalabatContext db)
+        public StoreTypesController(IGeneric<StoreType> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -23,10 +23,15 @@ namespace Talbat.Controllers
         // GET: api/StoreTypes
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<StoreType>>))]
-        public async Task<ActionResult<IList<StoreType>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<StoreType>>))]
+        [ProducesResponseType(400)]
+
+        public async Task<ActionResult<List<StoreType>>> Get()
         {
-            IList<StoreType> storeTypes = await _repo.RetriveAllAsync();
+
+            List<StoreType> storeTypes = await _repo.RetriveAllAsync();
+            if (storeTypes == null)
+                return BadRequest();
             if (storeTypes == null)
                 return NotFound();
             return Ok(storeTypes);
@@ -36,9 +41,13 @@ namespace Talbat.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             StoreType StoreType = await _repo.RetriveAsync(id);
             if (StoreType == null)
                 return NotFound();
@@ -51,8 +60,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] StoreType StoreType)
         {
-            
-
+     
             if (StoreType == null )
                 return BadRequest();
 
@@ -72,15 +80,17 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
@@ -109,7 +119,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(StoreType);
+            await _repo.PatchAsync(StoreType);
             return new NoContentResult();
 
         }

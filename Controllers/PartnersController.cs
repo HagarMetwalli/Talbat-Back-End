@@ -12,21 +12,24 @@ namespace Talbat.Controllers
     [ApiController]
     public class PartnersController : ControllerBase
     {
-        private IGenericService<Partner> _repo;
+        private IGeneric<Partner> _repo;
         private TalabatContext _db;
 
-        public PartnersController(IGenericService<Partner> repo, TalabatContext db)
+        public PartnersController(IGeneric<Partner> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
         }
         // GET: api/Partners
         [HttpGet]
+        [ProducesResponseType(400)]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Partner>>))]
-        public async Task<ActionResult<IList<Client>>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<Partner>>))]
+        public async Task<ActionResult<List<Client>>> Get()
         {
-            IList<Partner> partners = await _repo.RetriveAllAsync();
+            List<Partner> partners = await _repo.RetriveAllAsync();
+            if (partners == null)
+                return BadRequest();
             if (partners.Count == 0)
                 return NoContent();
             return Ok(partners);
@@ -34,11 +37,14 @@ namespace Talbat.Controllers
 
         // GET api/Partners/5
         [HttpGet("{id}")]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             Partner Partner = await _repo.RetriveAsync(id);
             if (Partner == null)
                 return NotFound();
@@ -51,13 +57,19 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] Partner Partner)
         {
+            if (Partner == null)
+            {
+                return BadRequest();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var StoreId = _db.Stores.Find(Partner.StoreId);
 
-            if (Partner == null || StoreId == null)
+            if (StoreId == null)
                 return BadRequest();
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
             Partner added = await _repo.CreatAsync(Partner);
             if (added == null)
@@ -72,15 +84,19 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+                return BadRequest();
+
             var existing = await _repo.RetriveAsync(id);
+
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
@@ -95,21 +111,32 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> PatchPartner(int id, [FromBody] Partner Partner)
         {
-            var StoreId = _db.Stores.Find(Partner.StoreId);
-            if (Partner == null || StoreId == null || Partner.PartnerId != id)
+            if (Partner == null || Partner.PartnerId != id)
             {
                 return BadRequest();
             }
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var StoreId = _db.Stores.Find(Partner.StoreId);
+            if (StoreId == null)
+            {
+                return BadRequest();
+            }
+           
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(Partner);
+            var affected = await _repo.PatchAsync(Partner);
+            if (affected == null)
+            {
+                return BadRequest();
+            }
             return new NoContentResult();
 
         }

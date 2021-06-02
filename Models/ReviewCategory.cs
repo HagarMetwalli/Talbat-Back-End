@@ -9,7 +9,7 @@ namespace Talbat.Models
     {
         public ReviewCategory()
         {
-            Reviews = new HashSet<Review>();
+            //Reviews = new HashSet<Review>();
         }
 
         public int ReviewCategoryId { get; set; }

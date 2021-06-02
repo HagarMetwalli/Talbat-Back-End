@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
-        private IGenericService<Region> _repo;
+        private IGeneric<Region> _repo;
         private TalabatContext _db;
 
-        public RegionsController(IGenericService<Region> repo, TalabatContext db)
+        public RegionsController(IGeneric<Region> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -23,10 +23,13 @@ namespace Talbat.Controllers
         // GET: api/Regions
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Region>>))]
-        public async Task<ActionResult<IList<Region>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<Region>>))]
+        public async Task<ActionResult<List<Region>>> Get()
         {
-            IList<Region> regions = await _repo.RetriveAllAsync();
+            List<Region> regions = await _repo.RetriveAllAsync();
+            if (regions == null)
+                return BadRequest();
             if (regions.Count == 0)
                 return NoContent();
             return Ok(regions);
@@ -39,6 +42,8 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             Region Region = await _repo.RetriveAsync(id);
             if (Region == null)
                 return NotFound();
@@ -70,15 +75,17 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
@@ -107,7 +114,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(Region);
+            await _repo.PatchAsync(Region);
             return new NoContentResult();
 
         }

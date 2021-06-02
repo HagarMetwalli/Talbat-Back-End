@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class SubItemsController : ControllerBase
     {
-        private IGenericService<SubItem> _repo;
+        private IGeneric<SubItem> _repo;
         private TalabatContext _db;
 
-        public SubItemsController(IGenericService<SubItem> repo, TalabatContext db)
+        public SubItemsController(IGeneric<SubItem> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -23,10 +23,13 @@ namespace Talbat.Controllers
         // GET: api/SubItems
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<SubItem>>))]
-        public async Task<ActionResult<IList<SubItem>>> Get()
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<SubItem>>))]
+        public async Task<ActionResult<List<SubItem>>> Get()
         {
-            IList<SubItem> subItems = await _repo.RetriveAllAsync();
+            List<SubItem> subItems = await _repo.RetriveAllAsync();
+            if (subItems == null)
+                return BadRequest();
             if (subItems.Count == 0)
                 return NoContent();
             return Ok(subItems);
@@ -36,9 +39,13 @@ namespace Talbat.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+
 
         public async Task<IActionResult> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             SubItem SubItem = await _repo.RetriveAsync(id);
             if (SubItem == null)
                 return NotFound();
@@ -51,14 +58,17 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] SubItem SubItem)
         {
-            var SubItemCategory = _db.SubItemCategories.Find(SubItem.SubItemCategoryId);
-            var Item = _db.Items.Find(SubItem.ItemId);
-
-            if (SubItem == null || SubItemCategory == null || Item == null)
+            if (SubItem == null )
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var SubItemCategory = _db.SubItemCategories.Find(SubItem.SubItemCategoryId);
+            var Item = _db.Items.Find(SubItem.ItemId);
+
+            if (SubItemCategory == null || Item == null)
+                return BadRequest();
 
             SubItem added = await _repo.CreatAsync(SubItem);
             if (added == null)
@@ -73,13 +83,15 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            bool? deleted = await _repo.DeleteAsync(id);
-            if (deleted.HasValue && deleted.Value)
+            bool deleted = await _repo.DeleteAsync(id);
+            if (deleted)
             {
                 return new NoContentResult();//204 No Content
             }
@@ -94,11 +106,9 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> PatchSubItem(int id, [FromBody] SubItem SubItem)
+        public async Task<IActionResult> Patch(int id, [FromBody] SubItem SubItem)
         {
-            var SubItemCategory = _db.SubItemCategories.Find(SubItem.SubItemCategoryId);
-            var Item = _db.Items.Find(SubItem.ItemId);
-            if (SubItem == null || SubItemCategory == null || Item == null || SubItem.SubItemId != id)
+            if (SubItem == null || SubItem.SubItemId != id)
             {
                 return BadRequest();
             }
@@ -106,12 +116,22 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var SubItemCategory = _db.SubItemCategories.Find(SubItem.SubItemCategoryId);
+            var Item = _db.Items.Find(SubItem.ItemId);
+            if (SubItemCategory == null || Item == null)
+            {
+                return BadRequest();
+            }
+    
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
-            await _repo.UpdateAsync(SubItem);
+
+            var effected= await _repo.PatchAsync(SubItem);
+            if (effected == null)
+                return null;
             return new NoContentResult();
 
         }
