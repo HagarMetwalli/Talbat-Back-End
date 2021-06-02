@@ -41,7 +41,7 @@ namespace Talbat.Services
         {
             try
             {
-
+  
                 return Task.Run(() => _db.Clients.Find(id));  
             }
             catch 
@@ -131,7 +131,6 @@ namespace Talbat.Services
         {
             try
             {
-
                 obj.Email = obj.Email.ToLower();
                 Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
 
@@ -140,8 +139,7 @@ namespace Talbat.Services
                     var tokenString = UserAuthentication.CreateToken(obj.Email);
                     return Task.Run(() => tokenString);
                 }
-                return null;
-                
+                return null;   
             }
             catch 
             {
