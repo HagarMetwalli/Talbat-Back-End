@@ -100,6 +100,28 @@ namespace Talbat.Controllers
                 return NotFound();
             return Ok(ItemsList);
         }
+
+        // GET api/NearestStores
+        [HttpGet]
+        [Route("NearestStores/{latitude}/{Longitude}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(200, Type = typeof(List<Store>))]
+        public async Task<ActionResult<List<Store>>> NearestStores(double latitude, double Longitude)
+        {
+            List<Store> stores = await _repo.RetriveStoresBasedLocationAsync(latitude, Longitude);
+            if (stores.Count == 0)
+            {
+                return NoContent();
+            }
+            if (stores==null)
+            {
+                return NotFound();
+            }
+
+            return Ok(stores);
+        }
         // GET api/Stores/MC/Drinks
         [HttpGet]
         [Route("{StoreName}/{CategoryName}")]

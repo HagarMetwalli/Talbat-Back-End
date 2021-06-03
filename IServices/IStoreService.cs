@@ -12,6 +12,7 @@ namespace Talbat.IServices
         public Task<List<String>> RetriveCategoriesAsync(int id);
         public Task<IEnumerable<Item>> RetriveCategoryItemsAsync(int StoreId, int CategoryId);
         public Task<List<Item>> RetriveMenuAsync(int storeId);
+        public Task<List<Store>> RetriveStoresBasedLocationAsync(double long1, double lat1 );
         public Task<Store> RetriveByNameAsync(string name);
 
     }

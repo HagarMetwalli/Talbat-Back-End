@@ -153,5 +153,47 @@ namespace Talbat.Services
                 return null;
             }
         }
+
+        public Task<List<Store>> RetriveStoresBasedLocationAsync(double lat1, double long1)
+        {
+            try
+            {
+                List<Store> stores = _db.Stores.ToList();
+                List<Store> nearestStores = new List<Store> { };
+                foreach (var store in stores)
+                {
+                    double destanceInMeters = getDistanceFromLatLonInMeter(lat1, long1, store.StoreLatitude, store.StoreLongitude);
+                    if(destanceInMeters <= store.StoreDeliveryDist)
+                    {
+                        nearestStores.Add(store);
+                    }
+
+                }
+                return Task<List<Store>>.Run<List<Store>>(() => nearestStores);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public double getDistanceFromLatLonInMeter(double lat1,double lon1,double lat2,double lon2)
+        {
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+            var dLon = deg2rad(lon2 - lon1);
+            var a =
+              Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+              Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) *
+              Math.Sin(dLon / 2) * Math.Sin(dLon / 2)
+              ;
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            var d = R * c; // Distance in km
+            return d*1000;
+        }
+
+        public double  deg2rad(double deg)
+        {
+            return deg * (Math.PI / 180);
+        }
     }
 }

@@ -12,19 +12,11 @@ namespace Talbat.Models
     {
         public Store()
         {
-<<<<<<< HEAD
             //    Items = new HashSet<Item>();
             //    Orders = new HashSet<Order>();
             //    Partners = new HashSet<Partner>();
             //    Reviews = new HashSet<Review>();
             //    StoreWorkingHours = new HashSet<StoreWorkingHour>();
-=======
-            //Items = new HashSet<Item>();
-            //Orders = new HashSet<Order>();
-            //Partners = new HashSet<Partner>();
-            //Reviews = new HashSet<Review>();
-            //StoreWorkingHours = new HashSet<StoreWorkingHour>();
->>>>>>> Hajar
         }
 
         public int StoreId { get; set; }
@@ -43,6 +35,15 @@ namespace Talbat.Models
 
         [Required]
         public string StoreAddress { get; set; }
+
+        [Required, DefaultValue(0.000000)]
+        public double StoreLatitude { get; set; }
+
+        [Required, DefaultValue(0.000000)]
+        public double StoreLongitude { get; set; }
+
+        [Required,DefaultValue(1)]
+        public double StoreDeliveryDist { get; set; }
 
         [Range(0, int.MaxValue)]
         public double StoreMinOrder { get; set; }

@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210527201836_clientdataannotation")]
-    partial class clientdataannotation
+    [Migration("20210603013456_updatecoordtoDouble")]
+    partial class updatecoordtoDouble
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -98,8 +98,8 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(15)")
                         .HasColumnName("Client_Lname");
 
-                    b.Property<bool>("ClientNewsletterSubscribe")
-                        .HasColumnType("bit")
+                    b.Property<int>("ClientNewsletterSubscribe")
+                        .HasColumnType("int")
                         .HasColumnName("Client_NewsletterSubscribe");
 
                     b.Property<string>("ClientPassword")
@@ -109,8 +109,8 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Client_Password");
 
-                    b.Property<bool>("ClientSmsSubscribe")
-                        .HasColumnType("bit")
+                    b.Property<int>("ClientSmsSubscribe")
+                        .HasColumnType("int")
                         .HasColumnName("Client_SmsSubscribe");
 
                     b.HasKey("ClientId");
@@ -131,6 +131,7 @@ namespace Talbat.Migrations
                         .HasColumnName("City_Id");
 
                     b.Property<string>("ClientAddressAddressTitle")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
                         .IsUnicode(false)
@@ -139,6 +140,7 @@ namespace Talbat.Migrations
                         .HasDefaultValueSql("('')");
 
                     b.Property<int>("ClientAddressApartmentNumber")
+                        .HasMaxLength(4)
                         .HasColumnType("int")
                         .HasColumnName("ClientAddress_ApartmentNumber");
 
@@ -157,6 +159,7 @@ namespace Talbat.Migrations
                         .HasColumnName("ClientAddress_Floor");
 
                     b.Property<string>("ClientAddressLandLine")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
                         .IsUnicode(false)
@@ -172,8 +175,10 @@ namespace Talbat.Migrations
                         .HasColumnName("ClientAddress_MobileNumber");
 
                     b.Property<string>("ClientAddressOptionalDirections")
+                        .IsRequired()
+                        .HasMaxLength(20)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
+                        .HasColumnType("varchar(20)")
                         .HasColumnName("ClientAddress_OptionalDirections");
 
                     b.Property<string>("ClientAddressStreet")
@@ -312,7 +317,9 @@ namespace Talbat.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CuisineName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("TotalOrdersNumber")
                         .HasColumnType("int");
@@ -331,8 +338,10 @@ namespace Talbat.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("DeliveryManCurrentLocation")
+                        .IsRequired()
+                        .HasMaxLength(100)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("DeliveryMan_CurrentLocation");
 
                     b.Property<DateTime?>("DeliveryManHireDate")
@@ -340,6 +349,7 @@ namespace Talbat.Migrations
                         .HasColumnName("DeliveryMan_HireDate");
 
                     b.Property<string>("DeliveryManName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
@@ -363,14 +373,16 @@ namespace Talbat.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("AddressDetails")
+                        .IsRequired()
+                        .HasMaxLength(100)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("OrderId")
+                    b.Property<int>("OrderId")
                         .HasColumnType("int")
                         .HasColumnName("Order_Id");
 
-                    b.Property<double?>("Price")
+                    b.Property<double>("Price")
                         .HasColumnType("float");
 
                     b.HasKey("InvoiceId");
@@ -399,8 +411,9 @@ namespace Talbat.Migrations
                     b.Property<string>("ItemDescription")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
+                        .HasMaxLength(150)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
+                        .HasColumnType("varchar(150)")
                         .HasColumnName("Item_Description")
                         .HasDefaultValueSql("('No Description')");
 
@@ -414,8 +427,9 @@ namespace Talbat.Migrations
 
                     b.Property<string>("ItemName")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
+                        .HasColumnType("varchar(50)")
                         .HasColumnName("Item_Name");
 
                     b.Property<string>("ItemPrice")
@@ -430,6 +444,8 @@ namespace Talbat.Migrations
                         .HasColumnName("Store_Id");
 
                     b.HasKey("ItemId");
+
+                    b.HasIndex("ItemCategoryId");
 
                     b.HasIndex(new[] { "CountryId" }, "IX_Item_Country_Id");
 
@@ -473,6 +489,8 @@ namespace Talbat.Migrations
                         .HasColumnName("RateStatus_Id");
 
                     b.HasKey("ItemId");
+
+                    b.HasIndex("OrderReviewId");
 
                     b.HasIndex("RateStatusId");
 
@@ -809,6 +827,7 @@ namespace Talbat.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("OfferReviewBody")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)")
                         .HasColumnName("OfferReview_body");
@@ -829,14 +848,6 @@ namespace Talbat.Migrations
 
                     b.HasKey("OrderReviewId");
 
-                    b.HasIndex("DeliveryTime");
-
-                    b.HasIndex("OrderPackaging");
-
-                    b.HasIndex("QualityOffood");
-
-                    b.HasIndex("ValueForMoney");
-
                     b.HasIndex(new[] { "OrderId" }, "IX_OrderReview_Order_Id");
 
                     b.ToTable("OrderReview");
@@ -849,30 +860,35 @@ namespace Talbat.Migrations
                         .HasColumnName("Partner_Id");
 
                     b.Property<string>("PartnerEmail")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Partner_Email");
 
                     b.Property<string>("PartnerFname")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Partner_FName");
 
                     b.Property<string>("PartnerLname")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Partner_LName");
 
                     b.Property<string>("PartnerPassword")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Partner_Password");
 
-                    b.Property<int?>("PartnerPhoneNo")
+                    b.Property<int>("PartnerPhoneNo")
                         .HasColumnType("int")
                         .HasColumnName("Partner_PhoneNo");
 
                     b.Property<int?>("StoreId")
+                        .IsRequired()
                         .HasColumnType("int")
                         .HasColumnName("Store_Id");
 
@@ -892,6 +908,7 @@ namespace Talbat.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("RateStatusName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("RateStatus_Name");
@@ -929,29 +946,31 @@ namespace Talbat.Migrations
                         .HasColumnName("Review_Id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ReviewCategoryId")
+                    b.Property<int>("ReviewCategoryId")
                         .HasColumnType("int")
                         .HasColumnName("ReviewCategory_Id");
 
                     b.Property<string>("ReviewContent")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Review_Content");
 
                     b.Property<DateTime?>("ReviewDate")
+                        .IsRequired()
                         .HasColumnType("datetime")
                         .HasColumnName("Review_Date");
 
-                    b.Property<double?>("ReviewRates")
+                    b.Property<double>("ReviewRates")
                         .HasColumnType("float")
                         .HasColumnName("Review_Rates");
 
-                    b.Property<int?>("StoreId")
+                    b.Property<int>("StoreId")
                         .HasColumnType("int")
                         .HasColumnName("Store_Id");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("User_Id");
 
@@ -1007,14 +1026,10 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Store_Address");
 
-                    b.Property<string>("StoreCuisine")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Store_Cuisine");
+                    b.Property<double>("StoreDeliveryDist")
+                        .HasColumnType("float");
 
-                    b.Property<double?>("StoreDeliveryFee")
+                    b.Property<double>("StoreDeliveryFee")
                         .HasColumnType("float")
                         .HasColumnName("Store_DeliveryFee");
 
@@ -1024,11 +1039,18 @@ namespace Talbat.Migrations
 
                     b.Property<string>("StoreDescription")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
+                        .HasColumnType("varchar(200)")
                         .HasColumnName("Store_Description");
 
-                    b.Property<double?>("StoreMinOrder")
+                    b.Property<double>("StoreLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("StoreLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("StoreMinOrder")
                         .HasColumnType("float")
                         .HasColumnName("Store_MinOrder");
 
@@ -1042,11 +1064,11 @@ namespace Talbat.Migrations
                     b.Property<int>("StoreOrdersNumber")
                         .HasColumnType("int");
 
-                    b.Property<int?>("StorePaymentOnDeliverCash")
+                    b.Property<int>("StorePaymentOnDeliverCash")
                         .HasColumnType("int")
                         .HasColumnName("Store_PaymentOnDeliverCash");
 
-                    b.Property<int?>("StorePaymentVisa")
+                    b.Property<int>("StorePaymentVisa")
                         .HasColumnType("int")
                         .HasColumnName("Store_PaymentVisa");
 
@@ -1056,11 +1078,13 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Store_PreOrder");
 
-                    b.Property<int?>("StoreTypeId")
+                    b.Property<int>("StoreTypeId")
                         .HasColumnType("int")
                         .HasColumnName("StoreType_Id");
 
                     b.HasKey("StoreId");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("CuisineId");
 
@@ -1072,13 +1096,14 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.StoreType", b =>
                 {
                     b.Property<int>("StoreTypeId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("StoreType_Id");
+                        .HasColumnName("StoreType_Id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("StoreType1")
+                    b.Property<string>("StoreTypeName")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Store_Type");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("StoreTypeId");
 
@@ -1102,13 +1127,13 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("StoreWorkingHour_Day");
 
-                    b.Property<int?>("StoreWorkingHourEnd")
+                    b.Property<int>("StoreWorkingHourEnd")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("StoreWorkingHour_End")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("StoreWorkingHourStart")
+                    b.Property<int>("StoreWorkingHourStart")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("StoreWorkingHour_Start")
@@ -1146,10 +1171,9 @@ namespace Talbat.Migrations
                         .HasColumnType("float")
                         .HasColumnName("SubItem_Price");
 
-                    b.Property<byte[]>("SubItemSelectionType")
-                        .IsRequired()
+                    b.Property<int>("SubItemSelectionType")
                         .HasMaxLength(10)
-                        .HasColumnType("binary(10)")
+                        .HasColumnType("int")
                         .HasColumnName("SubItem_SelectionType")
                         .IsFixedLength(true);
 
@@ -1170,8 +1194,9 @@ namespace Talbat.Migrations
 
                     b.Property<string>("SubItemCategoryDescription")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
+                        .HasColumnType("varchar(200)")
                         .HasColumnName("SubItemCategory_Description");
 
                     b.Property<string>("SubItemCategoryName")
@@ -1193,11 +1218,13 @@ namespace Talbat.Migrations
                         .HasColumnName("TempPartnerStore_Id");
 
                     b.Property<string>("PartnerContactRole")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Partner_ContactRole");
 
                     b.Property<string>("PartnerEmail")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Partner_Email");
@@ -1209,45 +1236,51 @@ namespace Talbat.Migrations
                         .HasColumnName("Partner_FName");
 
                     b.Property<string>("PartnerLname")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Partner_LName");
 
                     b.Property<string>("PartnerPhoneNumber")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Partner_PhoneNumber");
 
-                    b.Property<int?>("StoreAddress")
+                    b.Property<int>("StoreAddress")
                         .HasColumnType("int")
                         .HasColumnName("Store_Address");
 
-                    b.Property<int?>("StoreBranchesNo")
+                    b.Property<int>("StoreBranchesNo")
                         .HasColumnType("int")
                         .HasColumnName("Store_BranchesNo");
 
                     b.Property<string>("StoreContact")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Store_Contact");
 
                     b.Property<string>("StoreCountry")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Store_Country");
 
                     b.Property<string>("StoreName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Store_Name");
 
                     b.Property<byte[]>("StoreStatus")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("binary(10)")
                         .HasColumnName("Store_Status")
                         .IsFixedLength(true);
 
-                    b.Property<int?>("StoreTypeId")
+                    b.Property<int>("StoreTypeId")
                         .HasColumnType("int")
                         .HasColumnName("Store_Type_Id");
 
@@ -1374,7 +1407,9 @@ namespace Talbat.Migrations
                     b.HasOne("Talbat.Models.Order", "Order")
                         .WithMany("Invoices")
                         .HasForeignKey("OrderId")
-                        .HasConstraintName("FK_Invoice_Order");
+                        .HasConstraintName("FK_Invoice_Order")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Order");
                 });
@@ -1387,6 +1422,12 @@ namespace Talbat.Migrations
                         .HasConstraintName("FK_Item_Country")
                         .IsRequired();
 
+                    b.HasOne("Talbat.Models.ItemCategory", "ItemCategory")
+                        .WithMany()
+                        .HasForeignKey("ItemCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Talbat.Models.Store", "Store")
                         .WithMany("Items")
                         .HasForeignKey("StoreId")
@@ -1395,16 +1436,26 @@ namespace Talbat.Migrations
 
                     b.Navigation("Country");
 
+                    b.Navigation("ItemCategory");
+
                     b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Talbat.Models.ItemReview", b =>
                 {
+                    b.HasOne("Talbat.Models.OrderReview", "OrderReview")
+                        .WithMany()
+                        .HasForeignKey("OrderReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Talbat.Models.RateStatus", "RateStatus")
                         .WithMany("ItemReviews")
                         .HasForeignKey("RateStatusId")
                         .HasConstraintName("FK_ItemReview_RateStatus")
                         .IsRequired();
+
+                    b.Navigation("OrderReview");
 
                     b.Navigation("RateStatus");
                 });
@@ -1519,45 +1570,13 @@ namespace Talbat.Migrations
 
             modelBuilder.Entity("Talbat.Models.OrderReview", b =>
                 {
-                    b.HasOne("Talbat.Models.OrderReview", "DeliveryTimeNavigation")
-                        .WithMany("InverseDeliveryTimeNavigation")
-                        .HasForeignKey("DeliveryTime")
-                        .HasConstraintName("FK_OrderReview_OrderReview2")
-                        .IsRequired();
-
                     b.HasOne("Talbat.Models.Order", "Order")
                         .WithMany("OrderReviews")
                         .HasForeignKey("OrderId")
                         .HasConstraintName("FK_OrderReview_Order")
                         .IsRequired();
 
-                    b.HasOne("Talbat.Models.OrderReview", "OrderPackagingNavigation")
-                        .WithMany("InverseOrderPackagingNavigation")
-                        .HasForeignKey("OrderPackaging")
-                        .HasConstraintName("FK_OrderReview_OrderReview")
-                        .IsRequired();
-
-                    b.HasOne("Talbat.Models.OrderReview", "QualityOffoodNavigation")
-                        .WithMany("InverseQualityOffoodNavigation")
-                        .HasForeignKey("QualityOffood")
-                        .HasConstraintName("FK_OrderReview_OrderReview3")
-                        .IsRequired();
-
-                    b.HasOne("Talbat.Models.OrderReview", "ValueForMoneyNavigation")
-                        .WithMany("InverseValueForMoneyNavigation")
-                        .HasForeignKey("ValueForMoney")
-                        .HasConstraintName("FK_OrderReview_OrderReview1")
-                        .IsRequired();
-
-                    b.Navigation("DeliveryTimeNavigation");
-
                     b.Navigation("Order");
-
-                    b.Navigation("OrderPackagingNavigation");
-
-                    b.Navigation("QualityOffoodNavigation");
-
-                    b.Navigation("ValueForMoneyNavigation");
                 });
 
             modelBuilder.Entity("Talbat.Models.Partner", b =>
@@ -1565,7 +1584,9 @@ namespace Talbat.Migrations
                     b.HasOne("Talbat.Models.Store", "Store")
                         .WithMany("Partners")
                         .HasForeignKey("StoreId")
-                        .HasConstraintName("FK_Partner_Store");
+                        .HasConstraintName("FK_Partner_Store")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Store");
                 });
@@ -1576,19 +1597,22 @@ namespace Talbat.Migrations
                         .WithMany("Reviews")
                         .HasForeignKey("ReviewCategoryId")
                         .HasConstraintName("FK_Review_ReviewCategory")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Talbat.Models.Store", "Store")
                         .WithMany("Reviews")
                         .HasForeignKey("StoreId")
                         .HasConstraintName("FK_Review_Store")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Talbat.Models.Client", "User")
                         .WithMany("Reviews")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_Review_User")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ReviewCategory");
 
@@ -1599,6 +1623,12 @@ namespace Talbat.Migrations
 
             modelBuilder.Entity("Talbat.Models.Store", b =>
                 {
+                    b.HasOne("Talbat.Models.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Talbat.Models.Cuisine", "Cuisine")
                         .WithMany()
                         .HasForeignKey("CuisineId");
@@ -1606,7 +1636,11 @@ namespace Talbat.Migrations
                     b.HasOne("Talbat.Models.StoreType", "StoreType")
                         .WithMany("Stores")
                         .HasForeignKey("StoreTypeId")
-                        .HasConstraintName("FK_Store_StoreType");
+                        .HasConstraintName("FK_Store_StoreType")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Country");
 
                     b.Navigation("Cuisine");
 
@@ -1648,7 +1682,9 @@ namespace Talbat.Migrations
                     b.HasOne("Talbat.Models.StoreType", "StoreType")
                         .WithMany("TempPartnerRegisterationDetails")
                         .HasForeignKey("StoreTypeId")
-                        .HasConstraintName("FK_TempPartnerRegisterationDetails_StoreType");
+                        .HasConstraintName("FK_TempPartnerRegisterationDetails_StoreType")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("StoreType");
                 });
@@ -1746,17 +1782,6 @@ namespace Talbat.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("OrderReviews");
-                });
-
-            modelBuilder.Entity("Talbat.Models.OrderReview", b =>
-                {
-                    b.Navigation("InverseDeliveryTimeNavigation");
-
-                    b.Navigation("InverseOrderPackagingNavigation");
-
-                    b.Navigation("InverseQualityOffoodNavigation");
-
-                    b.Navigation("InverseValueForMoneyNavigation");
                 });
 
             modelBuilder.Entity("Talbat.Models.RateStatus", b =>
