@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.RegularExpressions;
 
 #nullable disable
 
@@ -37,9 +38,11 @@ namespace Talbat.Models
         public string StoreAddress { get; set; }
 
         [Required, DefaultValue(0.000000)]
+       //[RegularExpression("^-/+?[0-9]{9}.[0-9]{9}$", ErrorMessage ="Invalid Latitude")]
         public double StoreLatitude { get; set; }
 
         [Required, DefaultValue(0.000000)]
+        //[RegularExpression("^-/+?[0-9]{9}.[0-9]{9}$", ErrorMessage = "Invalid Longitude")]
         public double StoreLongitude { get; set; }
 
         [Required,DefaultValue(1)]
@@ -48,7 +51,7 @@ namespace Talbat.Models
         [Range(0, int.MaxValue)]
         public double StoreMinOrder { get; set; }
 
-        [Required]
+        [Required] 
         public int StoreDeliveryTime { get; set; }
 
         [Range(0, int.MaxValue)]
