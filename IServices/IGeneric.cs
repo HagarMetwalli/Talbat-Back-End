@@ -10,8 +10,8 @@ namespace Talbat.IServices
         Task<List<T>> RetriveAllAsync();
         Task<T> RetriveAsync(int id);
         Task<T> CreatAsync(T item);
-        Task<T> PatchAsync(T item);
         Task<bool> DeleteAsync(int id);
+        Task<T> PatchAsync(T item);
 
     }
 }

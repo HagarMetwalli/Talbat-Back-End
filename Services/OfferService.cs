@@ -24,6 +24,7 @@ namespace Talbat.Services
                 return offer;
             return null;
         }
+        
         public async Task<bool> DeleteAsync(int id)
         {
             Offer offer = await RetriveAsync(id);
@@ -62,7 +63,6 @@ namespace Talbat.Services
                 var offerItem = _db.OfferItems.FirstOrDefault(o => o.OfferId == Id && o.ItemId == 4);
 
                 var item = db.Items.Find(offerItem.ItemId);
-                //var item = db.Items.Find(l[0].ItemId);
                 if (item != null)
                 {
                     var offerStore = db.Stores.Find(item.StoreId);

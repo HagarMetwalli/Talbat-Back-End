@@ -598,11 +598,13 @@ namespace Talbat.Models
                     .IsUnicode(false)
                     .HasColumnName("Offer_Name");
 
-                entity.Property(e => e.OfferPrice)
+                entity.Property(e => e.OfferItemSaleValue).HasColumnName("OfferItem_SaleValue");
+
+                entity.Property(e => e.OfferItemTypePercentage)
                     .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("Offer_Price");
+                    .HasMaxLength(10)
+                    .HasColumnName("OfferItem_TypePercentage")
+                    .IsFixedLength(true);
 
                 entity.Property(e => e.OfferQuantity).HasColumnName("Offer_Quantity");
 
@@ -629,14 +631,6 @@ namespace Talbat.Models
                 entity.Property(e => e.OfferItemQuantity)
                     .HasColumnName("OfferItem_Quantity")
                     .HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.OfferItemSaleValue).HasColumnName("OfferItem_SaleValue");
-
-                entity.Property(e => e.OfferItemTypePercentage)
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .HasColumnName("OfferItem_TypePercentage")
-                    .IsFixedLength(true);
 
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.OfferItems)
