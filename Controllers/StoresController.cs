@@ -16,7 +16,7 @@ namespace Talbat.Controllers
         private TalabatContext _db;
         private IItemCategoryService _itemCategoryRepo;
 
-        public StoresController(IStoreService repo , IItemCategoryService itemCategoryRepo, TalabatContext db)
+        public StoresController(IStoreService repo, IItemCategoryService itemCategoryRepo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -30,7 +30,7 @@ namespace Talbat.Controllers
         public async Task<ActionResult<List<Store>>> Get()
         {
             List<Store> stores = await _repo.RetriveAllAsync();
-            if(stores== null) 
+            if (stores == null)
                 return BadRequest();
             if (stores.Count == 0)
                 return NoContent();
@@ -45,12 +45,28 @@ namespace Talbat.Controllers
 
         public async Task<IActionResult> GetById(int id)
         {
-            if(id <= 0)
+            if (id <= 0)
                 return BadRequest();
             Store Store = await _repo.RetriveAsync(id);
             if (Store == null)
                 return NotFound();
             return Ok(Store);
+        }
+        // GET api/Stores/5
+        [HttpGet]
+        [Route("GetTopItemsBystoreId/{id}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetTopItemsBystoreId(int id)
+        {
+            if (id <= 0)
+                return BadRequest();
+            var items = await _repo.RetriveTopItemsAsync(id);
+            if (items == null)
+                return NotFound();
+            return Ok(items);
         }
         // GET api/Stores/MC
         [HttpGet]
@@ -67,6 +83,7 @@ namespace Talbat.Controllers
                 return NotFound();
             return Ok(Store);
         }
+
 
         // GET api/Stores/MC/Categories
         [HttpGet]
@@ -115,7 +132,7 @@ namespace Talbat.Controllers
             {
                 return NoContent();
             }
-            if (stores==null)
+            if (stores == null)
             {
                 return NotFound();
             }
@@ -129,11 +146,11 @@ namespace Talbat.Controllers
         [ProducesResponseType(200, Type = typeof(List<Item>))]
         public async Task<ActionResult<IEnumerable<Item>>> StoreMenuwithCategries(string StoreName, string CategoryName)
         {
-            Store store = await _repo.RetriveByNameAsync(StoreName); 
+            Store store = await _repo.RetriveByNameAsync(StoreName);
             ItemCategory itemCategory = await _itemCategoryRepo.RetriveByNameAsync(CategoryName);
-            if (store == null || itemCategory==null)
+            if (store == null || itemCategory == null)
                 return NotFound();
-            IEnumerable<Item> ItemsList = await _repo.RetriveCategoryItemsAsync(store.StoreId,itemCategory.ItemCategoryId);
+            IEnumerable<Item> ItemsList = await _repo.RetriveCategoryItemsAsync(store.StoreId, itemCategory.ItemCategoryId);
             if (ItemsList == null)
                 return NotFound();
             return Ok(ItemsList);
@@ -146,7 +163,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Store>))]
         public async Task<ActionResult<IEnumerable<Item>>> MostCommonStores()
         {
-            IEnumerable < String > list = await _repo.RetriveMostCommonAsync();
+            IEnumerable<String> list = await _repo.RetriveMostCommonAsync();
             if (list == null)
                 return BadRequest();
             if (list.Count() == 0)
@@ -173,7 +190,7 @@ namespace Talbat.Controllers
             var CountryId = _db.Countries.Find(Store.CountryId);
             var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
             var CuisineId = _db.Cuisines.Find(Store.CuisineId);
-            if (CountryId == null || StoreTypeId == null || CuisineId == null )
+            if (CountryId == null || StoreTypeId == null || CuisineId == null)
             {
                 return BadRequest();
             }
@@ -198,7 +215,7 @@ namespace Talbat.Controllers
 
             if (existing == null)
                 return NotFound();
-           
+
             bool deleted = await _repo.DeleteAsync(id);
             if (deleted)
             {
@@ -229,7 +246,7 @@ namespace Talbat.Controllers
             var CountryId = _db.Countries.Find(Store.CountryId);
             var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
             var CuisineId = _db.Cuisines.Find(Store.CuisineId);
-            if (CountryId == null || StoreTypeId == null || CuisineId==null)
+            if (CountryId == null || StoreTypeId == null || CuisineId == null)
             {
                 return BadRequest();
             }
@@ -238,13 +255,92 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var affected= await _repo.PatchAsync(Store);
-            if(affected== null)
+            var affected = await _repo.PatchAsync(Store);
+            if (affected == null)
             {
                 return BadRequest();
             }
             return new NoContentResult();
 
-        }  
+        }
+        // GET api/Stores/GetStoreInArea/area
+        [HttpGet]
+        [Route("GetStoreInArea/{area}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetStoreInArea(string area)
+        {
+            if (area == null)
+            {
+                return BadRequest();
+            }
+            var stores = await _repo.RetriveStoreInAreaAsync(area);
+            {
+
+                if (stores.Count == 0)
+                {
+                    return NotFound();
+                }
+                return Ok(stores);
+            }
+        }
+
+        // GET api/Stores/GetStoresWithType/area
+        [HttpGet]
+        [Route("GetStoresWithType/{storeTypeId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetStoresWithType(string storeTypeId)
+        {
+            if (storeTypeId == null)
+            {
+                return BadRequest();
+            }
+            StoreType storeType = _db.StoreTypes.Find(storeTypeId);
+
+            if (storeType == null)
+            {
+                return BadRequest();
+            }
+            var stores = await _repo.RetriveStoreWithTypeIdAsync(storeType.StoreTypeId);
+            {
+
+                if (stores.Count == 0)
+                {
+                    return NotFound();
+                }
+                return Ok(stores);
+            }
+        }
+        // GET api/Stores/GetStoresWithCusineName/cusineName
+        [HttpGet]
+        [Route("GetStoresWithCusineName/{cusineId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetStoresWithCusineName(string cusineId)
+        {
+            if (cusineId == null)
+            {
+                return BadRequest();
+            }
+            Cuisine cuisine = _db.Cuisines.Find(cusineId);
+
+            if (cuisine == null)
+            {
+                return BadRequest();
+            }
+            var stores = await _repo.RetriveStoreWithCuisineIdAsync(cuisine.CuisineId);
+            {
+
+                if (stores.Count == 0)
+                {
+                    return NotFound();
+                }
+                return Ok(stores);
+            }
+        }
     }
 }

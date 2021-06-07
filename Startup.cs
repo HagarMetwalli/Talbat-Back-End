@@ -76,7 +76,7 @@ namespace Talbat
             services.AddScoped<IAddressType, AddressTypeService>();
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<ICuisienSevice, CuisineService>();
-            services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<IUserService<Client>, ClientService>();
             services.AddScoped<IGeneric<Order>, OrderService>();
             services.AddScoped<IGeneric<Job>, JobService>();
             services.AddScoped<IGeneric<JobCategory>, JobCategoryService>();

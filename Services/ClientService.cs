@@ -17,7 +17,7 @@ using System.Security.Claims;
 
 namespace Talbat.Services
 {
-    public class ClientService: IClientService
+    public class ClientService: IUserService<Client>
     {
         TalabatContext _db = new TalabatContext();
         public ClientService(TalabatContext db)

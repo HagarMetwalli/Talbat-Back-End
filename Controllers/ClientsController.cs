@@ -17,9 +17,9 @@ namespace Talbat.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private IClientService _repo;
+        private IUserService<Client> _repo;
 
-        public ClientsController(IClientService repo)
+        public ClientsController(IUserService <Client> repo)
         {
             _repo = repo;
         }

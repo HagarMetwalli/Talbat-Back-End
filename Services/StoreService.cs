@@ -82,6 +82,72 @@ namespace Talbat.Services
                 return null;
             }
         }
+        public Task<List<OrderItem>> RetriveTopItemsAsync(int storeId)
+        {
+            try
+            {
+                var _items = _db.Items.Where(i=>i.StoreId==storeId).ToList();
+                List<Item> items = new List<Item>();
+                List<OrderItem> orderItems = new List<OrderItem>();
+                foreach (var item in _db.OrderItems)
+                {
+                    var existing = _items.FirstOrDefault(x => x.ItemId == item.ItemId);
+                    if (existing != null)
+                    {
+                        orderItems.Add(_db.OrderItems.Where(i => i.ItemId == existing.ItemId).FirstOrDefault());
+                    }
+                }
+
+
+                return Task<IList<OrderItem>>.Run<List<OrderItem>>(() => orderItems);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<List<Store>> RetriveStoreInAreaAsync(string area)
+        {
+            try
+            {
+                var stores = _db.Stores.Where(s => s.StoreAddress.Contains(area)).ToList();
+
+
+                return Task<IList<Store>>.Run<List<Store>>(() => stores);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<List<Store>> RetriveStoreWithTypeIdAsync(int storeTypeId)
+        {
+            try
+            {
+                var stores = _db.Stores.Where(s => s.StoreTypeId==storeTypeId).ToList();
+
+                return Task<IList<Store>>.Run<List<Store>>(() => stores);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<List<Store>> RetriveStoreWithCuisineIdAsync(int CuisineId)
+        {
+            try
+            {
+
+                var stores = _db.Stores.Where(s => s.CuisineId == CuisineId).ToList();
+
+                return Task<IList<Store>>.Run<List<Store>>(() => stores);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public Task<Store> RetriveByNameAsync(string storename)
         {
             try { 

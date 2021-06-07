@@ -14,11 +14,11 @@ namespace Talbat.Controllers
     public class OrdersController : ControllerBase
     {
         private IGeneric<Order> _repo;
-        private IClientService _repoClient;
+        private IUserService<Client> _repoClient;
         private IStoreService _repoStore;
         private TalabatContext _db;
 
-        public OrdersController(IGeneric<Order> repo, IClientService repoClient, IStoreService repoStore, TalabatContext db)
+        public OrdersController(IGeneric<Order> repo, IUserService<Client> repoClient, IStoreService repoStore, TalabatContext db)
         {
             _repo = repo;
             _repoClient = repoClient;
