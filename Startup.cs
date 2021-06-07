@@ -58,7 +58,7 @@ namespace Talbat
             services.AddScoped<IGeneric<DeliveryMan>, DeliveryManService>();
             services.AddScoped<IGeneric<Invoice>, InvoiceService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
-            services.AddScoped<IGeneric<Item>, ItemService>();
+            services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IGeneric<ItemReview>, ItemReviewService>();
             services.AddScoped<IOfferRelatedService, OfferService>();
             services.AddScoped<IGeneric<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();

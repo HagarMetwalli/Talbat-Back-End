@@ -18,14 +18,16 @@ namespace Talbat.Services
         }
         public async Task<Store> CreatAsync(Store Store)
         {
-            try {
+            try 
+            {
                 await _db.Stores.AddAsync(Store);
                 int affected = await _db.SaveChangesAsync();
                 if (affected == 1)
                     return Store;
                 return null; 
             }
-            catch {
+            catch 
+            {
                 return null;
             }
         }
@@ -242,6 +244,26 @@ namespace Talbat.Services
                 return null;
             }
         }
+        public Task<Store> RetriveStoreInLocationAsync(string storeName,double lat1, double long1)
+        {
+            try
+            {
+                var store = _db.Stores.Single(x=>x.StoreName==storeName);
+
+                double destanceInMeters = getDistanceFromLatLonInMeter(lat1, long1, store.StoreLatitude, store.StoreLongitude);
+                if (destanceInMeters <= store.StoreDeliveryDist)
+                {
+                    return Task<Store>.Run<Store>(() => store);
+                }
+                return null;
+
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public double getDistanceFromLatLonInMeter(double lat1,double lon1,double lat2,double lon2)
         {
             var R = 6371; // Radius of the earth in km

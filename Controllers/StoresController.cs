@@ -139,6 +139,27 @@ namespace Talbat.Controllers
 
             return Ok(stores);
         }
+
+        // GET api/NearestStores
+        [HttpGet]
+        [Route("GetStoreInLocationAsync/{storeName}/{latitude}/{Longitude}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetStoreInLocationAsync(string storeName,double latitude, double Longitude)
+        {
+            Store store = await _repo.RetriveByNameAsync(storeName);
+            if (store == null)
+            {
+                return BadRequest();
+            }
+            var avaliablity  =  _repo.RetriveStoreInLocationAsync(storeName,latitude, Longitude);
+            if (avaliablity != null)
+            {
+                return NoContent();
+            }
+            return NotFound();  
+        }
         // GET api/Stores/MC/Drinks
         [HttpGet]
         [Route("{StoreName}/{CategoryName}")]

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class ItemService:IGeneric<Item>
+    public class ItemService: IItemService
     {
         private TalabatContext _db;
         public ItemService(TalabatContext db)
@@ -75,6 +76,47 @@ namespace Talbat.Services
             try
             {
                 return Task.Run(() => _db.Items.Find(id));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<List<SubItem>> RetriveSubItemsByItemIdAsync(int itemId)
+        {
+            try
+            {
+                var subItems = _db.SubItems.Where(s => s.ItemId == itemId).ToList();
+                return Task<IList>.Run<List<SubItem>>(() => subItems);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<List<SubItemCategory>> RetriveSubItemsCategoriesByItemIdAsync(int itemId)
+        {
+            try
+            {
+                var SubItemsCategories = _db.SubItems
+                    .Include("SubItemCategory")
+                    .Where(x=>x.ItemId==itemId).Select(x=>x.SubItemCategory)
+                    .Distinct()
+                    .ToList();
+
+                return Task<IList>.Run<List<SubItemCategory>>(() => SubItemsCategories);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<List<SubItem>> RetriveSubItemsAsync(int itemId)
+        {
+            try
+            {
+                var subItems = _db.SubItems.Where(i => i.ItemId == itemId).ToList();
+                return Task<IList>.Run<List<SubItem>>(() => subItems);
             }
             catch
             {

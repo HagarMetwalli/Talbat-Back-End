@@ -13,10 +13,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
-        private IGeneric<Item> _repo;
+        private IItemService _repo;
         private TalabatContext _db;
 
-        public ItemsController(IGeneric<Item> repo,TalabatContext db)
+        public ItemsController(IItemService repo,TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -53,6 +53,39 @@ namespace Talbat.Controllers
                 return NotFound();
             }
             return Ok(item);
+        }
+
+        // GET api/items/GetSubItemsByItemId/5
+        [HttpGet]
+        [Route("GetSubItemsByItemId/{itemId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> GetSubItemsByItemId(int itemId)
+        {
+            Item item = await _repo.RetriveAsync(itemId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            var subItems = await _repo.RetriveSubItemsByItemIdAsync(itemId);
+            return Ok(item);
+        }
+
+        //GET api/items/GetSubItemsCategoriesByItemId/5
+        [HttpGet]
+        [Route("GetSubItemsCategoriesByItemId/{itemId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetSubItemsCategoriesByItemId(int itemId)
+        {
+            Item item = await _repo.RetriveAsync(itemId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            var subItems = await _repo.RetriveSubItemsCategoriesByItemIdAsync(itemId);
+            return Ok(subItems);
         }
 
         // POST api/items
