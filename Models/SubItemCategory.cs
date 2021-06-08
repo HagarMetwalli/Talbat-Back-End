@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Talbat.Models
 {
+    [Table("SubItemCategory")]
     public partial class SubItemCategory
     {
         public SubItemCategory()
@@ -14,19 +14,19 @@ namespace Talbat.Models
             //SubItems = new HashSet<SubItem>();
         }
 
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int SubItemCategoryId { get; set; }
 
-        [MaxLength(100), MinLength(3)]
         [Required]
+        [StringLength(maximumLength: 20, MinimumLength = 1)]
         public string SubItemCategoryName { get; set; }
 
-        [MaxLength(200), MinLength(3)]
         [Required]
+        [StringLength(maximumLength: 100, MinimumLength = 1)]
         public string SubItemCategoryDescription { get; set; }
 
+
+        [InverseProperty(nameof(SubItem.SubItemCategory))]
         public virtual ICollection<SubItem> SubItems { get; set; }
     }
 }

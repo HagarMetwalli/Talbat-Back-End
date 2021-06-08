@@ -16,40 +16,40 @@ namespace Talbat.Services
         {
             _db = db;
         }
-        public async Task<Offer> CreatAsync(Offer offer)
+        public async Task<Promotion> CreatAsync(Promotion promotion)
         {
-            await _db.Offers.AddAsync(offer);
+            await _db.Promotions.AddAsync(promotion);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
-                return offer;
+                return promotion;
             return null;
         }
         
         public async Task<bool> DeleteAsync(int id)
         {
-            Offer offer = await RetriveAsync(id);
-            _db.Offers.Remove(offer);
+            Promotion promotion = await RetriveAsync(id);
+            _db.Promotions.Remove(promotion);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return true;
             return false;
         }
 
-        public Task<List<Offer>> RetriveAllAsync()
+        public Task<List<Promotion>> RetriveAllAsync()
         {
-            var x = _db.Offers.ToList();
+            var x = _db.Promotions.ToList();
             return Task.Run(() => x);
         }
 
-        public Task<Offer> RetriveAsync(int id)
+        public Task<Promotion> RetriveAsync(int id)
         {
-            return Task.Run(() => _db.Offers.Find(id));
+            return Task.Run(() => _db.Promotions.Find(id));
         }
 
-        public async Task<Offer> PatchAsync(Offer offer)
+        public async Task<Promotion> PatchAsync(Promotion offer)
         {
             _db = new TalabatContext();
-            _db.Offers.Update(offer);
+            _db.Promotions.Update(offer);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return offer;
@@ -60,7 +60,7 @@ namespace Talbat.Services
         {
             using (var db = new TalabatContext())
             {
-                var offerItem = _db.OfferItems.FirstOrDefault(o => o.OfferId == Id && o.ItemId == 4);
+                var offerItem = _db.PromotionItems.FirstOrDefault(o => o.PromotionId == Id && o.ItemId == 4);
 
                 var item = db.Items.Find(offerItem.ItemId);
                 if (item != null)

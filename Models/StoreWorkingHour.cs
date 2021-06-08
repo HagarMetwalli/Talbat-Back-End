@@ -1,30 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
 namespace Talbat.Models
 {
+    //enum WeekDays
+    //{
+    //    Monday,
+    //    Tuesday,
+    //    Wednesday,
+    //    Thursday,
+    //    Friday,
+    //    Saturday,
+    //    Sunday
+    //}
+
+    [Table("StoreWorkingHour")]
+    [Index(nameof(StoreId), Name = "IX_StoreWorkingHour_Store_Id")]
     public partial class StoreWorkingHour
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int StoreWorkingHourId { get; set; }
 
         [Required]
+        [StringLength(maximumLength: 15, MinimumLength = 1)]
         public string StoreWorkingHourDay { get; set; }
 
-        [Range(0, int.MaxValue)]
+        [Required]
+        [Range(0, 24)]
         public int StoreWorkingHourStart { get; set; }
 
-        [Range(0, int.MaxValue)]
+        [Required]
+        [Range(0, 24)]
         public int StoreWorkingHourEnd { get; set; }
 
-        [ForeignKey("Store")]
         public int StoreId { get; set; }
 
+
+        [ForeignKey(nameof(StoreId))]
+        [InverseProperty("StoreWorkingHours")]
         public virtual Store Store { get; set; }
     }
 }

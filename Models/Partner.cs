@@ -1,23 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
 namespace Talbat.Models
 {
+    [Table("Partner")]
+    [Index(nameof(StoreId), Name = "IX_Partner_Store_Id")]
     public partial class Partner
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int PartnerId { get; set; }
-        [MaxLength(10), MinLength(3)]
+
         [Required]
+        [StringLength(maximumLength: 10, MinimumLength =3)]
         public string PartnerFname { get; set; }
 
-        [MaxLength(10), MinLength(3)]
         [Required]
+        [StringLength(maximumLength: 10, MinimumLength = 3)]
         public string PartnerLname { get; set; }
 
         [Required]
@@ -25,19 +27,22 @@ namespace Talbat.Models
         public string PartnerEmail { get; set; }
 
         [Required]
-        //[RegularExpression("^\\+?\\d{0,3}\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$")]
         public int PartnerPhoneNo { get; set; }
 
         [Required]
-        [ForeignKey("Store")]
-        public int? StoreId { get; set; }
+        public int StoreId { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [MaxLength(100), MinLength(8)]
+        [StringLength(maximumLength: 100, MinimumLength = 8)]
         [RegularExpression("^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{8,}$")]
+
         public string PartnerPassword { get; set; }
 
+
+        [ForeignKey(nameof(StoreId))]
+        [InverseProperty("Partners")]
         public virtual Store Store { get; set; }
+
     }
 }

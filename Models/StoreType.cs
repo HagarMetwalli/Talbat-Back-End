@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Talbat.Models
 {
+    [Table("StoreType")]
     public partial class StoreType
     {
         public StoreType()
@@ -16,13 +16,18 @@ namespace Talbat.Models
         }
 
         [Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int StoreTypeId { get; set; }
 
+        [Required]
+        [StringLength(maximumLength: 50, MinimumLength = 1)]
         public string StoreTypeName { get; set; }
-       
 
+
+        [InverseProperty(nameof(Store.StoreType))]
         public virtual ICollection<Store> Stores { get; set; }
+
+        [InverseProperty(nameof(TempPartnerRegisterationDetail.StoreType))]
         public virtual ICollection<TempPartnerRegisterationDetail> TempPartnerRegisterationDetails { get; set; }
+
     }
 }

@@ -6,7 +6,7 @@ using Talbat.Models;
 
 namespace Talbat.IServices
 {
-    public interface IOfferRelatedService:IGeneric<Offer>
+    public interface IOfferRelatedService:IGeneric<Promotion>
     {
         public Store RetrieveOfferStoreAsync(int Id);
 

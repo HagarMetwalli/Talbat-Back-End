@@ -66,15 +66,15 @@ namespace Talbat
             services.AddScoped<IGeneric<SubItem>, SubItemsService>();
             services.AddScoped<IGeneric<StoreWorkingHour>, StoreWorkingHourService>();
             services.AddScoped<IGeneric<StoreType>, StoreTypeService>();
-            services.AddScoped<IGeneric<ReviewCategory>, ReviewCategoryService>();
-            services.AddScoped<IGeneric<Review>, ReviewService>();
+            //services.AddScoped<IGeneric<ReviewCategory>, ReviewCategoryService>();
+            //services.AddScoped<IGeneric<Review>, ReviewService>();
             services.AddScoped<IGeneric<Region>, RegionService>();
             services.AddScoped<IGeneric<RateStatus>, RateStatusService>();
             services.AddScoped<IGeneric<Partner>, PartnerService>();
             services.AddScoped<IGeneric<OrderReview>, OrderReviewService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
             services.AddScoped<IAddressType, AddressTypeService>();
-            services.AddScoped<IStoreService, StoreService>();
+            //services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<ICuisienSevice, CuisineService>();
             services.AddScoped<IUserService<Client>, ClientService>();
             services.AddScoped<IGeneric<Order>, OrderService>();
@@ -83,7 +83,7 @@ namespace Talbat
             services.AddScoped<IGeneric<JobLocation>, JobLocationService>();
             services.AddScoped<IGeneric<JobPeriod>, JobPeriodService>();
             services.AddScoped<IGeneric<JobType>, JobTypeService>();
-            services.AddScoped<IGenericComposite<OfferItem>, OfferItemService>();
+            services.AddScoped<IGenericComposite<PromotionItem>, OfferItemService>();
 
 
             // Adding Authentication  

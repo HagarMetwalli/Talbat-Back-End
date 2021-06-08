@@ -9,21 +9,21 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OfferItemController : ControllerBase
+    public class PromotionItemsController : ControllerBase
     {
-        private IGenericComposite<OfferItem> repo;
+        private IGenericComposite<PromotionItem> repo;
 
-        public OfferItemController(IGenericComposite<OfferItem> repo)
+        public PromotionItemsController(IGenericComposite<PromotionItem> repo)
         {
             this.repo = repo;
         }
 
 
-        // GET: api/OfferItem
+        // GET: api/PromotionItems
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<List<OfferItem>>))]
-        public ActionResult<List<OfferItem>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<PromotionItem>>))]
+        public ActionResult<List<PromotionItem>> Get()
         {
             var rels = repo.RetriveAll();
             if (rels.Count == 0)
@@ -34,12 +34,12 @@ namespace Talbat.Controllers
             return Ok(rels);
         }
 
-        // GET api/OfferItem/5/2
+        // GET api/PromotionItems/5/2
         [HttpGet("{id1}/{id2}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<OfferItem>))]
-        public ActionResult<OfferItem> Get(int id1, int id2)
+        [ProducesResponseType(200, Type = typeof(ActionResult<PromotionItem>))]
+        public ActionResult<PromotionItem> Get(int id1, int id2)
         {
             if (id1 <= 0 || id2 <= 0)
             {
@@ -55,13 +55,13 @@ namespace Talbat.Controllers
             return Ok(rel);
         }
 
-        // GET api/OfferItem/GetByOfferId/5
+        // GET api/PromotionItems/GetByOfferId/5
         [HttpGet]
         [Route("GetByEmpId/{id}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<List<OfferItem>>))]
-        public ActionResult<OfferItem> GetByOfferId(int id)
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<PromotionItem>>))]
+        public ActionResult<PromotionItem> GetByOfferId(int id)
         {
             if (id <= 0)
             {
@@ -77,13 +77,13 @@ namespace Talbat.Controllers
             return Ok(rel);
         }
 
-        // GET api/OfferItem/GetByItemId/5
+        // GET api/PromotionItems/GetByItemId/5
         [HttpGet]
         [Route("GetByItemId/{id}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<List<OfferItem>>))]
-        public ActionResult<OfferItem> GetByItemId(int id)
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<PromotionItem>>))]
+        public ActionResult<PromotionItem> GetByItemId(int id)
         {
             if (id <= 0)
             {
@@ -99,13 +99,13 @@ namespace Talbat.Controllers
             return Ok(rel);
         }
 
-        // POST api/OfferItem
+        // POST api/PromotionItems
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public ActionResult<OfferItem> Post([FromBody] OfferItem offerItem)
+        public ActionResult<PromotionItem> Post([FromBody] PromotionItem promotionItem)
         {
-            if (offerItem == null || offerItem.OfferId < 0 || offerItem.ItemId < 0)
+            if (promotionItem == null || promotionItem.PromotionId < 0 || promotionItem.ItemId < 0)
             {
                 return BadRequest();
             }
@@ -115,7 +115,7 @@ namespace Talbat.Controllers
                 return BadRequest(ModelState);
             }
 
-            var added = repo.Create(offerItem);
+            var added = repo.Create(promotionItem);
             if (added == null)
             {
                 return BadRequest();
@@ -124,7 +124,7 @@ namespace Talbat.Controllers
             return Ok();
         }
 
-        // DELETE api/OfferItem/5
+        // DELETE api/PromotionItems/5
         [HttpDelete]
         [Route("{id1}/{id2}")]
         [ProducesResponseType(400)]
@@ -146,15 +146,15 @@ namespace Talbat.Controllers
 
         }
 
-        // Put api/OfferItem/OfferId:5/ItemId:2
+        // Put api/PromotionItems/promotionId:5/ItemId:2
         [HttpPut]
         [Route("{id1}/{id2}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult Put(int id1, int id2, [FromBody] OfferItem rel)
+        public ActionResult Put(int id1, int id2, [FromBody] PromotionItem rel)
         {
-            if (rel == null || rel.OfferId <= 0 || rel.ItemId <= 0 || rel.OfferId != id1 || rel.ItemId != id2)
+            if (rel == null || rel.PromotionId <= 0 || rel.ItemId <= 0 || rel.PromotionId != id1 || rel.ItemId != id2)
             {
                 return BadRequest();
             }

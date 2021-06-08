@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Talbat.Models
 {
-    [Table("ItemReview")]
-    [Index(nameof(RateStatusId), Name = "IX_ItemReview_RateStatus_Id")]
-    public partial class ItemReview
+    [Table("PromotionReview")]
+    [Index(nameof(RateStatusId), Name = "IX_OfferReview_RateStatus_Id")]
+    public partial class PromotionReview
     {
         [Key]
-        public int ItemId { get; set; }
+        public int PromotionId { get; set; }
 
         [Key]
         public int OrderReviewId { get; set; }
@@ -21,16 +21,17 @@ namespace Talbat.Models
         public int RateStatusId { get; set; }
 
 
-        [ForeignKey(nameof(ItemId))]
-        [InverseProperty("ItemReviews")]
-        public virtual Item Item { get; set; }
-
         [ForeignKey(nameof(OrderReviewId))]
-        [InverseProperty("ItemReviews")]
+        [InverseProperty("PromotionReviews")]
         public virtual OrderReview OrderReview { get; set; }
 
+        [ForeignKey(nameof(PromotionId))]
+        [InverseProperty("PromotionReviews")]
+        public virtual Promotion Promotion { get; set; }
+
         [ForeignKey(nameof(RateStatusId))]
-        [InverseProperty("ItemReviews")]
+        [InverseProperty("PromotionReviews")]
         public virtual RateStatus RateStatus { get; set; }
+
     }
 }

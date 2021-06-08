@@ -10,12 +10,12 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OffersController : ControllerBase
+    public class PromotionsController : ControllerBase
     {
         private IOfferRelatedService _repo;
         private TalabatContext _db;
 
-        public OffersController(IOfferRelatedService repo, TalabatContext db)
+        public PromotionsController(IOfferRelatedService repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -23,7 +23,7 @@ namespace Talbat.Controllers
 
         // GET: api/Offers
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Offer>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Promotion>))]
         [ProducesResponseType(204)]
         public async Task<IActionResult> Get()
         {
@@ -42,7 +42,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetById(int id)
         {
-            Offer offer = await _repo.RetriveAsync(id);
+            Promotion offer = await _repo.RetriveAsync(id);
 
             if (offer == null)
             {
@@ -72,7 +72,7 @@ namespace Talbat.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] Offer offer)
+        public async Task<IActionResult> Post([FromBody] Promotion offer)
         {
             if (offer == null)
             {
@@ -84,7 +84,7 @@ namespace Talbat.Controllers
                 return BadRequest(ModelState);
             }
 
-            Offer added = await _repo.CreatAsync(offer);
+            Promotion added = await _repo.CreatAsync(offer);
 
             if (added == null)
             {
@@ -126,7 +126,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Patch(int id, [FromBody] Offer offer)
+        public async Task<IActionResult> Patch(int id, [FromBody] Promotion offer)
         {
             if (offer == null)
             {
@@ -148,3 +148,15 @@ namespace Talbat.Controllers
 
     }//end controller
 }
+
+
+
+
+
+// TODO: Add Coupon and promotion to DB and context
+// TODO: Make Coupon Service
+// TODO: Configure IofferRelated with Promotion and copouns
+// TODO: Make Coupon Controller
+// TODO: Check once more for the "Offer" word in other controllers and services
+// TODO: What Is Client Offer?!!!
+// TODO: NON sense - CLient Offer have a new attribute called IS offer/coupon (0,1) to identify whether it's an offer or coupon.

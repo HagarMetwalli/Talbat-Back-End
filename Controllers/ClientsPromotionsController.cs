@@ -10,64 +10,64 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsOffersController : ControllerBase
+    public class ClientsPromotionsController : ControllerBase
     {
-        private IGenericService<ClientOffer> _repo;
-        public ClientsOffersController(IGenericService<ClientOffer> repo) 
+        private IGenericService<ClientPromotion> _repo;
+        public ClientsPromotionsController(IGenericService<ClientPromotion> repo) 
         {
             _repo = repo;
         }
-        // GET: api/ClientsOffers
+        // GET: api/ClientPromotions
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<ClientOffer>>))]
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<ClientPromotion>>))]
         public async Task<ActionResult<IList<Client>>> Get()
         {
-            IList<ClientOffer> clientOffers = await _repo.RetriveAllAsync();
-            if (clientOffers.Count == 0)
+            IList<ClientPromotion> clientPromotions = await _repo.RetriveAllAsync();
+            if (clientPromotions.Count == 0)
                 return NoContent();
-            return Ok(clientOffers);
+            return Ok(clientPromotions);
         }
 
-        // GET api/ClientsOffers/5
+        // GET api/ClientPromotions/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
         public async Task<IActionResult> GetById(int id)
         {
-            ClientOffer clientOffer = await _repo.RetriveAsync(id);
-            if (clientOffer == null)
+            ClientPromotion clientPromotion = await _repo.RetriveAsync(id);
+            if (clientPromotion == null)
                 return NotFound();
-            return Ok(clientOffer);
+            return Ok(clientPromotion);
         }
 
-        // POST api/ClientsOffers
+        // POST api/ClientPromotions
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] ClientOffer clientOffer)
+        public async Task<IActionResult> Post([FromBody] ClientPromotion clientPromotion)
         {
-            if (clientOffer == null)
+            if (clientPromotion == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            ClientOffer added = await _repo.CreatAsync(clientOffer);
+            ClientPromotion added = await _repo.CreatAsync(clientPromotion);
             if (added == null)
                 return BadRequest();
             return Ok();
         }
 
-        //Patch api/ClientsOffers/5
+        //Patch api/ClientPromotions/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> PatchClientOffer(int id, [FromBody] ClientOffer clientOffer)
+        public async Task<ActionResult<City>> PatchClientPromotion(int id, [FromBody] ClientPromotion clientPromotion)
         {
-            if (clientOffer == null || clientOffer.OfferId != id)
+            if (clientPromotion == null || clientPromotion.PromotionId != id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
@@ -78,13 +78,13 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            var _clientOffer = await _repo.UpdateAsync(clientOffer);
-            if (_clientOffer == null)
+            var _clientPromotion = await _repo.UpdateAsync(clientPromotion);
+            if (_clientPromotion == null)
                 return BadRequest();
 
             return new NoContentResult();
         }
-        // DELETE api/ClientsOffers/5
+        // DELETE api/ClientPromotions/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -103,7 +103,7 @@ namespace Talbat.Controllers
             }
             else
             {
-                return BadRequest($"ClientsOffers {id} was found but failed to delete");
+                return BadRequest($"ClientsPromotions {id} was found but failed to delete");
             }
         }
     }

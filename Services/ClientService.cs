@@ -1,19 +1,9 @@
-﻿using Castle.Core.Configuration;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
 using Talbat.Authentication;
-using System.Security.Claims;
 
 namespace Talbat.Services
 {
@@ -133,7 +123,9 @@ namespace Talbat.Services
                 obj.Email = obj.Email.ToLower();
                 Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
 
-                if (client != null && client.ClientPassword == obj.Password)
+                Login clientLogin = _db.Logins.FirstOrDefault(x => x.Email == obj.Email && x.Password == obj.Password);
+
+                if (client != null && clientLogin != null)
                 {
                     var tokenString = UserAuthentication.CreateToken(obj.Email);
                     return Task.Run(() => tokenString);
