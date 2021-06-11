@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class PromotionsController : ControllerBase
     {
-        private IOfferRelatedService _repo;
+        private IPromotionRelatedService _repo;
         private TalabatContext _db;
 
-        public PromotionsController(IOfferRelatedService repo, TalabatContext db)
+        public PromotionsController(IPromotionRelatedService repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -148,15 +148,3 @@ namespace Talbat.Controllers
 
     }//end controller
 }
-
-
-
-
-
-// TODO: Add Coupon and promotion to DB and context
-// TODO: Make Coupon Service
-// TODO: Configure IofferRelated with Promotion and copouns
-// TODO: Make Coupon Controller
-// TODO: Check once more for the "Offer" word in other controllers and services
-// TODO: What Is Client Offer?!!!
-// TODO: NON sense - CLient Offer have a new attribute called IS offer/coupon (0,1) to identify whether it's an offer or coupon.

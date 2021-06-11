@@ -36,6 +36,10 @@ namespace Talbat.Models
 
         [Required]
         [Range(1, int.MaxValue)]
+        public int CouponPercentageValue { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue)]
         public int CouponMaxMoneyValue { get; set; }
 
         [Required]

@@ -8,6 +8,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Talbat.Models
 {
+
+    public enum DeliveryStatus
+    {
+        InKitchen,
+        ReadyForDeliver,
+        InWay,
+        Delivered
+    }
+
     [Table("Order")]
     [Index(nameof(ClientId), Name = "IX_Order_Client_Id")]
     [Index(nameof(StoreId), Name = "IX_Order_Store_Id")]
@@ -34,11 +43,18 @@ namespace Talbat.Models
         [Required]
         public DateTime OrderTime { get; set; }
 
+        [Required(ErrorMessage = "AddressDetails is required")]
+        [MaxLength(150, ErrorMessage = "You exceeded Max. Length")]
+        public string AddressDetails { get; set; }
+
         [Required]
         public int ClientId { get; set; }
 
         [Required]
         public int StoreId { get; set; }
+
+        [Required]
+        public DeliveryStatus IsDelivered { get; set; }
 
 
         [ForeignKey(nameof(ClientId))]
@@ -49,8 +65,8 @@ namespace Talbat.Models
         [InverseProperty("Orders")]
         public virtual Store Store { get; set; }
 
-        [InverseProperty(nameof(Invoice.Order))]
-        public virtual ICollection<Invoice> Invoices { get; set; }
+        //[InverseProperty(nameof(Invoice.Order))]
+        //public virtual ICollection<Invoice> Invoices { get; set; }
 
         [InverseProperty(nameof(OrderItem.Order))]
         public virtual ICollection<OrderItem> OrderItems { get; set; }
@@ -60,3 +76,6 @@ namespace Talbat.Models
 
     }
 }
+
+
+// TODO: ||Done|| Add Order Delivery Address, OrderDelivery Status

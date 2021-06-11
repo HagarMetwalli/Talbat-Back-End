@@ -28,7 +28,7 @@ namespace Talbat.Models
         public virtual DbSet<CouponItem> CouponItems { get; set; }
         public virtual DbSet<Cuisine> Cuisines { get; set; }
         public virtual DbSet<DeliveryMan> DeliveryMen { get; set; }
-        public virtual DbSet<Invoice> Invoices { get; set; }
+        //public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<ItemCategory> ItemCategories { get; set; }
         public virtual DbSet<ItemReview> ItemReviews { get; set; }
@@ -53,6 +53,7 @@ namespace Talbat.Models
         public virtual DbSet<SubItemCategory> SubItemCategories { get; set; }
         public virtual DbSet<TempPartnerRegisterationDetail> TempPartnerRegisterationDetails { get; set; }
         public virtual DbSet<Login> Logins { get; set; }
+        //public virtual DbSet<SystemReview> SystemReviews { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -145,7 +146,7 @@ namespace Talbat.Models
 
             modelBuilder.Entity<ClientDeliveryManOrder>(entity =>
             {
-                entity.HasKey(e => new { e.ClientId, e.DeliveryManId, e.InvoiceId });
+                entity.HasKey(e => new { e.ClientId, e.DeliveryManId}); //, e.InvoiceId 
 
                 entity.HasOne(d => d.ClientAddress)
                     .WithMany(p => p.ClientDeliveryManOrders)
@@ -165,11 +166,11 @@ namespace Talbat.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ClientDeliveryManOrder_DeliveryMan");
 
-                entity.HasOne(d => d.Invoice)
-                    .WithMany(p => p.ClientDeliveryManOrders)
-                    .HasForeignKey(d => d.InvoiceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ClientDeliveryManOrder_Order");
+                //entity.HasOne(d => d.Invoice)
+                //    .WithMany(p => p.ClientDeliveryManOrders)
+                //    .HasForeignKey(d => d.InvoiceId)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK_ClientDeliveryManOrder_Order");
             });
 
             //modelBuilder.Entity<ClientOffer>(entity =>
@@ -266,15 +267,15 @@ namespace Talbat.Models
                 entity.Property(e => e.DeliveryManName).IsUnicode(false);
             });
 
-            modelBuilder.Entity<Invoice>(entity =>
-            {
-                entity.Property(e => e.AddressDetails).IsUnicode(false);
+            //modelBuilder.Entity<Invoice>(entity =>
+            //{
+            //    entity.Property(e => e.AddressDetails).IsUnicode(false);
 
-                entity.HasOne(d => d.Order)
-                    .WithMany(p => p.Invoices)
-                    .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK_Invoice_Order");
-            });
+            //    entity.HasOne(d => d.Order)
+            //        .WithMany(p => p.Invoices)
+            //        .HasForeignKey(d => d.OrderId)
+            //        .HasConstraintName("FK_Invoice_Order");
+            //});
 
             modelBuilder.Entity<Item>(entity =>
             {
@@ -604,10 +605,25 @@ namespace Talbat.Models
             {
                 entity.Property(e => e.SubItemCategoryId).ValueGeneratedNever();
 
-                entity.Property(e => e.SubItemCategoryDescription).IsUnicode(false);
+                //entity.Property(e => e.SubItemCategoryDescription).IsUnicode(false);
 
                 entity.Property(e => e.SubItemCategoryName).IsUnicode(false);
             });
+
+            // TODO: FIX this SystemReview entity builder
+            //modelBuilder.Entity<SystemReview>(entity =>
+            //{
+            //    entity.Property(e => e.SystemReviewComment)
+            //        .IsUnicode(false)
+            //        .HasDefaultValueSql("('')");
+
+                //entity.HasOne(d => d.Client)
+                //    .WithMany(p => p.SystemReviews)
+                //    .HasForeignKey(d => d.ClientId)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK_SystemReviews_Client");
+
+            //});
 
             modelBuilder.Entity<TempPartnerRegisterationDetail>(entity =>
             {

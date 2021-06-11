@@ -49,6 +49,7 @@ namespace Talbat
                     builder.AllowAnyHeader();
                 });
             });
+            
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IGeneric<City>, CityService>();
@@ -56,11 +57,11 @@ namespace Talbat
             // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGeneric<Country>, CountryService>();
             services.AddScoped<IGeneric<DeliveryMan>, DeliveryManService>();
-            services.AddScoped<IGeneric<Invoice>, InvoiceService>();
+            //services.AddScoped<IGeneric<Invoice>, InvoiceService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IGeneric<ItemReview>, ItemReviewService>();
-            services.AddScoped<IOfferRelatedService, OfferService>();
+            services.AddScoped<IPromotionRelatedService, PromotionService>();
             services.AddScoped<IGeneric<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
             services.AddScoped<IGeneric<SubItemCategory>, SubItemCategoryService>();
             services.AddScoped<IGeneric<SubItem>, SubItemsService>();
@@ -84,6 +85,7 @@ namespace Talbat
             services.AddScoped<IGeneric<JobPeriod>, JobPeriodService>();
             services.AddScoped<IGeneric<JobType>, JobTypeService>();
             services.AddScoped<IGenericComposite<PromotionItem>, OfferItemService>();
+            services.AddScoped<ICouponRelatedService, CouponService>();
 
 
             // Adding Authentication  

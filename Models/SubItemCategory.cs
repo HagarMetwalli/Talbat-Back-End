@@ -21,9 +21,9 @@ namespace Talbat.Models
         [StringLength(maximumLength: 20, MinimumLength = 1)]
         public string SubItemCategoryName { get; set; }
 
-        [Required]
-        [StringLength(maximumLength: 100, MinimumLength = 1)]
-        public string SubItemCategoryDescription { get; set; }
+        //[Required]
+        //[StringLength(maximumLength: 100, MinimumLength = 1)]
+        //public string SubItemCategoryDescription { get; set; }
 
 
         [InverseProperty(nameof(SubItem.SubItemCategory))]
