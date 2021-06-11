@@ -8,7 +8,7 @@ namespace Talbat.IServices
 {
     public interface ICouponRelatedService : IGeneric<Coupon>
     {
-        public int RetrieveCouponDiscountValueAsync(int Id, List<Item> itemsList, int clientId);
+        public int RetrieveCouponDiscountValueAsync(int Id, List<int> itemsList, int clientId);
 
     }
 

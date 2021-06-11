@@ -55,11 +55,14 @@ namespace Talbat.Services
             return null;
         }
 
-        public int RetrieveCouponDiscountValueAsync(int Id, List<Item> itemsList, int clientId)
+        public int RetrieveCouponDiscountValueAsync(int Id, List<int> itemsIdList, int clientId)
         {
             // NOTE: just for testing
-            itemsList = _db.Items.Take(6).ToList();
-
+            var itemsList = (from itemId in itemsIdList
+                            join itemsOrigin in _db.Items
+                            on itemId equals itemsOrigin.ItemId
+                            select new { itemsOrigin });
+            
             Coupon c = _db.Coupons.Find(Id);
 
             DateTime CouponExpireDate = c.CouponStartDate.AddDays(c.CouponDaysCount);
@@ -79,14 +82,9 @@ namespace Talbat.Services
 
             if (c.IsForAllStoreItems == 1)
             {
-                var TotalDiscount = 0.0;
-
-                var ItemsCount = itemsList.Where(x => x.StoreId == c.StoreId).Count();
-
                 //var ItemsExceededLimit = itemsList.Where(x => (x.ItemPrice * (c.CouponPercentageValue / 100) >= c.CouponMaxMoneyValue).Count();
                 //var itemsss = itemsList.Select(x => new { discountForItem = (x.ItemPrice * (c.CouponPercentageValue / 100.0)) , maxDiscountValue = c.CouponMaxMoneyValue }).ToList();
                 //var ItemsExceededLimit = itemsss.Count();
-                var ItemsExceededLimit = itemsList.Count(x => (x.ItemPrice * (c.CouponPercentageValue / 100.0)) >= c.CouponMaxMoneyValue);
                 //var ItemsExceededLimit = itemsList.TakeWhile(x => (x.ItemPrice * (c.CouponPercentageValue / 100)) >= c.CouponMaxMoneyValue).Count();
                 //int ItemsExceededLimit = 0;
                 //foreach (var item in itemsList)
@@ -96,19 +94,29 @@ namespace Talbat.Services
                 //        ItemsExceededLimit += 1;
                 //    }
                 //}
+                //NOT GOOD
+                //-----------------------------------------------------------------------------------------------------------------------------------
+                var TotalDiscount = 0.0;
+
+                var ItemsCount = itemsList.Where(x => x.itemsOrigin.StoreId == c.StoreId).Count();
+
+                var ItemsExceededLimit = itemsList.Count(x => (x.itemsOrigin.ItemPrice * (c.CouponPercentageValue / 100.0)) >= c.CouponMaxMoneyValue);
 
                 TotalDiscount += (c.CouponMaxMoneyValue * ItemsExceededLimit);
-                var ItemsDidnotExceededLimit = itemsList.Where(x => ((x.ItemPrice) * (c.CouponPercentageValue / 100.0)) < c.CouponMaxMoneyValue).ToList();
 
-                //NOT GOOD
-                var customDiscounts = ItemsDidnotExceededLimit.Select(x => x.ItemPrice * (c.CouponPercentageValue / 100.0)).Sum();
-                //-----------------------------------------------------------------------------------------------------------------------------------
+                var ItemsDidnotExceededLimit = itemsList.Where(x => ((x.itemsOrigin.ItemPrice) * (c.CouponPercentageValue / 100.0)) < c.CouponMaxMoneyValue).ToList();
+
+                var customDiscounts = ItemsDidnotExceededLimit.Select(x => x.itemsOrigin.ItemPrice * (c.CouponPercentageValue / 100.0)).Sum();
 
                 TotalDiscount += customDiscounts;
+
                 return (int)TotalDiscount;
+
             }
             else
             {
+                var TotalDiscount = 0.0;
+
                 var CouponItemsFound = _db.CouponItems.Where(x => x.CouponId == c.CouponId).ToList();
 
                 //var ItemsFound = from v in CouponItemsFound
@@ -119,13 +127,21 @@ namespace Talbat.Services
                 //                 .Select(x => new { x });
 
                 var ItemsFound = from v in CouponItemsFound
-                                 join vOrigin in _db.Items
-                                 on v.ItemId equals vOrigin.ItemId
+                                 join vOrigin in itemsList
+                                 on v.ItemId equals vOrigin.itemsOrigin.ItemId
                                  select new { vOrigin };
 
-                int customDiscounts = ItemsFound.Select(x => x.vOrigin.ItemPrice * (c.CouponPercentageValue / 100)).Sum();
+                var ItemsExceededLimit = ItemsFound.Count(x => (x.vOrigin.itemsOrigin.ItemPrice * (c.CouponPercentageValue / 100.0)) >= c.CouponMaxMoneyValue);
 
-                return customDiscounts;
+                TotalDiscount += (c.CouponMaxMoneyValue * ItemsExceededLimit);
+
+                var ItemsDidnotExceededLimit = ItemsFound.Where(x => ((x.vOrigin.itemsOrigin.ItemPrice) * (c.CouponPercentageValue / 100.0)) < c.CouponMaxMoneyValue).ToList();
+
+                var customDiscounts = ItemsDidnotExceededLimit.Select(x => x.vOrigin.itemsOrigin.ItemPrice * (c.CouponPercentageValue / 100.0)).Sum();
+                
+                TotalDiscount += customDiscounts;
+
+                return (int)TotalDiscount;
             }
 
         }
