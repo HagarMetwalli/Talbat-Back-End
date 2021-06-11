@@ -87,6 +87,7 @@ namespace Talbat
             services.AddScoped<IGeneric<JobType>, JobTypeService>();
             services.AddScoped<IGenericComposite<PromotionItem>, OfferItemService>();
             services.AddScoped<ICouponRelated, CouponService>();
+            services.AddScoped<IOrderItems, OrderItemService>();
 
 
             // Adding Authentication  

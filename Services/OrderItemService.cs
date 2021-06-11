@@ -9,13 +9,13 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class OrderItemService : IGeneric<OrderItem>
+    public class OrderItemService : IOrderItems
     {
-        //private TalabatContext _db;
-        //public OrderItemService(TalabatContext db)
-        //{
-        //    _db = db;
-        //}
+        private TalabatContext db;
+        public OrderItemService(TalabatContext db)
+        {
+            this.db = db;
+        }
 
         public Task<List<OrderItem>> RetriveAllAsync()
         {
@@ -51,8 +51,6 @@ namespace Talbat.Services
 
         public async Task<OrderItem> CreatAsync(OrderItem orderItem)
         {
-            using (var db = new TalabatContext())
-            {
                 try
                 {
                     await db.OrderItems.AddAsync(orderItem);
@@ -68,6 +66,28 @@ namespace Talbat.Services
                 {
                     return null;
                 }
+        }
+
+        async Task<List<OrderItem>> IOrderItems.CreateListAsync(List<OrderItem> itemsList)
+        {
+            try
+            {
+                foreach (var item in itemsList)
+                {
+                    db.OrderItems.Add(item);
+                }
+
+                int affected = await db.SaveChangesAsync();
+                if (affected >= 1)
+                {
+                    return itemsList;
+                }
+
+                return null;
+            }
+            catch (System.Exception)
+            {
+                return null;
             }
         }
 

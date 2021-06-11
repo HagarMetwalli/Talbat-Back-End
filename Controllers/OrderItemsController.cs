@@ -13,10 +13,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class OrderItemsController : ControllerBase
     {
-        private IGeneric<OrderItem> _repo;
+        private IOrderItems _repo;
         private TalabatContext _db;
 
-        public OrderItemsController(IGeneric<OrderItem> repo, TalabatContext db)
+        public OrderItemsController(IOrderItems repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
