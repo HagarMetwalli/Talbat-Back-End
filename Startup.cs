@@ -75,17 +75,18 @@ namespace Talbat
             services.AddScoped<IGeneric<OrderReview>, OrderReviewService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
             services.AddScoped<IAddressType, AddressTypeService>();
-            //services.AddScoped<IStoreService, StoreService>();
+            services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<ICuisienSevice, CuisineService>();
             services.AddScoped<IUserService<Client>, ClientService>();
-            services.AddScoped<IGeneric<Order>, OrderService>();
+            //services.AddScoped<IGeneric<Order>, OrderService>();
+            services.AddScoped<IOrderRelated, OrderService>();
             services.AddScoped<IGeneric<Job>, JobService>();
             services.AddScoped<IGeneric<JobCategory>, JobCategoryService>();
             services.AddScoped<IGeneric<JobLocation>, JobLocationService>();
             services.AddScoped<IGeneric<JobPeriod>, JobPeriodService>();
             services.AddScoped<IGeneric<JobType>, JobTypeService>();
             services.AddScoped<IGenericComposite<PromotionItem>, OfferItemService>();
-            services.AddScoped<ICouponRelatedService, CouponService>();
+            services.AddScoped<ICouponRelated, CouponService>();
 
 
             // Adding Authentication  

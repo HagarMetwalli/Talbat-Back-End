@@ -10,10 +10,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class CouponsController : ControllerBase
     {
-        private ICouponRelatedService _repo;
+        private ICouponRelated _repo;
         private TalabatContext _db;
 
-        public CouponsController(ICouponRelatedService repo, TalabatContext db)
+        public CouponsController(ICouponRelated repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -154,123 +154,5 @@ namespace Talbat.Controllers
 }
 
 
-// TODO: Add OrderId for ClientCoupon Table to stack client coupon Usage throught 3 parts composite key
-
-
-
-/*
- {
-"Id" : 1,
-"itemsList" : [
-  {
-    "itemId": 1,
-    "itemImage": "aaaa",
-    "itemName": "aaaaaa",
-    "itemDescription": "aaaa",
-    "itemPrice": 100,
-    "itemCategoryId": 1,
-    "countryId": 1,
-    "storeId": 3,
-    "itemCategory": null,
-    "country": null,
-    "store": null,
-    "couponItems": null,
-    "orderItems": null,
-    "promotionItems": null,
-    "subItems": null,
-    "itemReviews": null
-  },
-  {
-    "itemId": 2,
-    "itemImage": "ssss",
-    "itemName": "wwww",
-    "itemDescription": "wwww",
-    "itemPrice": 100,
-    "itemCategoryId": 1,
-    "countryId": 1,
-    "storeId": 3,
-    "itemCategory": null,
-    "country": null,
-    "store": null,
-    "couponItems": null,
-    "orderItems": null,
-    "promotionItems": null,
-    "subItems": null,
-    "itemReviews": null
-  },
-  {
-    "itemId": 3,
-    "itemImage": "dddd",
-    "itemName": "aaaaaa",
-    "itemDescription": "aaaa",
-    "itemPrice": 100,
-    "itemCategoryId": 1,
-    "countryId": 1,
-    "storeId": 3,
-    "itemCategory": null,
-    "country": null,
-    "store": null,
-    "couponItems": null,
-    "orderItems": null,
-    "promotionItems": null,
-    "subItems": null,
-    "itemReviews": null
-  },
-  {
-    "itemId": 4,
-    "itemImage": "ffff",
-    "itemName": "wwww",
-    "itemDescription": "wwww",
-    "itemPrice": 100,
-    "itemCategoryId": 1,
-    "countryId": 1,
-    "storeId": 3,
-    "itemCategory": null,
-    "country": null,
-    "store": null,
-    "couponItems": null,
-    "orderItems": null,
-    "promotionItems": null,
-    "subItems": null,
-    "itemReviews": null
-  },
-  {
-    "itemId": 5,
-    "itemImage": "gggg",
-    "itemName": "aaaaaa",
-    "itemDescription": "aaaa",
-    "itemPrice": 100,
-    "itemCategoryId": 1,
-    "countryId": 1,
-    "storeId": 3,
-    "itemCategory": null,
-    "country": null,
-    "store": null,
-    "couponItems": null,
-    "orderItems": null,
-    "promotionItems": null,
-    "subItems": null,
-    "itemReviews": null
-  },
-  {
-    "itemId": 6,
-    "itemImage": "hhhh",
-    "itemName": "wwww",
-    "itemDescription": "wwww",
-    "itemPrice": 100,
-    "itemCategoryId": 1,
-    "countryId": 1,
-    "storeId": 3,
-    "itemCategory": null,
-    "country": null,
-    "store": null,
-    "couponItems": null,
-    "orderItems": null,
-    "promotionItems": null,
-    "subItems": null,
-    "itemReviews": null
-  }
-],
-"clientId" : 1
-}
- */
+// TODO: ||Done|| Add OrderId for ClientCoupon Table to stack client coupon Usage throught 3 parts composite key
+// TODO: ||Done|| Apply Coupon route should be full funtional

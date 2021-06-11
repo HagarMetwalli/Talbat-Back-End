@@ -13,17 +13,15 @@ namespace Talbat.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private IGeneric<Order> _repo;
+        private IOrderRelated _repo;
         private IUserService<Client> _repoClient;
         private IStoreService _repoStore;
-        private TalabatContext _db;
 
-        public OrdersController(IGeneric<Order> repo, IUserService<Client> repoClient, IStoreService repoStore, TalabatContext db)
+        public OrdersController(IOrderRelated repo, IUserService<Client> repoClient, IStoreService repoStore)
         {
             _repo = repo;
             _repoClient = repoClient;
             _repoStore = repoStore;
-            _db = db;
         }
 
         // GET: api/Orders
@@ -32,7 +30,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(200, Type = typeof(ActionResult<IList<Country>>))]
         public async Task<ActionResult<List<Client>>> Get()
         {
-            var orders = await _repo.RetriveAllAsync();
+            var orders =  _repo.RetriveAllAsync();
             if (orders.Count == 0)
             {
                 return NoContent();
@@ -53,13 +51,34 @@ namespace Talbat.Controllers
                 return BadRequest();
             }
 
-            var order = await _repo.RetriveAsync(id);
+            var order = _repo.RetriveAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
 
             return Ok(order);
+        }
+
+        // GET api/Orders/GetByClientId/5
+        [HttpGet("GetByClientId/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult GetByClientId(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var orders = _repo.RetriveByClientIdAsync(id);
+            if (orders == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(orders);
         }
 
         // POST api/Orders
@@ -103,7 +122,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int id)
         {
-            var existing = await _repo.RetriveAsync(id);
+            var existing = _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();
@@ -137,14 +156,18 @@ namespace Talbat.Controllers
                 return BadRequest(ModelState);
             }
 
-            var clientId = _db.Clients.Find(order.ClientId);
-            var storeId = _db.Stores.Find(order.StoreId);
+            //var clientId = _db.Clients.Find(order.ClientId);
+            //var storeId = _db.Stores.Find(order.StoreId);
+            
+            var clientId = _repoClient.RetriveAsync(order.ClientId);
+            var storeId = _repoStore.RetriveAsync(order.StoreId);
+            
             if (order.OrderId != id || clientId == null || storeId == null)
             {
                 return BadRequest();
             }
 
-            var existing = await _repo.RetriveAsync(id);
+            var existing = _repo.RetriveAsync(id);
             if (existing == null)
             {
                 return NotFound();

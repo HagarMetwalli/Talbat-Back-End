@@ -6,7 +6,7 @@ using Talbat.Models;
 
 namespace Talbat.IServices
 {
-    public interface ICouponRelatedService : IGeneric<Coupon>
+    public interface ICouponRelated : IGeneric<Coupon>
     {
         public int RetrieveCouponDiscountValueAsync(int Id, List<int> itemsList, int clientId);
 

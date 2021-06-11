@@ -129,7 +129,7 @@ namespace Talbat.Models
 
             modelBuilder.Entity<ClientCoupon>(entity =>
             {
-                entity.HasKey(e => new { e.ClientId, e.CouponId });
+                entity.HasKey(e => new { e.ClientId, e.CouponId, e.OrderId });
 
                 entity.HasOne(d => d.Client)
                     .WithMany(p => p.ClientCoupons)
@@ -142,6 +142,12 @@ namespace Talbat.Models
                     .HasForeignKey(d => d.CouponId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ClientCoupon_Coupon");
+
+                entity.HasOne(d => d.Order)
+                   .WithMany(p => p.ClientCoupons)
+                   .HasForeignKey(d => d.OrderId)
+                   .OnDelete(DeleteBehavior.ClientSetNull)
+                   .HasConstraintName("FK_ClientCoupon_Order");
             });
 
             modelBuilder.Entity<ClientDeliveryManOrder>(entity =>

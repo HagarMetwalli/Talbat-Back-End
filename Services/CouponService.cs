@@ -7,7 +7,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class CouponService : ICouponRelatedService
+    public class CouponService : ICouponRelated
     {
         private TalabatContext _db;
         public CouponService(TalabatContext db)

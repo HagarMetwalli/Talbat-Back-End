@@ -9,52 +9,61 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class OrderService : IGeneric<Order>
+    public class OrderService : IOrderRelated
     {
-        //private TalabatContext _db;
-        //public OrderService(TalabatContext db)
-        //{
-        //    _db = db;
-        //}
-
-        public Task<List<Order>> RetriveAllAsync()
+        private TalabatContext db;
+        public OrderService(TalabatContext db)
         {
-            using (var db = new TalabatContext())
-            {
+            this.db = db;
+        }
+
+        public List<Order> RetriveAllAsync()
+        {
+
                 try
                 {
                     var orders = db.Orders.ToList();
-                    return Task.Run(() => orders);
+                    return orders;
                 }
                 catch (System.Exception)
                 {
 
                     return null;
                 }
-            }
         }
 
-        public Task<Order> RetriveAsync(int id)
+        public Order RetriveAsync(int id)
         {
-            using (var db = new TalabatContext())
-            {
+
                 try
                 {
                     var order = db.Orders.Find(id);
-                    return Task.Run(() => order);
+                    return  order;
                 }
                 catch (System.Exception)
                 {
 
                     return null;
                 }
+        }
+
+        public List<Order> RetriveByClientIdAsync(int clientId)
+        {
+            try
+            {
+                var orderList = db.Orders.Where(x => x.ClientId == clientId).ToList();
+                return orderList;
+            }
+            catch (System.Exception)
+            {
+
+                return null;
             }
         }
 
         public async Task<Order> CreatAsync(Order order)
         {
-            using (var db = new TalabatContext())
-            {
+
                 try
                 {
                     await db.Orders.AddAsync(order);
@@ -73,16 +82,14 @@ namespace Talbat.Services
 
                     return null;
                 }
-            }
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            using (var db = new TalabatContext())
-            {
+
                 try
                 {
-                    Order order = await RetriveAsync(id);
+                    Order order = RetriveAsync(id);
                     db.Orders.Remove(order);
 
                     int affected = await db.SaveChangesAsync();
@@ -99,13 +106,11 @@ namespace Talbat.Services
                 {
                     return false;
                 }
-            }
         }
 
         public async Task<Order> PatchAsync(Order order)
         {
-            using(var db= new TalabatContext())
-            {
+
                 try
                 {
                     db.Orders.Update(order);
@@ -122,8 +127,7 @@ namespace Talbat.Services
                 {
                     return null;
                 }
-            }
         }
-
+        
     }
 }

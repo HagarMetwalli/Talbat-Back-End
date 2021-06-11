@@ -73,6 +73,9 @@ namespace Talbat.Models
 
         [InverseProperty(nameof(OrderReview.Order))]
         public virtual ICollection<OrderReview> OrderReviews { get; set; }
+        
+        [InverseProperty(nameof(OrderReview.Order))]
+        public virtual ICollection<ClientCoupon> ClientCoupons { get; set; }
 
     }
 }
