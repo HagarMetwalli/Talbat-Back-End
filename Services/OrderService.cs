@@ -113,9 +113,17 @@ namespace Talbat.Services
 
                 try
                 {
-                    db.Orders.Update(order);
 
-                    int affected = await db.SaveChangesAsync();
+                if (order == db.Orders.Find(order.OrderId))
+                {
+                    return order;
+                }
+
+                //db.Orders.Update(order);
+                db.Entry(db.Orders.FirstOrDefault(x => x.OrderId == order.OrderId)).CurrentValues.SetValues(order);
+
+
+                int affected = await db.SaveChangesAsync();
                     if (affected == 1)
                     {
                         return order;

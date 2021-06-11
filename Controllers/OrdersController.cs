@@ -134,7 +134,7 @@ namespace Talbat.Controllers
                     o.order.OrderCost -= couponDiscountValue;
                 }
             }
-            // TODO: |ERROR| Not added!! check it
+
             var orderAdded = await _repo.CreatAsync(o.order);
             if (orderAdded == null)
             {
@@ -180,41 +180,75 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Patch(int id, [FromBody] Order order)
+        public async Task<IActionResult> Patch([FromBody] OrderSubmitData o)
         {
-            if (order == null)
+           
+            //var existing = _repo.RetriveAsync(id);
+            //if (existing == null)
+            //    return NotFound();
+            //var patched= await _repo.PatchAsync(order);
+            //if (patched == null)
+            //    return BadRequest("Failed to Update!");
+            //return NoContent();
+            if (o.order == null || o.orderItemsList == null)
             {
-                return BadRequest();
+                return BadRequest("Param or more are missing!");
             }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            //var clientId = _db.Clients.Find(order.ClientId);
-            //var storeId = _db.Stores.Find(order.StoreId);
-            
-            var clientId = _repoClient.RetriveAsync(order.ClientId);
-            var storeId = _repoStore.RetriveAsync(order.StoreId);
-            
-            if (order.OrderId != id || clientId == null || storeId == null)
+            var client = await _repoClient.RetriveAsync(o.order.ClientId);
+            var store = await _repoStore.RetriveAsync(o.order.StoreId);
+            int years = DateTime.Now.Year - client.ClientDateOfBirth.Year;
+
+            if (client == null || store == null || years <= 12)
             {
-                return BadRequest();
+                return BadRequest("Reference or more are missing!");
             }
 
-            var existing = _repo.RetriveAsync(id);
+            if (o.coupon != null)
+            {
+                var itemIdsList = o.orderItemsList.Select(x => x.ItemId).ToList();
+
+                var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponId, itemIdsList, o.order.ClientId);
+
+                if ((o.order.OrderCost - couponDiscountValue) < 0)
+                {
+                    o.order.OrderCost = 0;
+                }
+                else
+                {
+                    o.order.OrderCost -= couponDiscountValue;
+                }
+            }
+
+            var existing = _repo.RetriveAsync(o.order.OrderId);
             if (existing == null)
             {
-                return NotFound();
+                return NotFound("Order u're trying to modify is not found!");
             }
 
-            var patched= await _repo.PatchAsync(order);
-            if (patched == null)
+            if (existing == o.order)
             {
-                return BadRequest("Failed to Update!");
+                return Ok("Orders are the same, no updates have to be done.");
             }
 
-            return NoContent();
+            var orderPatched = await _repo.PatchAsync(o.order);
+            if (orderPatched == null)
+            {
+                return BadRequest("Order is not added due to some corrupted data sent!");
+            }
+
+            var orderItemsRes = _repoOrderItem.PatchListAsync(o.orderItemsList);
+            if (orderItemsRes == null)
+            {
+                return BadRequest("Order item or more are not patched due to some corrupted data sent!");
+            }
+
+            return Ok("Order Added successfully with all it's related Items");
         }
     }
 }

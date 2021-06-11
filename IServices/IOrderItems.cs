@@ -9,5 +9,6 @@ namespace Talbat.IServices
     public interface IOrderItems: IGeneric<OrderItem>
     {
         Task<List<OrderItem>> CreateListAsync(List<OrderItem> itemsList);
+        Task<List<OrderItem>> PatchListAsync(List<OrderItem> itemsList);
     }
 }
