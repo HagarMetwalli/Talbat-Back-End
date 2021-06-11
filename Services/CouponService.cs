@@ -79,15 +79,14 @@ namespace Talbat.Services
 
             if (c.IsForAllStoreItems == 1)
             {
-                int TotalDiscount = 0;
+                var TotalDiscount = 0.0;
 
                 var ItemsCount = itemsList.Where(x => x.StoreId == c.StoreId).Count();
 
-                // NOT GOOD
                 //var ItemsExceededLimit = itemsList.Where(x => (x.ItemPrice * (c.CouponPercentageValue / 100) >= c.CouponMaxMoneyValue).Count();
-                var itemsss = itemsList.Select(x => new { discountForItem = (x.ItemPrice * (c.CouponPercentageValue / 100.0)) , maxDiscountValue = c.CouponMaxMoneyValue }).ToList();
-                var ItemsExceededLimit = itemsss.Count();
-                //var ItemsExceededLimit = itemsList.Count(x => (x.ItemPrice * (c.CouponPercentageValue / 100)) >= c.CouponMaxMoneyValue);
+                //var itemsss = itemsList.Select(x => new { discountForItem = (x.ItemPrice * (c.CouponPercentageValue / 100.0)) , maxDiscountValue = c.CouponMaxMoneyValue }).ToList();
+                //var ItemsExceededLimit = itemsss.Count();
+                var ItemsExceededLimit = itemsList.Count(x => (x.ItemPrice * (c.CouponPercentageValue / 100.0)) >= c.CouponMaxMoneyValue);
                 //var ItemsExceededLimit = itemsList.TakeWhile(x => (x.ItemPrice * (c.CouponPercentageValue / 100)) >= c.CouponMaxMoneyValue).Count();
                 //int ItemsExceededLimit = 0;
                 //foreach (var item in itemsList)
@@ -97,17 +96,16 @@ namespace Talbat.Services
                 //        ItemsExceededLimit += 1;
                 //    }
                 //}
-                //-----------------------------------------------------------------------------------------------------------------------------------
 
                 TotalDiscount += (c.CouponMaxMoneyValue * ItemsExceededLimit);
-                var ItemsDidnotExceededLimit = itemsList.Where(x => ((x.ItemPrice) * (c.CouponPercentageValue / 100)) < c.CouponMaxMoneyValue).ToList();
+                var ItemsDidnotExceededLimit = itemsList.Where(x => ((x.ItemPrice) * (c.CouponPercentageValue / 100.0)) < c.CouponMaxMoneyValue).ToList();
 
                 //NOT GOOD
-                int customDiscounts = ItemsDidnotExceededLimit.Select(x => x.ItemPrice * (c.CouponPercentageValue / 100)).Sum();
+                var customDiscounts = ItemsDidnotExceededLimit.Select(x => x.ItemPrice * (c.CouponPercentageValue / 100.0)).Sum();
                 //-----------------------------------------------------------------------------------------------------------------------------------
 
                 TotalDiscount += customDiscounts;
-                return TotalDiscount;
+                return (int)TotalDiscount;
             }
             else
             {
