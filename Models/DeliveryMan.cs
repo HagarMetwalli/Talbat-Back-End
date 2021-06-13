@@ -31,6 +31,7 @@ namespace Talbat.Models
         [Required(ErrorMessage = "DeliveryManCurrentLocation is required")]
         [StringLength(maximumLength: 100, MinimumLength = 3)]
         public string DeliveryManCurrentLocation { get; set; }
+        //TODO:the location needs to change
 
 
         [InverseProperty(nameof(ClientDeliveryManOrder.DeliveryMan))]

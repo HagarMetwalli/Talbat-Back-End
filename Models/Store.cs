@@ -17,7 +17,7 @@ namespace Talbat.Models
         public Store()
         {
             //Coupons = new HashSet<Coupon>();
-            //Items = new HashSet<Item>();
+           // Items = new HashSet<Item>();
             //Orders = new HashSet<Order>();
             //Partners = new HashSet<Partner>();
             //Reviews = new HashSet<Review>();
@@ -115,6 +115,9 @@ namespace Talbat.Models
 
         [InverseProperty(nameof(StoreWorkingHour.Store))]
         public virtual ICollection<StoreWorkingHour> StoreWorkingHours { get; set; }
+
+    
+      
 
     }
 }

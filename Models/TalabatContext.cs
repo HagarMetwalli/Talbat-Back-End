@@ -54,6 +54,8 @@ namespace Talbat.Models
         public virtual DbSet<TempPartnerRegisterationDetail> TempPartnerRegisterationDetails { get; set; }
         public virtual DbSet<Login> Logins { get; set; }
 
+        public virtual DbSet<SystemReview> SystemReview { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -79,6 +81,12 @@ namespace Talbat.Models
                 entity.Property(e => e.ClientFname).IsUnicode(false);
 
                 entity.Property(e => e.ClientLname).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<SystemReview>(entity =>
+            {
+                entity.Property(e => e.SystemReviewId).ValueGeneratedNever();
+
             });
 
             modelBuilder.Entity<ClientAddress>(entity =>
@@ -603,8 +611,6 @@ namespace Talbat.Models
             modelBuilder.Entity<SubItemCategory>(entity =>
             {
                 entity.Property(e => e.SubItemCategoryId).ValueGeneratedNever();
-
-                entity.Property(e => e.SubItemCategoryDescription).IsUnicode(false);
 
                 entity.Property(e => e.SubItemCategoryName).IsUnicode(false);
             });

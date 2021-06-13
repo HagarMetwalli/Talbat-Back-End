@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210608232803_blabla")]
-    partial class blabla
+    [Migration("20210611200312_second")]
+    partial class second
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -435,12 +435,20 @@ namespace Talbat.Migrations
                         .IsUnicode(false)
                         .HasColumnType("int");
 
+                    b.Property<int?>("OrderItemItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OrderItemOrderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
 
                     b.HasKey("ItemId");
 
                     b.HasIndex("ItemCategoryId");
+
+                    b.HasIndex("OrderItemOrderId", "OrderItemItemId");
 
                     b.HasIndex(new[] { "CountryId" }, "IX_Item_Country_Id");
 
@@ -1064,12 +1072,6 @@ namespace Talbat.Migrations
                     b.Property<int>("SubItemCategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SubItemCategoryDescription")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
                     b.Property<string>("SubItemCategoryName")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -1105,9 +1107,8 @@ namespace Talbat.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("PartnerPhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PartnerPhoneNumber")
+                        .HasColumnType("int");
 
                     b.Property<int>("StoreAddress")
                         .HasMaxLength(100)
@@ -1330,6 +1331,10 @@ namespace Talbat.Migrations
                         .HasForeignKey("StoreId")
                         .HasConstraintName("FK_Item_Store")
                         .IsRequired();
+
+                    b.HasOne("Talbat.Models.OrderItem", null)
+                        .WithMany("Items")
+                        .HasForeignKey("OrderItemOrderId", "OrderItemItemId");
 
                     b.Navigation("Country");
 
@@ -1711,6 +1716,11 @@ namespace Talbat.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("OrderReviews");
+                });
+
+            modelBuilder.Entity("Talbat.Models.OrderItem", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Talbat.Models.OrderReview", b =>

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talbat.Models;
 
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    partial class TalabatContextModelSnapshot : ModelSnapshot
+    [Migration("20210609165547_first")]
+    partial class first
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1062,6 +1064,12 @@ namespace Talbat.Migrations
                     b.Property<int>("SubItemCategoryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("SubItemCategoryDescription")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<string>("SubItemCategoryName")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -1071,35 +1079,6 @@ namespace Talbat.Migrations
                     b.HasKey("SubItemCategoryId");
 
                     b.ToTable("SubItemCategory");
-                });
-
-            modelBuilder.Entity("Talbat.Models.SystemReview", b =>
-                {
-                    b.Property<int>("SystemReviewId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EffortMadeToOrderFood")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RateTalabatExperience")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RecommendToFriend")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SystemReviewComment")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("SystemReviewId");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("SystemReview");
                 });
 
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>
@@ -1126,8 +1105,9 @@ namespace Talbat.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("PartnerPhoneNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("PartnerPhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StoreAddress")
                         .HasMaxLength(100)
@@ -1596,17 +1576,6 @@ namespace Talbat.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("SubItemCategory");
-                });
-
-            modelBuilder.Entity("Talbat.Models.SystemReview", b =>
-                {
-                    b.HasOne("Talbat.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>

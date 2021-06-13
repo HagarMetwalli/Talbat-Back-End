@@ -28,6 +28,7 @@ namespace Talbat.Models
         [Required]
         [StringLength(maximumLength: 15, MinimumLength = 1)]
         public string StoreWorkingHourDay { get; set; }
+        //TODO:enum
 
         [Required]
         [Range(0, 24)]

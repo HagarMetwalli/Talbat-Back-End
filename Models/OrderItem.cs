@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +13,7 @@ namespace Talbat.Models
     [Index(nameof(ItemId), Name = "IX_OrderItem_Item_Id")]
     public partial class OrderItem
     {
+      
         [Key]
         public int OrderId { get; set; }
 
@@ -34,6 +36,8 @@ namespace Talbat.Models
         [ForeignKey(nameof(OrderId))]
         [InverseProperty("OrderItems")]
         public virtual Order Order { get; set; }
+
+       
 
     }
 }

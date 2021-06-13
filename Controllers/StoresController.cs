@@ -284,28 +284,28 @@ namespace Talbat.Controllers
             return new NoContentResult();
 
         }
-        // GET api/Stores/GetStoreInArea/area
-        [HttpGet]
-        [Route("GetStoreInArea/{area}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+        //// GET api/Stores/GetStoreInArea/area
+        //[HttpGet]
+        //[Route("GetStoreInArea/{area}")]
+        //[ProducesResponseType(200)]
+        //[ProducesResponseType(404)]
 
-        public async Task<IActionResult> GetStoreInArea(string area)
-        {
-            if (area == null)
-            {
-                return BadRequest();
-            }
-            var stores = await _repo.RetriveStoreInAreaAsync(area);
-            {
+        //public async Task<IActionResult> GetStorebyfilter(string area)
+        //{
+        //    if (area == null)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    var stores = await _repo.RetriveStoreInAreaAsync(area);
+        //    {
 
-                if (stores.Count == 0)
-                {
-                    return NotFound();
-                }
-                return Ok(stores);
-            }
-        }
+        //        if (stores.Count == 0)
+        //        {
+        //            return NotFound();
+        //        }
+        //        return Ok(stores);
+        //    }
+        //}
 
         // GET api/Stores/GetStoresWithType/area
         [HttpGet]

@@ -26,8 +26,8 @@ namespace Talbat.Models
         public int StoreCountryId { get; set; }
 
         [Required]
-        [RegularExpression("^\\+?\\d{0,3}\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$")]
-        public string PartnerPhoneNumber { get; set; }
+        //[RegularExpression("^\\+?\\d{0,3}\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$")]
+        public int PartnerPhoneNumber { get; set; }
 
         [Required]
         [RegularExpression("^[a-zA-Z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$")]
@@ -36,6 +36,7 @@ namespace Talbat.Models
         [Required]
         [StringLength(maximumLength: 20, MinimumLength = 1)]
         public string PartnerContactRole { get; set; }
+        //TODO: enum 
 
         [Required]
         [StringLength(maximumLength: 100, MinimumLength = 3)]
