@@ -174,26 +174,6 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Promotion",
-                columns: table => new
-                {
-                    PromotionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PromotionImage = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false, defaultValueSql: "('Default.png')"),
-                    PromotionName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    PromotionDescription = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-                    PromotionStartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    PromotionDaysNumber = table.Column<int>(type: "int", nullable: false),
-                    PromotionQuantity = table.Column<int>(type: "int", nullable: false),
-                    PromotionTypePercentage = table.Column<int>(type: "int", nullable: false),
-                    PromotionSaleValue = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Promotion", x => x.PromotionId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RateStatus",
                 columns: table => new
                 {
@@ -283,30 +263,6 @@ namespace Talbat.Migrations
                         column: x => x.JobTypeId,
                         principalTable: "JobType",
                         principalColumn: "JobTypeId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientPromotion",
-                columns: table => new
-                {
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    PromotionId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientPromotion", x => new { x.ClientId, x.PromotionId });
-                    table.ForeignKey(
-                        name: "FK_ClientPromotion_Client",
-                        column: x => x.ClientId,
-                        principalTable: "Client",
-                        principalColumn: "ClientId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ClientPromotion_Promotion",
-                        column: x => x.PromotionId,
-                        principalTable: "Promotion",
-                        principalColumn: "PromotionId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -611,6 +567,33 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Promotion",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PromotionImage = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false, defaultValueSql: "('Default.png')"),
+                    PromotionName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    PromotionDescription = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+                    PromotionStartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
+                    PromotionDaysNumber = table.Column<int>(type: "int", nullable: false),
+                    PromotionQuantity = table.Column<int>(type: "int", nullable: false),
+                    PromotionTypePercentage = table.Column<int>(type: "int", nullable: false),
+                    PromotionSaleValue = table.Column<int>(type: "int", nullable: false),
+                    StoreId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Promotion", x => x.PromotionId);
+                    table.ForeignKey(
+                        name: "FK_Promotion_Store_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Store",
+                        principalColumn: "StoreId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StoreWorkingHour",
                 columns: table => new
                 {
@@ -628,30 +611,6 @@ namespace Talbat.Migrations
                         column: x => x.StoreId,
                         principalTable: "Store",
                         principalColumn: "StoreId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientCoupon",
-                columns: table => new
-                {
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    CouponId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientCoupon", x => new { x.ClientId, x.CouponId });
-                    table.ForeignKey(
-                        name: "FK_ClientCoupon_Client",
-                        column: x => x.ClientId,
-                        principalTable: "Client",
-                        principalColumn: "ClientId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ClientCoupon_Coupon",
-                        column: x => x.CouponId,
-                        principalTable: "Coupon",
-                        principalColumn: "CouponId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -680,31 +639,6 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PromotionItem",
-                columns: table => new
-                {
-                    PromotionId = table.Column<int>(type: "int", nullable: false),
-                    ItemId = table.Column<int>(type: "int", nullable: false),
-                    PromotionItemQuantity = table.Column<int>(type: "int", nullable: false, defaultValueSql: "((1))")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OfferItem", x => new { x.PromotionId, x.ItemId });
-                    table.ForeignKey(
-                        name: "FK_OfferItem_Item",
-                        column: x => x.ItemId,
-                        principalTable: "Item",
-                        principalColumn: "ItemId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OfferItem_Offer",
-                        column: x => x.PromotionId,
-                        principalTable: "Promotion",
-                        principalColumn: "PromotionId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SubItem",
                 columns: table => new
                 {
@@ -729,6 +663,37 @@ namespace Talbat.Migrations
                         column: x => x.SubItemCategoryId,
                         principalTable: "SubItemCategory",
                         principalColumn: "SubItemCategoryId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientCoupon",
+                columns: table => new
+                {
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    CouponId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientCoupon", x => new { x.ClientId, x.CouponId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_ClientCoupon_Client",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClientCoupon_Coupon",
+                        column: x => x.CouponId,
+                        principalTable: "Coupon",
+                        principalColumn: "CouponId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClientCoupon_Order",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "OrderId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -787,6 +752,55 @@ namespace Talbat.Migrations
                         principalTable: "Order",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientPromotion",
+                columns: table => new
+                {
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    PromotionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientPromotion", x => new { x.ClientId, x.PromotionId });
+                    table.ForeignKey(
+                        name: "FK_ClientPromotion_Client",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClientPromotion_Promotion",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionItem",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "int", nullable: false),
+                    ItemId = table.Column<int>(type: "int", nullable: false),
+                    PromotionItemQuantity = table.Column<int>(type: "int", nullable: false, defaultValueSql: "((1))")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OfferItem", x => new { x.PromotionId, x.ItemId });
+                    table.ForeignKey(
+                        name: "FK_OfferItem_Item",
+                        column: x => x.ItemId,
+                        principalTable: "Item",
+                        principalColumn: "ItemId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OfferItem_Offer",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -880,6 +894,11 @@ namespace Talbat.Migrations
                 name: "IX_ClientCoupon_CouponId",
                 table: "ClientCoupon",
                 column: "CouponId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientCoupon_OrderId",
+                table: "ClientCoupon",
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientDeliveryManOrder_ClientAddress_Id",
@@ -999,6 +1018,11 @@ namespace Talbat.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Partner_Store_Id",
                 table: "Partner",
+                column: "StoreId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Promotion_StoreId",
+                table: "Promotion",
                 column: "StoreId");
 
             migrationBuilder.CreateIndex(

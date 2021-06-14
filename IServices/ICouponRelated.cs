@@ -10,8 +10,7 @@ namespace Talbat.IServices
     {
         public int RetrieveCouponDiscountValueAsync(int Id, List<int> itemsList, int clientId);
         public List<Store> RetriveAllSotresHaveCoupons();
-        public List<CouponItem> RetriveAllSotreCouponItems(int storeId);
-
+        public List<fullCouponAndItem> RetriveAllSotreCouponItems(int storeId);
 
     }
 

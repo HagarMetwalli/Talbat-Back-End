@@ -89,14 +89,24 @@ namespace Talbat.Services
             return stores;
         }
 
-        public List<PromotionItem> RetriveAllSotrePromotionItems(int storeId)
+        public List<fullPromotionAndItem> RetriveAllSotrePromotionItems(int storeId)
         {
             var pi = _db.Items.Where(x => x.StoreId == storeId).ToList().Join(
                 _db.PromotionItems,
                 i => i.ItemId,
-                ci => ci.ItemId,
-                (i, ci) => ci
-                ).ToList();
+                pi => pi.ItemId,
+                (i, pi) => pi
+                ).ToList().Join(
+                _db.Promotions,
+                    pi => pi.PromotionId,
+                    p => p.PromotionId,
+                    (proIt, pro) => new { PromItem = proIt, promotion= pro }
+                    ).ToList().Join(
+                        _db.Items,
+                        promIte => promIte.PromItem.ItemId,
+                        i => i.ItemId,
+                        (prote, ite) => new fullPromotionAndItem() { item = ite, promotion= prote.promotion }
+                        ).ToList();
 
             if (pi.Count == 0)
             {
@@ -104,6 +114,34 @@ namespace Talbat.Services
             }
 
             return pi;
+
+            /*
+             var ci = _db.Items.Where(x => x.StoreId == storeId).ToList().Join(
+                _db.CouponItems,
+                i => i.ItemId,
+                ci => ci.ItemId,
+                (i, ci) => ci
+                ).ToList().Join(
+                _db.Coupons,
+                    ci => ci.CouponId,
+                    c => c.CouponId,
+                    (coIt, co) => new { couponItem = coIt, coupon = co }
+                    ).ToList().Join(
+                        _db.Items,
+                        couIte => couIte.couponItem.ItemId,
+                        i => i.ItemId,
+                        (coite, ite) => new fullCouponAndItem() { item = ite, coupon = coite.coupon }
+                        ).ToList();
+
+            if (ci.Count == 0)
+            {
+                return null;
+            }
+
+            return ci;
+             */
+
+
         }
 
     }//end service

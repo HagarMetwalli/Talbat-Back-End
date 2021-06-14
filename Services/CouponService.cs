@@ -158,14 +158,24 @@ namespace Talbat.Services
             return stores;
         }
 
-        public List<CouponItem> RetriveAllSotreCouponItems(int storeId)
+        public List<fullCouponAndItem> RetriveAllSotreCouponItems(int storeId)
         {
             var ci = _db.Items.Where(x => x.StoreId == storeId).ToList().Join(
                 _db.CouponItems,
                 i => i.ItemId,
                 ci => ci.ItemId,
                 (i, ci) => ci
-                ).ToList();
+                ).ToList().Join(
+                _db.Coupons,
+                    ci => ci.CouponId,
+                    c => c.CouponId,
+                    (coIt, co) => new { couponItem = coIt, coupon = co }
+                    ).ToList().Join(
+                        _db.Items,
+                        couIte => couIte.couponItem.ItemId,
+                        i => i.ItemId,
+                        (coite, ite) => new fullCouponAndItem() { item = ite, coupon = coite.coupon }
+                        ).ToList();
 
             if (ci.Count == 0)
             {

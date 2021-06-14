@@ -10,7 +10,7 @@ namespace Talbat.IServices
     {
         public Store RetrieveOfferStoreAsync(int Id);
         public List<Store> RetriveAllSotresHavePromotions();
-        public List<PromotionItem> RetriveAllSotrePromotionItems(int storeId);
+        public List<fullPromotionAndItem> RetriveAllSotrePromotionItems(int storeId);
 
     }
 
