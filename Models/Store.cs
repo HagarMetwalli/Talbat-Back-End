@@ -104,6 +104,9 @@ namespace Talbat.Models
         [InverseProperty(nameof(Coupon.Store))]
         public virtual ICollection<Coupon> Coupons { get; set; }
 
+        [InverseProperty(nameof(Promotion.Store))]
+        public virtual ICollection<Promotion> Promotions { get; set; }
+
         [InverseProperty(nameof(Item.Store))]
         public virtual ICollection<Item> Items { get; set; }
 

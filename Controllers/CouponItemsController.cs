@@ -9,21 +9,21 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PromotionItemsController : ControllerBase
+    public class CouponItemsController : ControllerBase
     {
-        private IGenericComposite<PromotionItem> repo;
+        private IGenericComposite<CouponItem> repo;
 
-        public PromotionItemsController(IGenericComposite<PromotionItem> repo)
+        public CouponItemsController(IGenericComposite<CouponItem> repo)
         {
             this.repo = repo;
         }
 
 
-        // GET: api/PromotionItems
+        // GET: api/CouponItems
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<List<PromotionItem>>))]
-        public ActionResult<List<PromotionItem>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<CouponItem>>))]
+        public ActionResult<List<CouponItem>> Get()
         {
             var rels = repo.RetriveAll();
             if (rels.Count == 0)
@@ -34,12 +34,12 @@ namespace Talbat.Controllers
             return Ok(rels);
         }
 
-        // GET api/PromotionItems/5/2
+        // GET api/CouponItems/5/2
         [HttpGet("{id1}/{id2}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<PromotionItem>))]
-        public ActionResult<PromotionItem> Get(int id1, int id2)
+        [ProducesResponseType(200, Type = typeof(ActionResult<CouponItem>))]
+        public ActionResult<CouponItem> Get(int id1, int id2)
         {
             if (id1 <= 0 || id2 <= 0)
             {
@@ -55,13 +55,13 @@ namespace Talbat.Controllers
             return Ok(rel);
         }
 
-        // GET api/PromotionItems/GetByPromotionId/5
+        // GET api/CouponItems/GetByCouponnId/5
         [HttpGet]
-        [Route("GetByPromotionId/{id}")]
+        [Route("GetByCouponnId/{id}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<List<PromotionItem>>))]
-        public ActionResult<PromotionItem> GetByPromotionId(int id)
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<CouponItem>>))]
+        public ActionResult<CouponItem> GetByCouponnId(int id)
         {
             if (id <= 0)
             {
@@ -77,13 +77,13 @@ namespace Talbat.Controllers
             return Ok(rel);
         }
 
-        // GET api/PromotionItems/GetByItemId/5
+        // GET api/CouponItems/GetByItemId/5
         [HttpGet]
         [Route("GetByItemId/{id}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<List<PromotionItem>>))]
-        public ActionResult<PromotionItem> GetByItemId(int id)
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<CouponItem>>))]
+        public ActionResult<CouponItem> GetByItemId(int id)
         {
             if (id <= 0)
             {
@@ -99,13 +99,13 @@ namespace Talbat.Controllers
             return Ok(rel);
         }
 
-        // POST api/PromotionItems
+        // POST api/CouponItems
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public ActionResult<PromotionItem> Post([FromBody] PromotionItem promotionItem)
+        public ActionResult<CouponItem> Post([FromBody] CouponItem promotionItem)
         {
-            if (promotionItem == null || promotionItem.PromotionId < 0 || promotionItem.ItemId < 0)
+            if (promotionItem == null || promotionItem.CouponId < 0 || promotionItem.ItemId < 0)
             {
                 return BadRequest();
             }
@@ -124,7 +124,7 @@ namespace Talbat.Controllers
             return Ok();
         }
 
-        // DELETE api/PromotionItems/5
+        // DELETE api/CouponItems/5
         [HttpDelete]
         [Route("{id1}/{id2}")]
         [ProducesResponseType(400)]
@@ -146,15 +146,15 @@ namespace Talbat.Controllers
 
         }
 
-        // Put api/PromotionItems/promotionId:5/ItemId:2
+        // Put api/CouponItems/promotionId:5/ItemId:2
         [HttpPut]
         [Route("{id1}/{id2}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult Put(int id1, int id2, [FromBody] PromotionItem rel)
+        public ActionResult Put(int id1, int id2, [FromBody] CouponItem rel)
         {
-            if (rel == null || rel.PromotionId <= 0 || rel.ItemId <= 0 || rel.PromotionId != id1 || rel.ItemId != id2)
+            if (rel == null || rel.CouponId <= 0 || rel.ItemId <= 0 || rel.CouponId != id1 || rel.ItemId != id2)
             {
                 return BadRequest();
             }

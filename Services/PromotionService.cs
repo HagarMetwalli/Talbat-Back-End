@@ -77,5 +77,34 @@ namespace Talbat.Services
 
         }
 
+        public List<Store> RetriveAllSotresHavePromotions()
+        {
+            var stores = _db.Promotions.Join(
+                _db.Stores,
+                p => p.StoreId,
+                s => s.StoreId,
+                (prom, sto) => sto
+                ).ToList();
+
+            return stores;
+        }
+
+        public List<PromotionItem> RetriveAllSotrePromotionItems(int storeId)
+        {
+            var pi = _db.Items.Where(x => x.StoreId == storeId).ToList().Join(
+                _db.PromotionItems,
+                i => i.ItemId,
+                ci => ci.ItemId,
+                (i, ci) => ci
+                ).ToList();
+
+            if (pi.Count == 0)
+            {
+                return null;
+            }
+
+            return pi;
+        }
+
     }//end service
 }

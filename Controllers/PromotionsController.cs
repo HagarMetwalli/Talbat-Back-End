@@ -68,6 +68,23 @@ namespace Talbat.Controllers
             return Ok(offerStore);
         }
 
+        // GET: api/Coupons/GetStorePromotionItems/3
+        [HttpGet]
+        [Route("GetStorePromotionItems/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        public IActionResult GetStorePromotionItems(int id)
+        {
+            var promotionItems = _repo.RetriveAllSotrePromotionItems(id);
+
+            if (promotionItems == null)
+            {
+                return NoContent();
+            }
+            return Ok(promotionItems);
+        }
+
+
         // POST api/Offers
         [HttpPost]
         [ProducesResponseType(201)]
@@ -145,6 +162,25 @@ namespace Talbat.Controllers
             return new NoContentResult();
 
         }
+
+
+        // GET: api/Offers/GetAllStoresHavePromotions
+        [HttpGet]
+        [Route("GetAllStoresHavePromotions")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        public IActionResult GetAllStoresHavePromotions()
+        {
+            var stores = _repo.RetriveAllSotresHavePromotions();
+
+            if (stores == null)
+            {
+                return NoContent();
+            }
+            return Ok(stores);
+        }
+
+
 
     }//end controller
 }
