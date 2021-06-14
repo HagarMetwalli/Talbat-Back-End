@@ -60,20 +60,20 @@ namespace Talbat.Controllers
                 return BadRequest();
             }
 
-            string token = Request.Headers["Authorization"];
+            //string token = Request.Headers["Authorization"];
 
-            if (string.IsNullOrEmpty(token) || client == null)
-            {
-                return BadRequest();
-            }
+            //if (string.IsNullOrEmpty(token) || client == null)
+            //{
+            //    return BadRequest();
+            //}
 
-            var jwttoken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            //var jwttoken = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
-            var jti = jwttoken.Claims.First(claim => claim.Type == ClaimTypes.Email);
-            if (client.ClientEmail != jti.Value)
-            {
-                return Unauthorized();
-            }
+            //var jti = jwttoken.Claims.First(claim => claim.Type == ClaimTypes.Email);
+            //if (client.ClientEmail != jti.Value)
+            //{
+            //    return Unauthorized();
+            //}
         
             return Ok(client);
         }
@@ -135,7 +135,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<City>> Patch(int id, [FromBody] Client client)
+        public async Task<ActionResult<Client>> Patch(int id, [FromBody] Client client)
         {
             if (client == null || client.ClientId != id)
             {
