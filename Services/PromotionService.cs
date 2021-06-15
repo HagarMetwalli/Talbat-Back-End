@@ -9,10 +9,10 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class OfferService : IOfferRelatedService
+    public class PromotionService : IPromotionRelatedService
     {
         private TalabatContext _db;
-        public OfferService(TalabatContext db)
+        public PromotionService(TalabatContext db)
         {
             _db = db;
         }

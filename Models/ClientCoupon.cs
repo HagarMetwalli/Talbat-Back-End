@@ -14,6 +14,8 @@ namespace Talbat.Models
         [Key]
         public int CouponId { get; set; }
 
+        [Key]
+        public int OrderId{ get; set; }
 
         [ForeignKey(nameof(ClientId))]
         [InverseProperty("ClientCoupons")]
@@ -22,5 +24,9 @@ namespace Talbat.Models
         [ForeignKey(nameof(CouponId))]
         [InverseProperty("ClientCoupons")]
         public virtual Coupon Coupon { get; set; }
+        
+        [ForeignKey(nameof(OrderId))]
+        [InverseProperty("ClientCoupons")]
+        public virtual Order Order{ get; set; }
     }
 }

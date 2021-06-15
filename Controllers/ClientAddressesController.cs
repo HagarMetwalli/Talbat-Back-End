@@ -13,10 +13,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class ClientAddressesController : ControllerBase
     {
-        private IGeneric<ClientAddress> _repo;
+        private IClientAddressesRelated _repo;
         private TalabatContext _db;
 
-        public ClientAddressesController(IGeneric<ClientAddress> repo,TalabatContext db)
+        public ClientAddressesController(IClientAddressesRelated repo,TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -55,6 +55,22 @@ namespace Talbat.Controllers
                 return NotFound();
             }
             return Ok(clientAddress);
+        }
+
+        // GET api/GetByClientId/5
+        [HttpGet("GetByClientId/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+
+        public IActionResult GetByClientId(int id)
+        {
+            var clientAddresses = _repo.RetriveByClientIdAsync(id);
+            if (clientAddresses.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(clientAddresses);
         }
 
         // POST api/clientaddresses

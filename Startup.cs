@@ -49,18 +49,19 @@ namespace Talbat
                     builder.AllowAnyHeader();
                 });
             });
+            
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IGeneric<City>, CityService>();
-            services.AddScoped<IGeneric<ClientAddress>, ClientAddressService>();
+            services.AddScoped<IClientAddressesRelated, ClientAddressService>();
             // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGeneric<Country>, CountryService>();
             services.AddScoped<IGeneric<DeliveryMan>, DeliveryManService>();
-            services.AddScoped<IGeneric<Invoice>, InvoiceService>();
+            //services.AddScoped<IGeneric<Invoice>, InvoiceService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IGeneric<ItemReview>, ItemReviewService>();
-            services.AddScoped<IOfferRelatedService, OfferService>();
+            services.AddScoped<IPromotionRelatedService, PromotionService>();
             services.AddScoped<IGeneric<TempPartnerRegisterationDetail>, TempPartnerRegisterationDetailService>();
             services.AddScoped<IGeneric<SubItemCategory>, SubItemCategoryService>();
             services.AddScoped<IGeneric<SubItem>, SubItemsService>();
@@ -77,13 +78,16 @@ namespace Talbat
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<ICuisienSevice, CuisineService>();
             services.AddScoped<IUserService<Client>, ClientService>();
-            services.AddScoped<IGeneric<Order>, OrderService>();
+            //services.AddScoped<IGeneric<Order>, OrderService>();
+            services.AddScoped<IOrderRelated, OrderService>();
             services.AddScoped<IGeneric<Job>, JobService>();
             services.AddScoped<IGeneric<JobCategory>, JobCategoryService>();
             services.AddScoped<IGeneric<JobLocation>, JobLocationService>();
             services.AddScoped<IGeneric<JobPeriod>, JobPeriodService>();
             services.AddScoped<IGeneric<JobType>, JobTypeService>();
             services.AddScoped<IGenericComposite<PromotionItem>, OfferItemService>();
+            services.AddScoped<ICouponRelated, CouponService>();
+            services.AddScoped<IOrderItems, OrderItemService>();
             services.AddScoped<IReview<SystemReview>, SystemReviewService>();
 
 
