@@ -1786,7 +1786,7 @@ namespace Talbat.Migrations
                 {
                     b.Navigation("ClientCoupons");
 
-                    //b.Navigation("Invoices");
+                    b.Navigation("Invoices");
 
                     b.Navigation("OrderItems");
 

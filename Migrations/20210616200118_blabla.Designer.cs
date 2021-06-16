@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210616062619_sec")]
-    partial class sec
+    [Migration("20210616200118_blabla")]
+    partial class blabla
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,7 @@ namespace Talbat.Migrations
             modelBuilder
                 .HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.6")
+                .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Talbat.Models.AddressType", b =>
@@ -842,7 +842,12 @@ namespace Talbat.Migrations
                     b.Property<int>("PromotionTypePercentage")
                         .HasColumnType("int");
 
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
                     b.HasKey("PromotionId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("Promotion");
                 });
@@ -1523,6 +1528,17 @@ namespace Talbat.Migrations
                     b.Navigation("Store");
                 });
 
+            modelBuilder.Entity("Talbat.Models.Promotion", b =>
+                {
+                    b.HasOne("Talbat.Models.Store", "Store")
+                        .WithMany("Promotions")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+                });
+
             modelBuilder.Entity("Talbat.Models.PromotionItem", b =>
                 {
                     b.HasOne("Talbat.Models.Item", "Item")
@@ -1816,6 +1832,8 @@ namespace Talbat.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Partners");
+
+                    b.Navigation("Promotions");
 
                     b.Navigation("StoreWorkingHours");
                 });

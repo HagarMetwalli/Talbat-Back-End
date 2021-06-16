@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class fri : Migration
+    public partial class blabla : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -43,6 +43,7 @@ namespace Talbat.Migrations
                     ClientLname = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
                     ClientEmail = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
                     ClientDateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClientPassword = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ClientGenderIsMale = table.Column<int>(type: "int", nullable: false),
                     ClientNewsletterSubscribe = table.Column<int>(type: "int", nullable: false),
                     ClientSmsSubscribe = table.Column<int>(type: "int", nullable: false)
@@ -396,7 +397,7 @@ namespace Talbat.Migrations
                     StoreName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     StoreBranchesNo = table.Column<int>(type: "int", nullable: false),
                     StoreWebSite = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    StoreAddress = table.Column<int>(type: "int", maxLength: 100, nullable: false),
+                    StoreAddress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     StoreTypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -584,8 +585,6 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
-<<<<<<< HEAD:Migrations/20210616040728_fri.cs
-=======
                 name: "StoreWorkingHour",
                 columns: table => new
                 {
@@ -607,7 +606,6 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
->>>>>>> BlaBla:Migrations/20210614203127_blabla.cs
                 name: "CouponItem",
                 columns: table => new
                 {
@@ -691,7 +689,6 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
-<<<<<<< HEAD:Migrations/20210616040728_fri.cs
                 name: "Invoice",
                 columns: table => new
                 {
@@ -713,8 +710,6 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
-=======
->>>>>>> BlaBla:Migrations/20210614203127_blabla.cs
                 name: "OrderItem",
                 columns: table => new
                 {
@@ -772,22 +767,6 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
-<<<<<<< HEAD:Migrations/20210616040728_fri.cs
-                name: "ClientDeliveryManOrder",
-                columns: table => new
-                {
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    DeliveryManId = table.Column<int>(type: "int", nullable: false),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
-                    ClientAddressId = table.Column<int>(type: "int", nullable: false),
-                    OrderShipingTime = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientDeliveryManOrder", x => new { x.ClientId, x.DeliveryManId });
-                    table.ForeignKey(
-                        name: "FK_ClientDeliveryManOrder_Client",
-=======
                 name: "ClientPromotion",
                 columns: table => new
                 {
@@ -799,30 +778,11 @@ namespace Talbat.Migrations
                     table.PrimaryKey("PK_ClientPromotion", x => new { x.ClientId, x.PromotionId });
                     table.ForeignKey(
                         name: "FK_ClientPromotion_Client",
->>>>>>> BlaBla:Migrations/20210614203127_blabla.cs
                         column: x => x.ClientId,
                         principalTable: "Client",
                         principalColumn: "ClientId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-<<<<<<< HEAD:Migrations/20210616040728_fri.cs
-                        name: "FK_ClientDeliveryManOrder_ClientAddress",
-                        column: x => x.ClientAddressId,
-                        principalTable: "ClientAddress",
-                        principalColumn: "ClientAddressId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ClientDeliveryManOrder_DeliveryMan",
-                        column: x => x.DeliveryManId,
-                        principalTable: "DeliveryMan",
-                        principalColumn: "DeliveryManId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ClientDeliveryManOrder_Invoice_InvoiceId",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoice",
-                        principalColumn: "InvoiceId",
-=======
                         name: "FK_ClientPromotion_Promotion",
                         column: x => x.PromotionId,
                         principalTable: "Promotion",
@@ -852,7 +812,45 @@ namespace Talbat.Migrations
                         column: x => x.PromotionId,
                         principalTable: "Promotion",
                         principalColumn: "PromotionId",
->>>>>>> BlaBla:Migrations/20210614203127_blabla.cs
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientDeliveryManOrder",
+                columns: table => new
+                {
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    DeliveryManId = table.Column<int>(type: "int", nullable: false),
+                    InvoiceId = table.Column<int>(type: "int", nullable: false),
+                    ClientAddressId = table.Column<int>(type: "int", nullable: false),
+                    OrderShipingTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientDeliveryManOrder", x => new { x.ClientId, x.DeliveryManId });
+                    table.ForeignKey(
+                        name: "FK_ClientDeliveryManOrder_Client",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClientDeliveryManOrder_ClientAddress",
+                        column: x => x.ClientAddressId,
+                        principalTable: "ClientAddress",
+                        principalColumn: "ClientAddressId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClientDeliveryManOrder_DeliveryMan",
+                        column: x => x.DeliveryManId,
+                        principalTable: "DeliveryMan",
+                        principalColumn: "DeliveryManId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClientDeliveryManOrder_Invoice_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoice",
+                        principalColumn: "InvoiceId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
