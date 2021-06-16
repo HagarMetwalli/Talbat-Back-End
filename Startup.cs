@@ -85,10 +85,12 @@ namespace Talbat
             services.AddScoped<IGeneric<JobLocation>, JobLocationService>();
             services.AddScoped<IGeneric<JobPeriod>, JobPeriodService>();
             services.AddScoped<IGeneric<JobType>, JobTypeService>();
-            services.AddScoped<IGenericComposite<PromotionItem>, OfferItemService>();
             services.AddScoped<ICouponRelated, CouponService>();
             services.AddScoped<IOrderItems, OrderItemService>();
             services.AddScoped<IReview<SystemReview>, SystemReviewService>();
+            services.AddScoped<IGenericComposite<PromotionItem>, PromotionItemService>();
+            services.AddScoped<IGenericComposite<CouponItem>, CouponItemService>();
+
 
 
             // Adding Authentication  

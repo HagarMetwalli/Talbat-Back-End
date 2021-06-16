@@ -68,7 +68,28 @@ namespace Talbat.Services
                 }
         }
 
-        async Task<List<OrderItem>> IOrderItems.CreateListAsync(List<OrderItem> itemsList)
+        public List<Item> RetriveByOrderIdAsync(int orderId)
+        {
+            var orderItems = db.OrderItems.Where(
+                x => x.OrderId == orderId)
+                .ToList()
+                .Join(
+                    db.Items,
+                    oi => oi.ItemId,
+                    i => i.ItemId,
+                    (orit, it) => it
+                )
+                .ToList();
+
+            if (orderItems.Count== 0)
+            {
+                return null;
+            }
+
+            return orderItems;
+        }
+
+        public List<OrderItem> CreateListAsync(List<OrderItem> itemsList)
         {
             try
             {
@@ -77,7 +98,7 @@ namespace Talbat.Services
                     db.OrderItems.Add(item);
                 }
 
-                int affected = await db.SaveChangesAsync();
+                int affected = db.SaveChanges();
                 if (affected >= 1)
                 {
                     return itemsList;
@@ -115,27 +136,27 @@ namespace Talbat.Services
             }
         }
 
-        public async Task<OrderItem> PatchAsync(OrderItem orderItem)
-        {
-                try
-                {
-                    db.OrderItems.Update(orderItem);
+        //Task<OrderItem> IGeneric<OrderItem>.PatchAsync(OrderItem item)
+        //{
+        //    try
+        //        {
+        //            db.OrderItems.Update(item);
 
-                    int affected = await db.SaveChangesAsync();
-                    if (affected == 1)
-                    {
-                        return orderItem;
-                    }
+        //            int affected = db.SaveChanges();
+        //            if (affected == 1)
+        //            {
+        //            return Task<OrderItem>.Run<OrderItem>(item);
+        //        }
 
-                    return null;
-                }
-                catch (System.Exception)
-                {
-                    return null;
-                }
-            }
+        //            return null;
+        //        }
+        //        catch (System.Exception)
+        //        {
+        //            return null;
+        //        }
+        //    }
 
-        public async Task<List<OrderItem>> PatchListAsync(List<OrderItem> itemsList)
+        List<OrderItem> IOrderItems.PatchListAsync(List<OrderItem> itemsList)
         {
             try
             {
@@ -162,7 +183,7 @@ namespace Talbat.Services
 
                 //db.OrderItems.AddRange(itemsList);
 
-                int affected = await db.SaveChangesAsync();
+                int affected = db.SaveChanges();
                 if (affected >= 1)
                 {
                     using (var dbb= new TalabatContext())
@@ -172,7 +193,7 @@ namespace Talbat.Services
                             dbb.OrderItems.Add(item);
                         }
 
-                        int affectedd = await dbb.SaveChangesAsync();
+                        int affectedd = dbb.SaveChanges();
                         if (affectedd >= 1)
                         {
                             return itemsList;
@@ -200,8 +221,11 @@ namespace Talbat.Services
             //}    
 
         }
-
-
+        
+        public Task<OrderItem> PatchAsync(OrderItem item)
+        {
+            throw new System.NotImplementedException();
+        }
     }//end class
 
     //abstract class blabla
@@ -226,3 +250,7 @@ namespace Talbat.Services
     //    }
     //}
 }
+
+
+
+// TODO: Fix all Task blabla things ,,, no need for these wierdo staff!

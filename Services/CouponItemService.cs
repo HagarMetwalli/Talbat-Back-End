@@ -5,27 +5,27 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class OfferItemService : IGenericComposite<PromotionItem>
+    public class CouponItemService : IGenericComposite<CouponItem>
     {
         private TalabatContext db;
 
-        public OfferItemService(TalabatContext db)
+        public CouponItemService(TalabatContext db)
         {
             this.db = db;
         }
 
 
-        public List<PromotionItem> RetriveAll()
+        public List<CouponItem> RetriveAll()
         {
             try
             {
-                var promotionItems = db.PromotionItems.ToList();
-                if (promotionItems.Count == 0)
+                var couponItems = db.CouponItems.ToList();
+                if (couponItems.Count == 0)
                 {
                     return null;
                 }
 
-                return promotionItems;
+                return couponItems;
             }
             catch (System.Exception)
             {
@@ -34,11 +34,11 @@ namespace Talbat.Services
             }
         }
 
-        public List<PromotionItem> RetriveWithFstKey(int id)
+        public List<CouponItem> RetriveWithFstKey(int id)
         {
             try
             {
-                var relationsFound = db.PromotionItems.Where(x => x.PromotionId == id)
+                var relationsFound = db.CouponItems.Where(x => x.CouponId == id)
                     .ToList();
 
                 if (relationsFound.Count == 0)
@@ -50,16 +50,15 @@ namespace Talbat.Services
             }
             catch (System.Exception)
             {
-
                 return null;
             }
         }
 
-        public List<PromotionItem> RetriveWithSndKey(int id)
+        public List<CouponItem> RetriveWithSndKey(int id)
         {
             try
             {
-                var relationsFound = db.PromotionItems.Where(x => x.ItemId == id)
+                var relationsFound = db.CouponItems.Where(x => x.ItemId == id)
                     .ToList();
 
                 if (relationsFound.Count == 0)
@@ -71,16 +70,15 @@ namespace Talbat.Services
             }
             catch (System.Exception)
             {
-
                 return null;
             }
         }
 
-        public PromotionItem Retrive(int id1, int id2)
+        public CouponItem Retrive(int id1, int id2)
         {
             try
             {
-                var relationsFound = db.PromotionItems.FirstOrDefault(x => x.PromotionId == id1 && x.ItemId == id2);
+                var relationsFound = db.CouponItems.FirstOrDefault(x => x.CouponId == id1 && x.ItemId == id2);
 
                 if (relationsFound == null)
                 {
@@ -96,18 +94,18 @@ namespace Talbat.Services
             }
         }
 
-        public PromotionItem Create(PromotionItem item)
+        public CouponItem Create(CouponItem item)
         {
             try
             {
-                var offer = db.Promotions.Find(item.PromotionId);
+                var offer = db.Promotions.Find(item.CouponId);
                 var menuItem = db.Items.Find(item.ItemId);
                 if (offer == null || menuItem == null)
                 {
                     return null;
                 }
 
-                db.PromotionItems.Add(item);
+                db.CouponItems.Add(item);
 
                 var affected = db.SaveChanges();
                 if (affected == 0)
@@ -127,9 +125,9 @@ namespace Talbat.Services
         {
             try
             {
-                var rel = db.PromotionItems.FirstOrDefault(x => x.PromotionId == id1 && x.ItemId == id2);
+                var rel = db.CouponItems.FirstOrDefault(x => x.CouponId == id1 && x.ItemId == id2);
 
-                db.PromotionItems.Remove(rel);
+                db.CouponItems.Remove(rel);
 
                 int affected = db.SaveChanges();
                 if (affected == 0)
@@ -145,18 +143,16 @@ namespace Talbat.Services
             }
         }
 
-        public PromotionItem Put(PromotionItem item)
+        public CouponItem Put(CouponItem item)
         {
             try
             {
-                var rel = db.PromotionItems.FirstOrDefault(x => x.PromotionId == item.PromotionId && x.ItemId == item.ItemId);
+                var rel = db.CouponItems.FirstOrDefault(x => x.CouponId == item.CouponId && x.ItemId == item.ItemId);
 
                 if (rel == null)
                 {
                     return null;
                 }
-
-                rel.PromotionItemQuantity = item.PromotionItemQuantity;
 
                 var affected = db.SaveChanges();
                 if (affected == 0)

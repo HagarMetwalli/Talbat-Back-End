@@ -14,12 +14,10 @@ namespace Talbat.Controllers
     public class OrderItemsController : ControllerBase
     {
         private IOrderItems _repo;
-        private TalabatContext _db;
 
-        public OrderItemsController(IOrderItems repo, TalabatContext db)
+        public OrderItemsController(IOrderItems repo)
         {
             _repo = repo;
-            _db = db;
         }
 
 
@@ -51,6 +49,28 @@ namespace Talbat.Controllers
             }
 
             var orderItem = await _repo.RetriveAsync(id);
+            if (orderItem == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(orderItem);
+        }
+
+        // GET api/OrderItems/GetByOrderId/5
+        [HttpGet]
+        [Route("GetByOrderId/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult GetByOrderId(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var orderItem = _repo.RetriveByOrderIdAsync(id);
             if (orderItem == null)
             {
                 return NotFound();

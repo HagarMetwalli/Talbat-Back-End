@@ -17,7 +17,7 @@ namespace Talbat.Migrations
             modelBuilder
                 .HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.6")
+                .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Talbat.Models.AddressType", b =>
@@ -178,9 +178,14 @@ namespace Talbat.Migrations
                     b.Property<int>("CouponId")
                         .HasColumnType("int");
 
-                    b.HasKey("ClientId", "CouponId");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ClientId", "CouponId", "OrderId");
 
                     b.HasIndex("CouponId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("ClientCoupon");
                 });
@@ -819,7 +824,12 @@ namespace Talbat.Migrations
                     b.Property<int>("PromotionTypePercentage")
                         .HasColumnType("int");
 
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
                     b.HasKey("PromotionId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("Promotion");
                 });
@@ -1210,9 +1220,17 @@ namespace Talbat.Migrations
                         .HasConstraintName("FK_ClientCoupon_Coupon")
                         .IsRequired();
 
+                    b.HasOne("Talbat.Models.Order", "Order")
+                        .WithMany("ClientCoupons")
+                        .HasForeignKey("OrderId")
+                        .HasConstraintName("FK_ClientCoupon_Order")
+                        .IsRequired();
+
                     b.Navigation("Client");
 
                     b.Navigation("Coupon");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Talbat.Models.ClientDeliveryManOrder", b =>
@@ -1492,6 +1510,17 @@ namespace Talbat.Migrations
                     b.Navigation("Store");
                 });
 
+            modelBuilder.Entity("Talbat.Models.Promotion", b =>
+                {
+                    b.HasOne("Talbat.Models.Store", "Store")
+                        .WithMany("Promotions")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+                });
+
             modelBuilder.Entity("Talbat.Models.PromotionItem", b =>
                 {
                     b.HasOne("Talbat.Models.Item", "Item")
@@ -1737,7 +1766,11 @@ namespace Talbat.Migrations
 
             modelBuilder.Entity("Talbat.Models.Order", b =>
                 {
-                    b.Navigation("Invoices");
+
+//                     b.Navigation("Invoices");
+
+                    b.Navigation("ClientCoupons");
+
 
                     b.Navigation("OrderItems");
 
@@ -1781,6 +1814,8 @@ namespace Talbat.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Partners");
+
+                    b.Navigation("Promotions");
 
                     b.Navigation("StoreWorkingHours");
                 });

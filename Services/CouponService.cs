@@ -146,6 +146,44 @@ namespace Talbat.Services
 
         }
 
+        public List<Store> RetriveAllSotresHaveCoupons()
+        {
+            var stores = _db.Coupons.Join(
+                _db.Stores,
+                p => p.StoreId,
+                s => s.StoreId,
+                (prom, sto) => sto
+                ).ToList();
+
+            return stores;
+        }
+
+        public List<fullCouponAndItem> RetriveAllSotreCouponItems(int storeId)
+        {
+            var ci = _db.Items.Where(x => x.StoreId == storeId).ToList().Join(
+                _db.CouponItems,
+                i => i.ItemId,
+                ci => ci.ItemId,
+                (i, ci) => ci
+                ).ToList().Join(
+                _db.Coupons,
+                    ci => ci.CouponId,
+                    c => c.CouponId,
+                    (coIt, co) => new { couponItem = coIt, coupon = co }
+                    ).ToList().Join(
+                        _db.Items,
+                        couIte => couIte.couponItem.ItemId,
+                        i => i.ItemId,
+                        (coite, ite) => new fullCouponAndItem() { item = ite, coupon = coite.coupon }
+                        ).ToList();
+
+            if (ci.Count == 0)
+            {
+                return null;
+            }
+
+            return ci;
+        }
 
     }//end service
 }

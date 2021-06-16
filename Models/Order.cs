@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Talbat.Models
 {
 
-    public enum DeliveryStatus
-    {
-        InKitchen,
-        ReadyForDeliver,
-        InWay,
-        Delivered
-    }
+    //public enum DeliveryStatus
+    //{
+    //    InKitchen,
+    //    ReadyForDeliver,
+    //    InWay,
+    //    Delivered
+    //}
 
     [Table("Order")]
     [Index(nameof(ClientId), Name = "IX_Order_Client_Id")]
@@ -54,7 +54,8 @@ namespace Talbat.Models
         public int StoreId { get; set; }
 
         [Required]
-        public DeliveryStatus IsDelivered { get; set; }
+        [Range(0,1)]
+        public int IsDelivered { get; set; }
 
 
         [ForeignKey(nameof(ClientId))]
