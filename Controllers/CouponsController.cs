@@ -50,6 +50,38 @@ namespace Talbat.Controllers
             return Ok(coupon);
         }
 
+        // GET: api/Coupons/GetAllStoresHaveCoupns
+        [HttpGet]
+        [Route("GetAllStoresHaveCoupns")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        public IActionResult GetAllStoresHaveCoupns()
+        {
+            var stores = _repo.RetriveAllSotresHaveCoupons();
+
+            if (stores == null)
+            {
+                return NoContent();
+            }
+            return Ok(stores);
+        }
+
+        // GET: api/Coupons/GetStoreCouponItems/3
+        [HttpGet]
+        [Route("GetStoreCouponItems/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        public IActionResult GetStoreCouponItems(int id)
+        {
+            var couponItems = _repo.RetriveAllSotreCouponItems(id);
+
+            if (couponItems == null)
+            {
+                return NoContent();
+            }
+            return Ok(couponItems);
+        }
+
         // POST api/Coupons
         [HttpPost]
         [ProducesResponseType(201)]
@@ -149,6 +181,8 @@ namespace Talbat.Controllers
 
             return Ok(discount);
         }
+
+        
 
     }//end controller
 }

@@ -53,6 +53,14 @@ namespace Talbat.Models
         [Range(1, int.MaxValue)]
         public int PromotionSaleValue { get; set; }
 
+        [Required]
+        [ForeignKey("Store")]
+        public int StoreId { get; set; }
+
+
+        [ForeignKey(nameof(StoreId))]
+        [InverseProperty("Promotions")]
+        public virtual Store Store { get; set; }
 
         [InverseProperty(nameof(ClientPromotion.Promotion))]
         public virtual ICollection<ClientPromotion> ClientPromotions { get; set; }

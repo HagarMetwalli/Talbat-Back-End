@@ -409,6 +409,9 @@ namespace Talbat.Models
 
                 entity.Property(e => e.OrderTime).HasDefaultValueSql("(getdate())");
 
+                //entity.Property(e => e.IsDelivered)
+                //    .HasConversion(x => (int)x, x => (DeliveryStatus)x);
+
                 entity.HasOne(d => d.Client)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.ClientId)

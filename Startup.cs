@@ -84,8 +84,12 @@ namespace Talbat
             services.AddScoped<IGeneric<JobLocation>, JobLocationService>();
             services.AddScoped<IGeneric<JobPeriod>, JobPeriodService>();
             services.AddScoped<IGeneric<JobType>, JobTypeService>();
-            services.AddScoped<IGenericComposite<PromotionItem>, OfferItemService>();
+            // services.AddScoped<IGenericComposite<PromotionItem>, OfferItemService>();
             services.AddScoped<IReview<SystemReview>, SystemReviewService>();
+            services.AddScoped<ICouponRelated, CouponService>();
+            services.AddScoped<IOrderItems, OrderItemService>();
+            services.AddScoped<IGenericComposite<PromotionItem>, PromotionItemService>();
+            services.AddScoped<IGenericComposite<CouponItem>, CouponItemService>();
 
 
             // Adding Authentication  
@@ -106,7 +110,7 @@ namespace Talbat
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidAudience = "https://localhost:4200",
-                    ValidIssuer = "https://localhost:4200",
+                    ValidIssuer = "https://localhost:4200",     
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"))
                 };
             });
