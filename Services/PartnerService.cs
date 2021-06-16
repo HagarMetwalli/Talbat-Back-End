@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Talbat.Authentication;
 using Talbat.IServices;
 using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class PartnerService : IGeneric<Partner>
+    public class PartnerService : IUserService<Partner>
     {
         private TalabatContext _db;
         public PartnerService(TalabatContext db)
@@ -19,6 +20,7 @@ namespace Talbat.Services
         {
             try
             {
+                Partner.PartnerEmail.ToLower();
                 await _db.Partners.AddAsync(Partner);
                 int affected = await _db.SaveChangesAsync();
                 if (affected == 1)
@@ -74,6 +76,7 @@ namespace Talbat.Services
             try
             {
                 _db = new TalabatContext();
+                Partner.PartnerEmail.ToLower();
                 _db.Partners.Update(Partner);
                 int affected = await _db.SaveChangesAsync();
                 if (affected == 1)
@@ -86,8 +89,40 @@ namespace Talbat.Services
             }
         }
 
-        //public Task<Client> RetriveByEmail(string Email)
-        //public Task<string> Login(Login obj)
+        public Task<string> Login(Login obj)
+        {
+            try
+            {
+                obj.Email = obj.Email.ToLower();
+                Partner partner = _db.Partners.FirstOrDefault(c => c.PartnerEmail == obj.Email);
+
+                //Login partenerLogin = _db.Logins.FirstOrDefault(x => x.Email == obj.Email && x.Password == obj.Password);
+
+                //if (partner != null && partenerLogin != null)
+                if (partner != null )
+                {
+                    var tokenString = UserAuthentication.CreateToken(obj.Email);
+                    return Task.Run(() => tokenString);
+                }
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<Partner> RetriveByEmail(string Email)
+        {
+            try
+            {
+                var partener = _db.Partners.FirstOrDefault(c => c.PartnerEmail == Email);
+                return Task<Partner>.Run<Partner>(() => partener);
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
     }
 }

@@ -28,7 +28,7 @@ namespace Talbat.Models
         public virtual DbSet<CouponItem> CouponItems { get; set; }
         public virtual DbSet<Cuisine> Cuisines { get; set; }
         public virtual DbSet<DeliveryMan> DeliveryMen { get; set; }
-        //public virtual DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<ItemCategory> ItemCategories { get; set; }
         public virtual DbSet<ItemReview> ItemReviews { get; set; }
@@ -53,7 +53,7 @@ namespace Talbat.Models
         public virtual DbSet<SubItemCategory> SubItemCategories { get; set; }
         public virtual DbSet<TempPartnerRegisterationDetail> TempPartnerRegisterationDetails { get; set; }
         public virtual DbSet<Login> Logins { get; set; }
-        //public virtual DbSet<SystemReview> SystemReviews { get; set; }
+        
 
         public virtual DbSet<SystemReview> SystemReview { get; set; }
 
@@ -62,7 +62,7 @@ namespace Talbat.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=.; Database=Toto; Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=.; Database=Toto2; Trusted_Connection=True;");
             }
         }
 
@@ -182,7 +182,7 @@ namespace Talbat.Models
 
                 //entity.HasOne(d => d.Invoice)
                 //    .WithMany(p => p.ClientDeliveryManOrders)
-                //    .HasForeignKey(d => d.InvoiceId)
+                //    .HasForeignKey(d => d.Invoice)
                 //    .OnDelete(DeleteBehavior.ClientSetNull)
                 //    .HasConstraintName("FK_ClientDeliveryManOrder_Order");
             });
@@ -281,15 +281,15 @@ namespace Talbat.Models
                 entity.Property(e => e.DeliveryManName).IsUnicode(false);
             });
 
-            //modelBuilder.Entity<Invoice>(entity =>
-            //{
-            //    entity.Property(e => e.AddressDetails).IsUnicode(false);
+            modelBuilder.Entity<Invoice>(entity =>
+            {
+                entity.Property(e => e.AddressDetails).IsUnicode(false);
 
-            //    entity.HasOne(d => d.Order)
-            //        .WithMany(p => p.Invoices)
-            //        .HasForeignKey(d => d.OrderId)
-            //        .HasConstraintName("FK_Invoice_Order");
-            //});
+                //entity.HasOne(d => d.Order)
+                //    .WithMany(p => p.Invoices)
+                //    .HasForeignKey(d => d.OrderId)
+                //    .HasConstraintName("FK_Invoice_Order");
+            });
 
             modelBuilder.Entity<Item>(entity =>
             {

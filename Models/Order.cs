@@ -65,8 +65,8 @@ namespace Talbat.Models
         [InverseProperty("Orders")]
         public virtual Store Store { get; set; }
 
-        //[InverseProperty(nameof(Invoice.Order))]
-        //public virtual ICollection<Invoice> Invoices { get; set; }
+        [InverseProperty(nameof(Invoice.Order))]
+        public virtual ICollection<Invoice> Invoices { get; set; }
 
         [InverseProperty(nameof(OrderItem.Order))]
         public virtual ICollection<OrderItem> OrderItems { get; set; }

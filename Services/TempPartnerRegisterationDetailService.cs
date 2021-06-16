@@ -40,13 +40,14 @@ namespace Talbat.Services
 
         public async Task<TempPartnerRegisterationDetail> CreatAsync(TempPartnerRegisterationDetail TempPartnerRegisterationDetail)
         {
-            try { 
-            await _db.TempPartnerRegisterationDetails.AddAsync(TempPartnerRegisterationDetail);
+            try
+            {
+                await _db.TempPartnerRegisterationDetails.AddAsync(TempPartnerRegisterationDetail);
             int affected = await _db.SaveChangesAsync();
             if (affected == 1)
                 return TempPartnerRegisterationDetail;
             return null;
-            }
+             }
             catch
             {
                 return null;

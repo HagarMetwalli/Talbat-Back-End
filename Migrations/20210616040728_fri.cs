@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class first : Migration
+    public partial class fri : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -236,12 +236,33 @@ namespace Talbat.Migrations
                 columns: table => new
                 {
                     SubItemCategoryId = table.Column<int>(type: "int", nullable: false),
-                    SubItemCategoryName = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    SubItemCategoryDescription = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false)
+                    SubItemCategoryName = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SubItemCategory", x => x.SubItemCategoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SystemReview",
+                columns: table => new
+                {
+                    SystemReviewId = table.Column<int>(type: "int", nullable: false),
+                    RateTalabatExperience = table.Column<int>(type: "int", nullable: false),
+                    EffortMadeToOrderFood = table.Column<int>(type: "int", nullable: false),
+                    RecommendToFriend = table.Column<int>(type: "int", nullable: false),
+                    SystemReviewComment = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemReview", x => x.SystemReviewId);
+                    table.ForeignKey(
+                        name: "FK_SystemReview_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -413,7 +434,7 @@ namespace Talbat.Migrations
                     PartnerFname = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     PartnerLname = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     StoreCountryId = table.Column<int>(type: "int", nullable: false),
-                    PartnerPhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PartnerPhoneNumber = table.Column<int>(type: "int", nullable: false),
                     PartnerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PartnerContactRole = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     StoreName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -472,6 +493,7 @@ namespace Talbat.Migrations
                     CouponStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CouponDaysCount = table.Column<int>(type: "int", nullable: false),
                     CouponAvailableUsingTimes = table.Column<int>(type: "int", nullable: false),
+                    CouponPercentageValue = table.Column<int>(type: "int", nullable: false),
                     CouponMaxMoneyValue = table.Column<int>(type: "int", nullable: false),
                     IsForAllStoreItems = table.Column<int>(type: "int", nullable: false),
                     StoreId = table.Column<int>(type: "int", nullable: false)
@@ -533,8 +555,10 @@ namespace Talbat.Migrations
                     OrderCost = table.Column<double>(type: "float", nullable: false),
                     OrderSpecialRequest = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false, defaultValueSql: "('none')"),
                     OrderTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
+                    AddressDetails = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: false),
-                    StoreId = table.Column<int>(type: "int", nullable: false)
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    IsDelivered = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -594,30 +618,6 @@ namespace Talbat.Migrations
                         column: x => x.StoreId,
                         principalTable: "Store",
                         principalColumn: "StoreId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientCoupon",
-                columns: table => new
-                {
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    CouponId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientCoupon", x => new { x.ClientId, x.CouponId });
-                    table.ForeignKey(
-                        name: "FK_ClientCoupon_Client",
-                        column: x => x.ClientId,
-                        principalTable: "Client",
-                        principalColumn: "ClientId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ClientCoupon_Coupon",
-                        column: x => x.CouponId,
-                        principalTable: "Coupon",
-                        principalColumn: "CouponId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -699,6 +699,37 @@ namespace Talbat.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClientCoupon",
+                columns: table => new
+                {
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    CouponId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientCoupon", x => new { x.ClientId, x.CouponId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_ClientCoupon_Client",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClientCoupon_Coupon",
+                        column: x => x.CouponId,
+                        principalTable: "Coupon",
+                        principalColumn: "CouponId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClientCoupon_Order",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "OrderId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Invoice",
                 columns: table => new
                 {
@@ -712,7 +743,7 @@ namespace Talbat.Migrations
                 {
                     table.PrimaryKey("PK_Invoice", x => x.InvoiceId);
                     table.ForeignKey(
-                        name: "FK_Invoice_Order",
+                        name: "FK_Invoice_Order_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Order",
                         principalColumn: "OrderId",
@@ -788,7 +819,7 @@ namespace Talbat.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientDeliveryManOrder", x => new { x.ClientId, x.DeliveryManId, x.InvoiceId });
+                    table.PrimaryKey("PK_ClientDeliveryManOrder", x => new { x.ClientId, x.DeliveryManId });
                     table.ForeignKey(
                         name: "FK_ClientDeliveryManOrder_Client",
                         column: x => x.ClientId,
@@ -808,11 +839,11 @@ namespace Talbat.Migrations
                         principalColumn: "DeliveryManId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ClientDeliveryManOrder_Order",
+                        name: "FK_ClientDeliveryManOrder_Invoice_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "InvoiceId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -906,6 +937,11 @@ namespace Talbat.Migrations
                 name: "IX_ClientCoupon_CouponId",
                 table: "ClientCoupon",
                 column: "CouponId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientCoupon_OrderId",
+                table: "ClientCoupon",
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientDeliveryManOrder_ClientAddress_Id",
@@ -1083,6 +1119,11 @@ namespace Talbat.Migrations
                 column: "SubItemCategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SystemReview_ClientId",
+                table: "SystemReview",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TempPartnerRegisterationDetails_Store_Type_Id",
                 table: "TempPartnerRegisterationDetails",
                 column: "StoreTypeId");
@@ -1133,6 +1174,9 @@ namespace Talbat.Migrations
 
             migrationBuilder.DropTable(
                 name: "SubItem");
+
+            migrationBuilder.DropTable(
+                name: "SystemReview");
 
             migrationBuilder.DropTable(
                 name: "TempPartnerRegisterationDetails");

@@ -55,7 +55,7 @@ namespace Talbat.Models
 
         [Required]
         [StringLength(maximumLength: 100, MinimumLength = 3)]
-        public int StoreAddress { get; set; }
+        public string StoreAddress { get; set; }
 
         //[MaxLength(10)]
         //public byte[] StoreStatus { get; set; }

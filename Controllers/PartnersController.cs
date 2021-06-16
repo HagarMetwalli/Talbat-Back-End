@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class PartnersController : ControllerBase
     {
-        private IGeneric<Partner> _repo;
+        private IUserService<Partner> _repo;
         private TalabatContext _db;
 
-        public PartnersController(IGeneric<Partner> repo, TalabatContext db)
+        public PartnersController(IUserService<Partner> repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -25,7 +25,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(200, Type = typeof(ActionResult<List<Partner>>))]
-        public async Task<ActionResult<List<Client>>> Get()
+        public async Task<ActionResult<List<Partner>>> Get()
         {
             List<Partner> partners = await _repo.RetriveAllAsync();
             if (partners == null)
@@ -70,6 +70,15 @@ namespace Talbat.Controllers
 
             if (StoreId == null)
                 return BadRequest();
+
+            Partner.PartnerEmail = Partner.PartnerEmail.ToLower();
+
+            Partner _partner = await _repo.RetriveByEmail(Partner.PartnerEmail);
+
+            if (_partner != null)
+            {
+                return BadRequest("The Email is already exist");
+            }
 
             Partner added = await _repo.CreatAsync(Partner);
             if (added == null)
@@ -132,6 +141,15 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
+            Partner.PartnerEmail = Partner.PartnerEmail.ToLower();
+
+            Partner _partner = await _repo.RetriveByEmail(Partner.PartnerEmail);
+
+            if (_partner != null)
+            {
+                return BadRequest("The Email is already exist");
+            }
+
             var affected = await _repo.PatchAsync(Partner);
             if (affected == null)
             {
@@ -139,6 +157,46 @@ namespace Talbat.Controllers
             }
             return new NoContentResult();
 
+        }
+
+        // GET: api/partners/email
+        [HttpGet]
+        [Route("GetpartnerByEmail/{email}")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(Partner))]
+        public async Task<IActionResult> GetpartnerByEmail(string email)
+        {
+            if (email == null)
+            {
+                return BadRequest();
+            }
+            var partner = await _repo.RetriveByEmail(email);
+            if (partner == null)
+            {
+                return NotFound();
+            }
+            return Ok(partner);
+        }
+
+        // POST api/partners/login
+        [HttpPost]
+        [Route("login")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Login([FromBody] Login obj)
+        {
+            if (obj.Email == null || obj.Password == null)
+            {
+                return BadRequest();
+            }
+            var token = await _repo.Login(obj);
+
+            if (token == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new { Token = token });
         }
     }
 }

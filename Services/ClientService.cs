@@ -123,9 +123,10 @@ namespace Talbat.Services
                 obj.Email = obj.Email.ToLower();
                 Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
 
-                Login clientLogin = _db.Logins.FirstOrDefault(x => x.Email == obj.Email && x.Password == obj.Password);
+                // Login clientLogin = _db.Logins.FirstOrDefault(x => x.Email == obj.Email && x.Password == obj.Password);
 
-                if (client != null && clientLogin != null)
+                // if (client != null && clientLogin != null)
+                if (client != null )
                 {
                     var tokenString = UserAuthentication.CreateToken(obj.Email);
                     return Task.Run(() => tokenString);

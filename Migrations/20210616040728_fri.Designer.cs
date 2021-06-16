@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210611200938_th")]
-    partial class th
+    [Migration("20210616040728_fri")]
+    partial class fri
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,9 +180,14 @@ namespace Talbat.Migrations
                     b.Property<int>("CouponId")
                         .HasColumnType("int");
 
-                    b.HasKey("ClientId", "CouponId");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ClientId", "CouponId", "OrderId");
 
                     b.HasIndex("CouponId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("ClientCoupon");
                 });
@@ -195,16 +200,16 @@ namespace Talbat.Migrations
                     b.Property<int>("DeliveryManId")
                         .HasColumnType("int");
 
-                    b.Property<int>("InvoiceId")
+                    b.Property<int>("ClientAddressId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClientAddressId")
+                    b.Property<int>("InvoiceId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderShipingTime")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ClientId", "DeliveryManId", "InvoiceId");
+                    b.HasKey("ClientId", "DeliveryManId");
 
                     b.HasIndex(new[] { "ClientAddressId" }, "IX_ClientDeliveryManOrder_ClientAddress_Id");
 
@@ -288,6 +293,9 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<int>("CouponMaxMoneyValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CouponPercentageValue")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CouponStartDate")
@@ -632,7 +640,15 @@ namespace Talbat.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AddressDetails")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
                     b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsDelivered")
                         .HasColumnType("int");
 
                     b.Property<double>("OrderCost")
@@ -1075,6 +1091,35 @@ namespace Talbat.Migrations
                     b.ToTable("SubItemCategory");
                 });
 
+            modelBuilder.Entity("Talbat.Models.SystemReview", b =>
+                {
+                    b.Property<int>("SystemReviewId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EffortMadeToOrderFood")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RateTalabatExperience")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecommendToFriend")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SystemReviewComment")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("SystemReviewId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("SystemReview");
+                });
+
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>
                 {
                     b.Property<int>("TempPartnerStoreId")
@@ -1183,9 +1228,17 @@ namespace Talbat.Migrations
                         .HasConstraintName("FK_ClientCoupon_Coupon")
                         .IsRequired();
 
+                    b.HasOne("Talbat.Models.Order", "Order")
+                        .WithMany("ClientCoupons")
+                        .HasForeignKey("OrderId")
+                        .HasConstraintName("FK_ClientCoupon_Order")
+                        .IsRequired();
+
                     b.Navigation("Client");
 
                     b.Navigation("Coupon");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Talbat.Models.ClientDeliveryManOrder", b =>
@@ -1211,7 +1264,7 @@ namespace Talbat.Migrations
                     b.HasOne("Talbat.Models.Invoice", "Invoice")
                         .WithMany("ClientDeliveryManOrders")
                         .HasForeignKey("InvoiceId")
-                        .HasConstraintName("FK_ClientDeliveryManOrder_Order")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -1297,7 +1350,6 @@ namespace Talbat.Migrations
                     b.HasOne("Talbat.Models.Order", "Order")
                         .WithMany("Invoices")
                         .HasForeignKey("OrderId")
-                        .HasConstraintName("FK_Invoice_Order")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1571,6 +1623,17 @@ namespace Talbat.Migrations
                     b.Navigation("SubItemCategory");
                 });
 
+            modelBuilder.Entity("Talbat.Models.SystemReview", b =>
+                {
+                    b.HasOne("Talbat.Models.Client", "Client")
+                        .WithMany("SystemReviews")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>
                 {
                     b.HasOne("Talbat.Models.Country", "Country")
@@ -1616,6 +1679,8 @@ namespace Talbat.Migrations
                     b.Navigation("OrderReviews");
 
                     b.Navigation("Orders");
+
+                    b.Navigation("SystemReviews");
                 });
 
             modelBuilder.Entity("Talbat.Models.ClientAddress", b =>
@@ -1699,6 +1764,8 @@ namespace Talbat.Migrations
 
             modelBuilder.Entity("Talbat.Models.Order", b =>
                 {
+                    b.Navigation("ClientCoupons");
+
                     b.Navigation("Invoices");
 
                     b.Navigation("OrderItems");
