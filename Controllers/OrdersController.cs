@@ -34,8 +34,8 @@ namespace Talbat.Controllers
         // GET: api/Orders
         [HttpGet]
         [ProducesResponseType(204)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Country>>))]
-        public ActionResult<List<Client>> Get()
+        [ProducesResponseType(200, Type = typeof(ActionResult<IList<Order>>))]
+        public ActionResult<List<Order>> Get()
         {
             var orders = _repo.RetriveAllAsync();
             if (orders.Count == 0)
