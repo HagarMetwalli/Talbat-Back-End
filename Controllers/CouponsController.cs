@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
@@ -10,71 +8,55 @@ namespace Talbat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PromotionsController : ControllerBase
+    public class CouponsController : ControllerBase
     {
-        private IPromotionRelatedService _repo;
+        private ICouponRelated _repo;
         private TalabatContext _db;
 
-        public PromotionsController(IPromotionRelatedService repo, TalabatContext db)
+        public CouponsController(ICouponRelated repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
         }
 
-        // GET: api/Offers
+        // GET: api/Coupons
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Promotion>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Coupon>))]
         [ProducesResponseType(204)]
         public async Task<IActionResult> Get()
         {
-            var offers = await _repo.RetriveAllAsync();
+            var coupons = await _repo.RetriveAllAsync();
 
-            if (offers == null)
+            if (coupons == null)
             {
                 return NoContent();
             }
-            return Ok(offers);
+            return Ok(coupons);
         }
 
-        // GET api/Offers/5
+        // GET api/Coupons/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetById(int id)
         {
-            Promotion offer = await _repo.RetriveAsync(id);
+            Coupon coupon = await _repo.RetriveAsync(id);
 
-            if (offer == null)
+            if (coupon == null)
             {
                 return NotFound();
             }
 
-            return Ok(offer);
+            return Ok(coupon);
         }
 
-        [HttpGet]
-        [Route("OfferStore")]
-        [ProducesResponseType(200, Type = typeof(Store))]
-        [ProducesResponseType(404)]
-        public IActionResult OfferStore(int Id)
-        {
-            var offerStore = _repo.RetrieveOfferStoreAsync(Id);
-
-            if (offerStore == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(offerStore);
-        }
-
-        // POST api/Offers
+        // POST api/Coupons
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] Promotion offer)
+        public async Task<IActionResult> Post([FromBody] Coupon coupon)
         {
-            if (offer == null)
+            if (coupon == null)
             {
                 return BadRequest();
             }
@@ -84,7 +66,7 @@ namespace Talbat.Controllers
                 return BadRequest(ModelState);
             }
 
-            Promotion added = await _repo.CreatAsync(offer);
+            Coupon added = await _repo.CreatAsync(coupon);
 
             if (added == null)
             {
@@ -94,7 +76,7 @@ namespace Talbat.Controllers
             return Ok();
         }
 
-        // DELETE api/Offers/5
+        // DELETE api/Coupons/5
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -108,27 +90,25 @@ namespace Talbat.Controllers
                 return NotFound();
             }
 
-            //Why nullable boolean?
             bool deleted = await _repo.DeleteAsync(id);
-            ///////////////////////////////////
 
             if (deleted)
             {
-                return new NoContentResult();//204 No Content
+                return new NoContentResult();
             }
             else
             {
-                return BadRequest($"Offer {id} was found but failed to delete");
+                return BadRequest($"Coupon {id} was found but failed to delete");
             }
         }
-        // Patch api/Offers/5
+        // Patch api/Coupons/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Patch(int id, [FromBody] Promotion offer)
+        public async Task<IActionResult> Patch(int id, [FromBody] Coupon coupon)
         {
-            if (offer == null)
+            if (coupon == null)
             {
                 return BadRequest();
             }
@@ -141,10 +121,38 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.PatchAsync(offer);
-            return new NoContentResult();
 
+            await _repo.PatchAsync(coupon);
+            return new NoContentResult();
+        }
+
+        // GET: api/Coupons/GetCouponDiscount
+        [HttpGet]
+        [Route("GetCouponDiscount/{Id}/{clientId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult TotalDiscountValue(int Id, int clientId, [FromQuery] List<int> itemsIdList)//, [FromBody] List<Item> itemsList
+        {
+            if (Id == 0 ||  clientId == 0)//itemsList.Count <= 0 ||
+            {
+                return BadRequest();
+            }
+            //var itemsList = new List<Item>();
+            
+            var discount = _repo.RetrieveCouponDiscountValueAsync(Id, itemsIdList, clientId);
+
+            if (discount == 0)
+            {
+                return NoContent();
+            }
+
+            return Ok(discount);
         }
 
     }//end controller
 }
+
+
+// TODO: ||Done|| Add OrderId for ClientCoupon Table to stack client coupon Usage throught 3 parts composite key
+// TODO: ||Done|| Apply Coupon route should be full funtional

@@ -9,13 +9,13 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class OrderItemService : IGeneric<OrderItem>
+    public class OrderItemService : IOrderItems
     {
-        //private TalabatContext _db;
-        //public OrderItemService(TalabatContext db)
-        //{
-        //    _db = db;
-        //}
+        private TalabatContext db;
+        public OrderItemService(TalabatContext db)
+        {
+            this.db = db;
+        }
 
         public Task<List<OrderItem>> RetriveAllAsync()
         {
@@ -51,8 +51,6 @@ namespace Talbat.Services
 
         public async Task<OrderItem> CreatAsync(OrderItem orderItem)
         {
-            using (var db = new TalabatContext())
-            {
                 try
                 {
                     await db.OrderItems.AddAsync(orderItem);
@@ -68,6 +66,28 @@ namespace Talbat.Services
                 {
                     return null;
                 }
+        }
+
+        async Task<List<OrderItem>> IOrderItems.CreateListAsync(List<OrderItem> itemsList)
+        {
+            try
+            {
+                foreach (var item in itemsList)
+                {
+                    db.OrderItems.Add(item);
+                }
+
+                int affected = await db.SaveChangesAsync();
+                if (affected >= 1)
+                {
+                    return itemsList;
+                }
+
+                return null;
+            }
+            catch (System.Exception)
+            {
+                return null;
             }
         }
 
@@ -97,8 +117,6 @@ namespace Talbat.Services
 
         public async Task<OrderItem> PatchAsync(OrderItem orderItem)
         {
-            using(var db= new TalabatContext())
-            {
                 try
                 {
                     db.OrderItems.Update(orderItem);
@@ -116,7 +134,95 @@ namespace Talbat.Services
                     return null;
                 }
             }
+
+        public async Task<List<OrderItem>> PatchListAsync(List<OrderItem> itemsList)
+        {
+            try
+            {
+                var orderItemsCurrentList = db.OrderItems.Where(x => x.OrderId == itemsList[0].OrderId).ToList();
+
+                var listsEqualityTest = Enumerable.SequenceEqual(orderItemsCurrentList, itemsList);
+
+                if (listsEqualityTest == true)
+                {
+                    return itemsList;
+                }
+
+                //db.OrderItems.ToList().RemoveAll(x => x.OrderId == itemsList[0].OrderId);
+                //var x = db.OrderItems.Where(x => x.OrderId == itemsList[0].OrderId).ToList();
+                foreach (var oItem in orderItemsCurrentList)
+                {
+                    db.OrderItems.Remove(oItem);
+                }
+
+                //foreach (var item in itemsList)
+                //{
+                //    db.OrderItems.Add(item);
+                //}
+
+                //db.OrderItems.AddRange(itemsList);
+
+                int affected = await db.SaveChangesAsync();
+                if (affected >= 1)
+                {
+                    using (var dbb= new TalabatContext())
+                    {
+                        foreach (var item in itemsList)
+                        {
+                            dbb.OrderItems.Add(item);
+                        }
+
+                        int affectedd = await dbb.SaveChangesAsync();
+                        if (affectedd >= 1)
+                        {
+                            return itemsList;
+                        }
+
+                        return null;
+                    }
+                    
+                    //var x = blabla.AddOrderItemsAsync(itemsList);
+                    //if (x == 1)
+                    //{
+
+                    //}
+                }
+
+                return null;
+            }
+            catch (System.Exception)
+            {
+                return null;
+            }
+            //catch (System.Exception)
+            //{
+            //    throw;
+            //}    
+
         }
 
-    }
+
+    }//end class
+
+    //abstract class blabla
+    //{
+
+    //    public static async Task<int> AddOrderItemsAsync(List<OrderItem> itemslist)
+    //    {
+    //        using (var db = new TalabatContext())
+    //        {
+    //            foreach (var item in itemslist)
+    //            {
+    //                db.OrderItems.Add(item);
+    //            }
+
+    //            int affectedd = await db.SaveChangesAsync();
+    //            if (affectedd >= 1)
+    //            {
+    //                return 1;
+    //            }
+    //            return 0;
+    //        }
+    //    }
+    //}
 }

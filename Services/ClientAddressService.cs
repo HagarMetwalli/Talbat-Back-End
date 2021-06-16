@@ -9,7 +9,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class ClientAddressService: IGeneric<ClientAddress>
+    public class ClientAddressService: IClientAddressesRelated
     {
 
         private TalabatContext _db;
@@ -17,6 +17,7 @@ namespace Talbat.Services
         {
            _db = db;
         }
+        
         public Task<List<ClientAddress>> RetriveAllAsync()
         {
             try
@@ -40,6 +41,7 @@ namespace Talbat.Services
                 return null;
             }
         }
+        
         public async Task<ClientAddress> CreatAsync(ClientAddress clientAddress)
         {
             try
@@ -62,6 +64,7 @@ namespace Talbat.Services
             }
 
         }
+        
         public async Task<bool> DeleteAsync(int id)
         {
             try
@@ -91,7 +94,7 @@ namespace Talbat.Services
                 using (var db = new TalabatContext())
                 {
                     db.ClientAddresses.Update(clientAddress);
-                    int affected = await _db.SaveChangesAsync();
+                    int affected = await db.SaveChangesAsync();
                     if (affected == 1)
                     {
                         return clientAddress;
@@ -103,6 +106,20 @@ namespace Talbat.Services
             {
                 return null;
             }
+
+        }
+
+        public List<ClientAddress> RetriveByClientIdAsync(int id)
+        {
+            try
+            {
+                return _db.ClientAddresses.Where(x => x.ClientId == id).ToList();
+            }
+            catch
+            {
+                return null;
+            }
+            
 
         }
     }
