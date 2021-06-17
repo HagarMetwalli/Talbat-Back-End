@@ -339,11 +339,11 @@ namespace Talbat.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ItemReview_OrderReview");
 
-                entity.HasOne(d => d.RateStatus)
-                    .WithMany(p => p.ItemReviews)
-                    .HasForeignKey(d => d.RateStatusId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ItemReview_RateStatus");
+                //entity.HasOne(d => d.RateStatus)
+                //    .WithMany(p => p.ItemReviews)
+                    //.HasForeignKey(d => d.RateStatusId)
+                    //.OnDelete(DeleteBehavior.ClientSetNull)
+                    //.HasConstraintName("FK_ItemReview_RateStatus");
 
             });
 

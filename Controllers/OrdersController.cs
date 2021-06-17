@@ -250,5 +250,28 @@ namespace Talbat.Controllers
 
             return Ok("Order Added successfully with all it's related Items");
         }
+
+
+        // GET api/Orders/GetItemsInOrder/5
+        [HttpGet("GetItemsInOrder/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult GetItemsInOrder(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var items = _repo.RetriveItemsInOrderdAsync(id);
+            if (items == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(items);
+        }
+
     }
 }

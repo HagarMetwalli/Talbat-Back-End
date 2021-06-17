@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -136,6 +137,23 @@ namespace Talbat.Services
                     return null;
                 }
         }
-        
+
+        public IEnumerable RetriveItemsInOrderdAsync(int orderId)
+        {
+            try
+            {
+                var Items = db.OrderItems.Include("Item").Where(i => i.OrderId == orderId).Select(x => x.Item);
+                return Items;
+            }
+            catch (System.Exception)
+            {
+                return null;
+            }
+
+        }
+
+
+
+
     }
 }

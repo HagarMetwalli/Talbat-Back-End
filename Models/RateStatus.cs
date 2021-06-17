@@ -22,10 +22,6 @@ namespace Talbat.Models
         [StringLength(maximumLength: 50, MinimumLength = 1)]
         public string RateStatusName { get; set; }
 
-
-        [InverseProperty(nameof(ItemReview.RateStatus))]
-        public virtual ICollection<ItemReview> ItemReviews { get; set; }
-
         [InverseProperty(nameof(PromotionReview.RateStatus))]
         public virtual ICollection<PromotionReview> PromotionReviews { get; set; }
 

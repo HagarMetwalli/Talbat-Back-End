@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace Talbat.IServices
         Task<bool> DeleteAsync(int id);
 
         Task<Order> PatchAsync(Order item);
+        IEnumerable RetriveItemsInOrderdAsync(int orderId);
 
     }
 }

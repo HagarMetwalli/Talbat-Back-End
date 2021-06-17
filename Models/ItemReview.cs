@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Talbat.Models
 {
     [Table("ItemReview")]
-    [Index(nameof(RateStatusId), Name = "IX_ItemReview_RateStatus_Id")]
+  
     public partial class ItemReview
     {
         [Key]
@@ -18,7 +18,7 @@ namespace Talbat.Models
         public int OrderReviewId { get; set; }
 
         [Required]
-        public int RateStatusId { get; set; }
+        public int Rate { get; set; }
 
 
         [ForeignKey(nameof(ItemId))]
@@ -29,8 +29,7 @@ namespace Talbat.Models
         [InverseProperty("ItemReviews")]
         public virtual OrderReview OrderReview { get; set; }
 
-        [ForeignKey(nameof(RateStatusId))]
-        [InverseProperty("ItemReviews")]
-        public virtual RateStatus RateStatus { get; set; }
+       
+      
     }
 }

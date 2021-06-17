@@ -61,8 +61,8 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody] ItemReview itemReview)
         {
-            var ratestatusId = _db.RateStatuses.Find(itemReview.RateStatusId);
-            if (itemReview == null || ratestatusId == null)
+            
+            if (itemReview == null )
             {
                 return BadRequest();
             }
@@ -87,8 +87,8 @@ namespace Talbat.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<ItemReview>> Patch(int id, [FromBody] ItemReview itemReview)
         {
-            var ratestatusId = _db.RateStatuses.Find(itemReview.RateStatusId);
-            if (id <= 0 || itemReview == null ||ratestatusId ==null || itemReview.ItemId != id)
+           
+            if (id <= 0 || itemReview == null  || itemReview.ItemId != id)
             {
                 return BadRequest();
             }
