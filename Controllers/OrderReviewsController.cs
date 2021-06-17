@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class OrderReviewsController : ControllerBase
     {
-        private IGeneric<OrderReview> _repo;
+        private IorderReview _repo;
         private TalabatContext _db;
 
-        public OrderReviewsController(IGeneric<OrderReview> repo, TalabatContext db)
+        public OrderReviewsController( IorderReview repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
@@ -136,5 +136,26 @@ namespace Talbat.Controllers
             return new NoContentResult();
 
         }
+
+        // POST api/allStoreReview
+        [HttpGet]
+        [Route("allStoreReview/{storeid}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> allStoreReview(int storeid)
+        {
+            if (storeid <= 0)
+            {
+                return BadRequest();
+            }
+            var reviwes = await _repo.ALLCommentsForStore(storeid);
+            if (reviwes == null)
+                return NotFound();
+            return Ok(reviwes);
+        }
+
+        
     }
 }

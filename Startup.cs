@@ -72,7 +72,7 @@ namespace Talbat
             services.AddScoped<IGeneric<Region>, RegionService>();
             services.AddScoped<IGeneric<RateStatus>, RateStatusService>();
             services.AddScoped<IUserService<Partner>, PartnerService>();
-            //services.AddScoped<IGeneric<OrderReview>, OrderReviewService>();
+            services.AddScoped<IorderReview, OrderReviewService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
             services.AddScoped<IAddressType, AddressTypeService>();
             services.AddScoped<IStoreService, StoreService>();

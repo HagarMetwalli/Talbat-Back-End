@@ -8,7 +8,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class OrderReviewService : IGeneric<OrderReview>
+    public class OrderReviewService : IorderReview
     {
         private TalabatContext _db;
         public OrderReviewService(TalabatContext db)
@@ -19,11 +19,20 @@ namespace Talbat.Services
         {
             try
             {
-                await _db.OrderReviews.AddAsync(OrderReview);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
-                    return OrderReview;
-                return null;
+                Order order = _db.Orders.Where(a => a.OrderId == OrderReview.OrderId).First();
+
+                if (order.IsDelivered == 1)
+                {
+                    await _db.OrderReviews.AddAsync(OrderReview);
+                    int affected = await _db.SaveChangesAsync();
+                    if (affected == 1)
+                        return OrderReview;
+                    return null;
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch
             {
@@ -85,6 +94,31 @@ namespace Talbat.Services
             {
                 return null;
             }
+        }
+
+        public Task<List<OrderReview>> ALLCommentsForStore (int  storeid)
+        {
+            try
+            {
+                List<OrderReview> allreviwes = new List<OrderReview>();
+                var allStoreOrder = _db.Orders.Where(a => a.StoreId == storeid && a.IsDelivered ==1).Select(a => a.OrderId).ToList();
+                foreach (var item in allStoreOrder)
+                {
+                    var element = _db.OrderReviews.Where(a => a.OrderId == item).ToList();
+                    if (element.Count != 0)
+                    {
+                        allreviwes.Add(_db.OrderReviews.Where(a => a.OrderId == item).First());
+                    }
+                    
+
+                }
+                return Task<List<OrderReview>>.Run<List<OrderReview>>(() => allreviwes);
+            }
+            catch
+            {
+                return null;
+            }
+
         }
 
     }

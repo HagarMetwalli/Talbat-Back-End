@@ -68,7 +68,7 @@ namespace Talbat.Models
 
         [Required]
         [Range(0, 1), DefaultValue(0)]
-        public string StorePreOrder { get; set; }
+        public int StorePreOrder { get; set; }
 
         [Required]
         [Range(0, 1), DefaultValue(1)]
