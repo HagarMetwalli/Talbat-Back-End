@@ -74,7 +74,7 @@ namespace Talbat.Controllers
             OrderReview added = await _repo.CreatAsync(OrderReview);
             if (added == null)
                 return BadRequest();
-            return Ok();
+            return Ok(added);
         }
 
         // DELETE api/OrderReviews/5
