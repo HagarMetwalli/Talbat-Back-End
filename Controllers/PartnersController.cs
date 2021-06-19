@@ -189,6 +189,7 @@ namespace Talbat.Controllers
             {
                 return BadRequest();
             }
+            try { 
             var token = await _repo.Login(obj);
 
             if (token == null)
@@ -197,6 +198,12 @@ namespace Talbat.Controllers
             }
 
             return Ok(new { Token = token });
+
+            }
+            catch
+            {
+                return Unauthorized();
+            }
         }
     }
 }

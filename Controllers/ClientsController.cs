@@ -204,14 +204,21 @@ namespace Talbat.Controllers
             {
                 return BadRequest();
             }
-            var token = await _repo.Login(obj);
+            try
+            {
+                var token = await _repo.Login(obj);
 
-            if (token == null)
+                if (token == null)
+                {
+                    return Unauthorized();
+                }
+
+                return Ok(new { Token = token });
+            }
+            catch
             {
                 return Unauthorized();
             }
-
-            return Ok(new { Token = token });
         }
     }
 }
