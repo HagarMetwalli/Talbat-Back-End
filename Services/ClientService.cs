@@ -123,17 +123,14 @@ namespace Talbat.Services
                 obj.Email = obj.Email.ToLower();
                 Client client = _db.Clients.FirstOrDefault(c => c.ClientEmail == obj.Email);
 
-                // Login clientLogin = _db.Logins.FirstOrDefault(x => x.Email == obj.Email && x.Password == obj.Password);
-
-                // if (client != null && clientLogin != null)
-                if (client != null )
+                if (client != null && client.ClientPassword == obj.Password)
                 {
                     var tokenString = UserAuthentication.CreateToken(obj.Email);
                     return Task.Run(() => tokenString);
                 }
-                return null;   
+                return null;
             }
-            catch 
+            catch
             {
                 return null;
             }

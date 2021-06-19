@@ -198,20 +198,20 @@ namespace Talbat.Controllers
         [Route("login")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Login([FromBody] Login obj)
+        public async Task<IActionResult> Login([FromBody] Login obj )
         {
-            if (obj.Email== null || obj.Password == null)
+            if (obj.Email == null || obj.Password == null)
             {
                 return BadRequest();
             }
-            var token =await  _repo.Login(obj); 
+            var token = await _repo.Login(obj);
 
             if (token == null)
             {
                 return Unauthorized();
             }
 
-            return Ok(new {Token = token});
+            return Ok(new { Token = token });
         }
     }
 }
