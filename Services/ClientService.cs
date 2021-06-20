@@ -128,11 +128,11 @@ namespace Talbat.Services
                     var tokenString = UserAuthentication.CreateToken(obj.Email);
                     return Task.Run(() => tokenString);
                 }
-                return null;
+                return (Task<string>)Task.Run(() => null);
             }
             catch
             {
-                return null;
+                return (Task<string>)Task.Run(() => null);
             }
         }
     }

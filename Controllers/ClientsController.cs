@@ -198,6 +198,7 @@ namespace Talbat.Controllers
         [Route("login")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Login([FromBody] Login obj )
         {
             if (obj.Email == null || obj.Password == null)

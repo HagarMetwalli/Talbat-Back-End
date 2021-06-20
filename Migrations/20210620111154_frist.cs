@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class fir : Migration
+    public partial class frist : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -353,7 +353,7 @@ namespace Talbat.Migrations
                     StoreMinOrder = table.Column<double>(type: "float", nullable: false),
                     StoreDeliveryTime = table.Column<int>(type: "int", nullable: false),
                     StoreDeliveryFee = table.Column<double>(type: "float", nullable: false),
-                    StorePreOrder = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    StorePreOrder = table.Column<int>(type: "int", unicode: false, nullable: false),
                     StorePaymentOnDeliverCash = table.Column<int>(type: "int", nullable: false),
                     StorePaymentVisa = table.Column<int>(type: "int", nullable: false),
                     StoreTypeId = table.Column<int>(type: "int", nullable: false),
@@ -860,7 +860,7 @@ namespace Talbat.Migrations
                 {
                     ItemId = table.Column<int>(type: "int", nullable: false),
                     OrderReviewId = table.Column<int>(type: "int", nullable: false),
-                    RateStatusId = table.Column<int>(type: "int", nullable: false)
+                    Rate = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -876,12 +876,6 @@ namespace Talbat.Migrations
                         column: x => x.OrderReviewId,
                         principalTable: "OrderReview",
                         principalColumn: "OrderReviewId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ItemReview_RateStatus",
-                        column: x => x.RateStatusId,
-                        principalTable: "RateStatus",
-                        principalColumn: "RateStatusId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -1005,11 +999,6 @@ namespace Talbat.Migrations
                 name: "IX_ItemReview_OrderReviewId",
                 table: "ItemReview",
                 column: "OrderReviewId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemReview_RateStatus_Id",
-                table: "ItemReview",
-                column: "RateStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Job_JobCategory_Id",
