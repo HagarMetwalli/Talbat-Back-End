@@ -71,6 +71,20 @@ namespace Talbat.Services
                 return null;
             }
         }
+        public Task<List<Item>> RetriveAllWithNameAsync()
+        {
+            try
+            {
+                return Task<IList>.Run<List<Item>>(() => _db.Items
+                .Include("ItemCategory")
+                .Include("Country")
+                .ToList());
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public Task<Item> RetriveAsync(int id)
         {
             try
@@ -143,5 +157,6 @@ namespace Talbat.Services
                 return null;
             }
         }
+
     }
 }

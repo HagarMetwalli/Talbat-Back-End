@@ -11,5 +11,6 @@ namespace Talbat.IServices
         public Task<List<SubItem>> RetriveSubItemsByItemIdAsync(int itemId);
 
         public Task<List<SubItemCategory>> RetriveSubItemsCategoriesByItemIdAsync(int itemId);
+        public Task<List<Item>> RetriveAllWithNameAsync();
     }
 }
