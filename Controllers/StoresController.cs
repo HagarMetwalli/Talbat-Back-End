@@ -142,23 +142,31 @@ namespace Talbat.Controllers
 
         // GET api/NearestStores
         [HttpGet]
-        [Route("GetStoreInLocationAsync/{storeName}/{latitude}/{Longitude}")]
+        [Route("GetStoreInLocationAsync/{storeid}/{latitude}/{Longitude}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> GetStoreInLocationAsync(string storeName,double latitude, double Longitude)
+        public async Task<IActionResult> GetStoreInLocationAsync(int storeid,double latitude, double Longitude)
         {
-            Store store = await _repo.RetriveByNameAsync(storeName);
+            Store store =_db.Stores.Where(a =>a.StoreId == storeid).First();
             if (store == null)
             {
                 return BadRequest();
             }
-            var avaliablity  =  _repo.RetriveStoreInLocationAsync(storeName,latitude, Longitude);
-            if (avaliablity != null)
+            try
             {
-                return NoContent();
+                var avaliablity = await _repo.RetriveStoreInLocationAsync(storeid, latitude, Longitude);
+                if (avaliablity != null)
+                {
+                    return Ok(avaliablity);
+                }
+                return NotFound();
             }
-            return NotFound();  
+            catch
+            {
+                return NotFound();
+            }
+           
         }
         // GET api/Stores/MC/Drinks
         [HttpGet]

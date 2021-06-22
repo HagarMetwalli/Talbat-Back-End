@@ -259,23 +259,23 @@ namespace Talbat.Services
                 return null;
             }
         }
-        public Task<Store> RetriveStoreInLocationAsync(string storeName, double lat1, double long1)
+        public Task<Store> RetriveStoreInLocationAsync(int storeid, double lat1, double long1)
         {
             try
             {
-                var store = _db.Stores.Single(x => x.StoreName == storeName);
+                var store = _db.Stores.Single(x => x.StoreId == storeid);
 
                 double destanceInMeters = getDistanceFromLatLonInMeter(lat1, long1, store.StoreLatitude, store.StoreLongitude);
                 if (destanceInMeters <= store.StoreDeliveryDistance)
                 {
                     return Task<Store>.Run<Store>(() => store);
                 }
-                return null;
+                return (Task<Store>)Task.Run(() => null);
 
             }
             catch
             {
-                return null;
+                return (Task<Store>)Task.Run(() => null);
             }
         }
 
