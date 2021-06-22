@@ -52,6 +52,26 @@ namespace Talbat.Controllers
                 return NotFound();
             return Ok(Store);
         }
+        // GET: api/stores/Getwithname
+        [HttpGet]
+        [Route("Getwithname/{storeId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<Item>>))]
+        public async Task<ActionResult<List<Client>>> Getwithname(int storeId)
+        {
+
+            IList<Item> items = await _repo.RetriveAllWithNameAsync(storeId);
+            if (items.Count == 0)
+            {
+                return NoContent();
+            }
+            if (items == null)
+            {
+                return BadRequest();
+            }
+            return Ok(items);
+        }
         // GET api/Stores/5
         [HttpGet]
         [Route("GetTopItemsBystoreId/{id}")]
@@ -143,8 +163,9 @@ namespace Talbat.Controllers
         // GET api/NearestStores
         [HttpGet]
         [Route("GetStoreInLocationAsync/{storeName}/{latitude}/{Longitude}")]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(404)] 
 
         public async Task<IActionResult> GetStoreInLocationAsync(string storeName,double latitude, double Longitude)
         {

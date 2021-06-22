@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,6 +74,21 @@ namespace Talbat.Services
             }
 
         }
+        public Task<List<Item>> RetriveAllWithNameAsync(int id)
+        {
+            try
+            {
+                return Task<IList>.Run<List<Item>>(() => _db.Items
+                .Include("ItemCategory")
+                .Include("Country")
+                .Where(s=>s.StoreId==id)
+                .ToList());
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         public Task<IEnumerable<String>> RetriveMostCommonAsync()
         {
@@ -101,10 +117,10 @@ namespace Talbat.Services
                     {
                         var all_Order_That_Have_sec_Item = _db.OrderItems.Where(q => q.ItemId == _items[j].ItemId);
                         var numberOfOrdereForSec = all_Order_That_Have_sec_Item.Count();
-
+                         
                         if (numberOfOrdereForSec > numberOfOrdere)
                         {
-                            var temp = _items[i];
+                             var temp = _items[i];
                             _items[i] = _items[j];
                             _items[j] = temp;
                             //resulte.Add(_items[j]);

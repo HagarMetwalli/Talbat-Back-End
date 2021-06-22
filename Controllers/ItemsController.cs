@@ -39,25 +39,7 @@ namespace Talbat.Controllers
             }
             return Ok(items);
         }
-        // GET: api/items
-        [HttpGet]
-        [Route("Getwithname")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<List<Item>>))]
-        public async Task<ActionResult<List<Client>>> Getwithname()
-        {
-            IList<Item> items = await _repo.RetriveAllWithNameAsync();
-            if (items.Count == 0)
-            {
-                return NoContent();
-            }
-            if (items == null)
-            {
-                return BadRequest();
-            }
-            return Ok(items);
-        }
+
         // GET api/items/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
