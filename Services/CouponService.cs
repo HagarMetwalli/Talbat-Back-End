@@ -55,8 +55,32 @@ namespace Talbat.Services
             return null;
         }
 
-        public int RetrieveCouponDiscountValueAsync(int Id, List<int> itemsIdList, int clientId)
+        public  Coupon RetrivebynameAsync(string couponKey)
         {
+            try
+            {
+                var coupon = _db.Coupons.FirstOrDefault(s => s.CouponKey == couponKey);
+
+                return coupon;
+            }
+            catch
+            {
+                return null;
+            }
+         
+        }
+
+
+
+        public int RetrieveCouponDiscountValueAsync(string couponKey, List<int> itemsIdList, int clientId)
+        {
+            Coupon coupon = RetrivebynameAsync(couponKey);
+            if (coupon == null)
+            {
+                return 0;
+            }
+            int Id = coupon.CouponId;
+
             // NOTE: just for testing
             var itemsList = (from itemId in itemsIdList
                             join itemsOrigin in _db.Items

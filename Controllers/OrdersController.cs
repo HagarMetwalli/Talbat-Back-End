@@ -123,7 +123,7 @@ namespace Talbat.Controllers
             {
                 var itemIdsList = o.orderItemsList.Select(x => x.ItemId).ToList();
 
-                var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponId, itemIdsList, o.order.ClientId);
+                var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponKey, itemIdsList, o.order.ClientId);
 
                 if ( (o.order.OrderCost-couponDiscountValue) < 0 )
                 {
@@ -213,7 +213,7 @@ namespace Talbat.Controllers
             {
                 var itemIdsList = o.orderItemsList.Select(x => x.ItemId).ToList();
 
-                var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponId, itemIdsList, o.order.ClientId);
+                var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponKey, itemIdsList, o.order.ClientId);
 
                 if ((o.order.OrderCost - couponDiscountValue) < 0)
                 {
