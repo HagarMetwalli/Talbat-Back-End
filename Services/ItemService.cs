@@ -44,6 +44,15 @@ namespace Talbat.Services
                 using (var db = new TalabatContext())
                 {
                     Item item = await RetriveAsync(id);
+                    var orderItems = db.OrderItems.Where(i => i.ItemId == id).ToList();
+                    if (orderItems != null)
+                    {
+                        foreach (var orderItem in orderItems)
+                        {
+                            db.OrderItems.Remove(orderItem);
+                        }
+                        
+                    }
                     db.Items.Remove(item);
                     int affected = await db.SaveChangesAsync();
 

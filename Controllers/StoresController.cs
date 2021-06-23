@@ -111,6 +111,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(200, Type = typeof(List<string>))]
         public async Task<ActionResult<IEnumerable<string>>> StoreCateories(string StoreName)
         {
+
             Store store = await _repo.RetriveByNameAsync(StoreName);
             if (store == null)
                 return NotFound();
@@ -162,19 +163,19 @@ namespace Talbat.Controllers
 
         // GET api/NearestStores
         [HttpGet]
-        [Route("GetStoreInLocationAsync/{storeName}/{latitude}/{Longitude}")]
+        [Route("GetStoreInLocationAsync/{storeId}/{latitude}/{Longitude}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)] 
 
-        public async Task<IActionResult> GetStoreInLocationAsync(string storeName,double latitude, double Longitude)
+        public async Task<IActionResult> GetStoreInLocationAsync(int storeId,double latitude, double Longitude)
         {
-            Store store = await _repo.RetriveByNameAsync(storeName);
+            Store store = await _repo.RetriveAsync(storeId);
             if (store == null)
             {
                 return BadRequest();
             }
-            var avaliablity  =  _repo.RetriveStoreInLocationAsync(storeName,latitude, Longitude);
+            var avaliablity  =  _repo.RetriveStoreInLocationAsync(storeId,latitude, Longitude);
             if (avaliablity != null)
             {
                 return NoContent();
@@ -356,7 +357,31 @@ namespace Talbat.Controllers
                 return Ok(stores);
             }
         }
-        // GET api/Stores/GetStoresWithCusineName/cusineName
+        // GET api/Stores/GetCategories
+        [HttpGet]
+        [Route("GetCategories/{storeId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+
+        public async Task<IActionResult> GetCategories(int storeId)
+        {
+            Store store = _db.Stores.Find(storeId);
+
+            if (store == null)
+            {
+                return BadRequest();
+            }
+            var itemCategories = await _repo.RetriveItemCategoriesAsync(storeId);
+            {
+                if (itemCategories.Count == 0)
+                {
+                    return NotFound();
+                }
+                return Ok(itemCategories);
+            }
+        }
+        // GET api/Stores/GetStoresWithCusineName/cusineId
         [HttpGet]
         [Route("GetStoresWithCusineName/{cusineId}")]
         [ProducesResponseType(200)]

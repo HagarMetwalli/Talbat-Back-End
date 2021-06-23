@@ -195,15 +195,27 @@ namespace Talbat.Services
         {
             try
             {
-                var Categories = _db.Items.Where(c => c.StoreId == storeId).ToList();
+                var Categries = _db.Items.Include("ItemCategory").Where(c => c.StoreId == storeId)
+                .Select(x => x.ItemCategory).Distinct().ToList();
                 List<string> CategriesNames = new List<string>();
-                ItemCategory category = new ItemCategory();
-                foreach (var item in Categories)
+                foreach (var category in Categries)
                 {
-                    category = _db.ItemCategories.FirstOrDefault(c => c.ItemCategoryId == item.ItemCategoryId);
                     CategriesNames.Add(category.ItemCategoryName);
                 }
                 return Task.Run(() => CategriesNames);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<List<ItemCategory>> RetriveItemCategoriesAsync(int storeId)
+         {
+            try
+            {
+                var Categries = _db.Items.Include("ItemCategory").Where(c => c.StoreId == storeId)
+                    .Select(x => x.ItemCategory).Distinct().ToList();
+                return Task.Run(() => Categries);
             }
             catch
             {
@@ -275,11 +287,11 @@ namespace Talbat.Services
                 return null;
             }
         }
-        public Task<Store> RetriveStoreInLocationAsync(string storeName, double lat1, double long1)
+        public Task<Store> RetriveStoreInLocationAsync(int storeId, double lat1, double long1)
         {
             try
             {
-                var store = _db.Stores.Single(x => x.StoreName == storeName);
+                var store = _db.Stores.Single(x => x.StoreId == storeId);
 
                 double destanceInMeters = getDistanceFromLatLonInMeter(lat1, long1, store.StoreLatitude, store.StoreLongitude);
                 if (destanceInMeters <= store.StoreDeliveryDistance)
