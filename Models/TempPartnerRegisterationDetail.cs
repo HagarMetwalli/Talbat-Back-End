@@ -51,6 +51,7 @@ namespace Talbat.Models
 
         [Required]
         [StringLength(maximumLength: 100, MinimumLength = 3)]
+        [RegularExpression("^[a-zA-Z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$")]
         public string StoreWebSite { get; set; }
 
         [Required]

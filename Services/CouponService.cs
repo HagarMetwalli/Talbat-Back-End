@@ -17,11 +17,26 @@ namespace Talbat.Services
 
         public async Task<Coupon> CreatAsync(Coupon coupon)
         {
-            await _db.Coupons.AddAsync(coupon);
-            int affected = await _db.SaveChangesAsync();
-            if (affected == 1)
-                return coupon;
-            return null;
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    Coupon cou = RetrivebynameAsync(coupon.CouponKey);
+                    if (cou != null)
+                    {
+                        return null;
+                    }
+                    await _db.Coupons.AddAsync(coupon);
+                    int affected = await _db.SaveChangesAsync();
+                    if (affected == 1)
+                        return coupon;
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
         
         public async Task<bool> DeleteAsync(int id)
@@ -47,6 +62,11 @@ namespace Talbat.Services
 
         public async Task<Coupon> PatchAsync(Coupon coupon)
         {
+            Coupon cou = RetrivebynameAsync(coupon.CouponKey);
+            if (cou != null)
+            {
+                return null;
+            }
             _db = new TalabatContext();
             _db.Coupons.Update(coupon);
             int affected = await _db.SaveChangesAsync();
