@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Talbat.IServices;
@@ -92,7 +94,7 @@ namespace Talbat.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] Item item)
+        public async Task<IActionResult> Post([FromForm] Item item,IFormFile itemImage)
         {
 
             if (item == null )
@@ -112,8 +114,8 @@ namespace Talbat.Controllers
             {
                 return BadRequest();
             }
+            Item added = await _repo.CreatefileAsync(item, itemImage);
 
-            Item added = await _repo.CreatAsync(item);
             if (added == null)
             {
                 return BadRequest();
