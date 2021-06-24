@@ -13,6 +13,8 @@ namespace Talbat.IServices
 
         public Task<List<SubItemCategory>> RetriveSubItemsCategoriesByItemIdAsync(int itemId);
         public Task<Item> CreatefileAsync(Item item, IFormFile imgFile);
+        public Task<Item> PatchfileAsync(Item item, IFormFile imgFile);
+
 
     }
 }

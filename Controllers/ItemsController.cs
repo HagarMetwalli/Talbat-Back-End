@@ -97,7 +97,7 @@ namespace Talbat.Controllers
         public async Task<IActionResult> Post([FromForm] Item item,IFormFile itemImage)
         {
 
-            if (item == null )
+            if (item == null || itemImage==null)
             {
                 return BadRequest();
             }
@@ -158,7 +158,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> Patch(int id, [FromBody] Item item)
+        public async Task<IActionResult> Patch(int id, [FromForm] Item item, IFormFile itemImage)
         {
             if (id <=0 || item == null ||item.ItemId != id)
             {
@@ -168,7 +168,6 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             var countryId = _db.Countries.Find(item.CountryId);
             var storeId = _db.Stores.Find(item.StoreId);
 
@@ -181,7 +180,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.PatchAsync(item);
+            await _repo.PatchfileAsync(item,itemImage);
             return new NoContentResult();
 
         }

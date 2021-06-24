@@ -76,6 +76,68 @@ namespace Talbat.Services
                 return null;
             }
         }
+        public async Task<Item> PatchfileAsync(Item item, IFormFile imgFile)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    if (imgFile == null)
+                    {
+                        var _item = db.Items.Single(i => i.ItemId == item.ItemId);
+                        item.ItemImage = _item.ItemImage;
+                        db.SaveChanges();
+                        return item;
+                    }
+                    db.Items.Update(item);
+
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {  
+                        if (imgFile != null)
+                        {
+                            if (imgFile.Length > 0)
+                            {
+                                //Getting FileName
+                                var fileName = Path.GetFileName(imgFile.FileName);
+
+                                ////Assigning Unique Filename (Guid)
+                                //var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+
+                                //Getting file Extension
+                                var fileExtension = Path.GetExtension(fileName);
+
+                                // concatenating  FileName + FileExtension
+                                var newFileName = String.Concat(item.ItemId, fileExtension);
+                                item.ItemImage = "https://localhost:44311/Images/" + newFileName;
+
+                                // Combines two strings into a path.
+                                var filepath =
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")).Root + $@"\{newFileName}";
+
+                                using (FileStream fs = System.IO.File.Create(filepath))
+                                {
+                                    imgFile.CopyTo(fs);
+                                    fs.Flush();
+                                }
+                                db.SaveChanges();
+                                return item;
+                            }
+
+                            return item;
+
+                        }
+                        return null;
+                    }
+                    return item;
+                }
+            }
+
+            catch
+            {
+                return null;
+            }
+        }
         public async Task<bool> DeleteAsync(int id)
         {
             try
