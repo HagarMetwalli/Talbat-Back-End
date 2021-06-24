@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210624102242_nullableImage")]
-    partial class nullableImage
+    [Migration("20210624214916_nullablestoreimaged")]
+    partial class nullablestoreimaged
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -959,6 +959,10 @@ namespace Talbat.Migrations
                         .HasMaxLength(400)
                         .IsUnicode(false)
                         .HasColumnType("varchar(400)");
+
+                    b.Property<string>("StoreImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("StoreLatitude")
                         .HasColumnType("float");

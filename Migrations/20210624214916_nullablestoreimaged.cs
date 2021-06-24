@@ -2,10 +2,17 @@
 
 namespace Talbat.Migrations
 {
-    public partial class nullableImage : Migration
+    public partial class nullablestoreimaged : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<string>(
+                name: "StoreImage",
+                table: "Store",
+                type: "nvarchar(max)",
+                nullable: true,
+                defaultValue: "");
+
             migrationBuilder.AlterColumn<string>(
                 name: "ItemImage",
                 table: "Item",
@@ -21,6 +28,10 @@ namespace Talbat.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "StoreImage",
+                table: "Store");
+
             migrationBuilder.AlterColumn<string>(
                 name: "ItemImage",
                 table: "Item",

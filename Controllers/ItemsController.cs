@@ -152,7 +152,7 @@ namespace Talbat.Controllers
             }
         }
 
-        // Patch api/Cities/5
+        // Patch api/items/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]

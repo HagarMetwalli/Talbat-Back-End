@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,8 +7,13 @@ using Talbat.Models;
 
 namespace Talbat.IServices
 {
-    public interface IStoreService : IGeneric<Store>
+    public interface IStoreService 
     {
+        Task <List<Store>> RetriveAllAsync();
+        Task<Store> RetriveAsync(int id);
+  
+        Task<bool> DeleteAsync(int id);
+       
         public Task<IEnumerable<String>> RetriveMostCommonAsync();
         public Task<List<String>> RetriveCategoriesAsync(int id);
         public Task<IEnumerable<Item>> RetriveCategoryItemsAsync(int StoreId, int CategoryId);
@@ -23,8 +29,8 @@ namespace Talbat.IServices
         public Task<Store> RetriveStoreInLocationAsync(int storeId, double lat1, double long1);
         public Task<List<Item>> RetriveAllWithNameAsync(int id);
 
-
-
+        public Task<Store> CreateStoreAsync(Store store, IFormFile imgFile);
+        public Task<Store> PatchStoreAsync(Store store, IFormFile imgFile);
 
     }
 }

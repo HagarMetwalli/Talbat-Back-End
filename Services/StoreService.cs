@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -17,16 +20,119 @@ namespace Talbat.Services
         {
             _db = db;
         }
-        public async Task<Store> CreatAsync(Store Store)
+
+        public async Task<Store> CreateStoreAsync(Store store , IFormFile imgFile)
+        {
+            try
+            { 
+                using (var db = new TalabatContext())
+                {
+                    await db.Stores.AddAsync(store);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+
+                        if (imgFile != null)
+                        {
+                            if (imgFile.Length > 0)
+                            {
+                                //Getting FileName
+                                var fileName = Path.GetFileName(imgFile.FileName);
+
+                                ////Assigning Unique Filename (Guid)
+                                //var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+
+                                //Getting file Extension
+                                var fileExtension = Path.GetExtension(fileName);
+
+                                // concatenating  FileName + FileExtension
+                                var newFileName = String.Concat(store.StoreId, fileExtension);
+                                store.StoreImage = "https://localhost:44311/StoreImages/" + newFileName;
+
+                                // Combines two strings into a path.
+                                var filepath =
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StoreImages")).Root + $@"\{newFileName}";
+
+                                using (FileStream fs = System.IO.File.Create(filepath))
+                                {
+                                    imgFile.CopyTo(fs);
+                                    fs.Flush();
+                                }
+                                db.SaveChanges();
+                                return store;
+                            }
+
+                            return store;
+
+                        }
+                        return null;
+                    }
+                return store;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
+        public async Task<Store> PatchStoreAsync(Store store ,IFormFile imgFile)
         {
             try
             {
-                await _db.Stores.AddAsync(Store);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
-                    return Store;
-                return null;
+                using (var db = new TalabatContext())
+                {
+                    if (imgFile == null)
+                    {
+                        var _store = db.Stores.Single(i => i.StoreId == store.StoreId);
+                        store.StoreImage = _store.StoreImage;
+                        db.SaveChanges();
+                        return  await Task.Run(() => store);
+                    }
+                    db.Stores.Update(store);
+
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        if (imgFile != null)
+                        {
+                            if (imgFile.Length > 0)
+                            {
+                                //Getting FileName
+                                var fileName = Path.GetFileName(imgFile.FileName);
+
+                                ////Assigning Unique Filename (Guid)
+                                //var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+
+                                //Getting file Extension
+                                var fileExtension = Path.GetExtension(fileName);
+
+                                // concatenating  FileName + FileExtension
+                                var newFileName = String.Concat(store.StoreId, fileExtension);
+                                store.StoreImage = "https://localhost:44311/StoreImages/" + newFileName;
+
+                                // Combines two strings into a path.
+                                var filepath =
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StoreImages")).Root + $@"\{newFileName}";
+
+                                using (FileStream fs = System.IO.File.Create(filepath))
+                                {
+                                    imgFile.CopyTo(fs);
+                                    fs.Flush();
+                                }
+                                db.SaveChanges();
+                                return store;
+                            }
+
+                            return store;
+
+                        }
+                        return null;
+                    }
+                    return store;
+                }
             }
+
             catch
             {
                 return null;
@@ -235,22 +341,22 @@ namespace Talbat.Services
             }
         }
 
-        public async Task<Store> PatchAsync(Store Store)
-        {
-            try
-            {
-                _db = new TalabatContext();
-                _db.Stores.Update(Store);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
-                    return Store;
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        //public async Task<Store> PatchAsync(Store Store)
+        //{
+        //    try
+        //    {
+        //        _db = new TalabatContext();
+        //        _db.Stores.Update(Store);
+        //        int affected = await _db.SaveChangesAsync();
+        //        if (affected == 1)
+        //            return Store;
+        //        return null;
+        //    }
+        //    catch
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public Task<IEnumerable<Item>> RetriveCategoryItemsAsync(int StoreId, int itemCategoryId)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -214,15 +215,13 @@ namespace Talbat.Controllers
             return Ok(list);
         }
 
-
         // POST api/Stores
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        public async Task<IActionResult> Post([FromBody] Store Store)
+        public async Task<IActionResult> Post([FromForm] Store store, IFormFile storeImage)
         {
-            if (Store == null)
+            if (store == null)
             {
                 return BadRequest();
             }
@@ -230,18 +229,58 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var CountryId = _db.Countries.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            var CuisineId = _db.Cuisines.Find(Store.CuisineId);
+            var CountryId = _db.Countries.Find(store.CountryId);
+            var StoreTypeId = _db.StoreTypes.Find(store.StoreTypeId);
+            var CuisineId = _db.Cuisines.Find(store.CuisineId);
             if (CountryId == null || StoreTypeId == null || CuisineId == null)
             {
                 return BadRequest();
             }
-            Store added = await _repo.CreatAsync(Store);
+            Store added = await _repo.CreateStoreAsync(store, storeImage);
             if (added == null)
+            {
                 return BadRequest();
+            }
             return Ok();
         }
+
+        // Patch api/ Stores/5
+        [HttpPatch("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> Patch(int id, [FromForm] Store store, IFormFile storeImage)
+        {
+            if (store == null || store.StoreId != id)
+            {
+                return BadRequest();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var CountryId = _db.Countries.Find(store.CountryId);
+            var StoreTypeId = _db.StoreTypes.Find(store.StoreTypeId);
+            var CuisineId = _db.Cuisines.Find(store.CuisineId);
+            if (CountryId == null || StoreTypeId == null || CuisineId == null)
+            {
+                return BadRequest();
+            }
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            var affected = await _repo.PatchStoreAsync(store, storeImage);
+            if (affected == null)
+            {
+                return BadRequest();
+            }
+            return new NoContentResult();
+
+        }
+
 
         // DELETE api/Stores/5
         [HttpDelete("{id}")]
@@ -270,42 +309,7 @@ namespace Talbat.Controllers
             }
         }
 
-        // Patch api/ Stores/5
-        [HttpPatch("{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-
-        public async Task<IActionResult> Patch(int id, [FromBody] Store Store)
-        {
-            if (Store == null || Store.StoreId != id)
-            {
-                return BadRequest();
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var CountryId = _db.Countries.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            var CuisineId = _db.Cuisines.Find(Store.CuisineId);
-            if (CountryId == null || StoreTypeId == null || CuisineId == null)
-            {
-                return BadRequest();
-            }
-            var existing = await _repo.RetriveAsync(id);
-            if (existing == null)
-            {
-                return NotFound();
-            }
-            var affected = await _repo.PatchAsync(Store);
-            if (affected == null)
-            {
-                return BadRequest();
-            }
-            return new NoContentResult();
-
-        }
+ 
         //// GET api/Stores/GetStoreInArea/area
         //[HttpGet]
         //[Route("GetStoreInArea/{area}")]

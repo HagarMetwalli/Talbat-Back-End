@@ -958,6 +958,10 @@ namespace Talbat.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(400)");
 
+                    b.Property<string>("StoreImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("StoreLatitude")
                         .HasColumnType("float");
 
