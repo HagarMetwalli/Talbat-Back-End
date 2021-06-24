@@ -24,7 +24,7 @@ namespace Talbat.Models
         [Range(1, int.MaxValue), DefaultValue(1)]
         public int OrderItemQty { get; set; }
 
-        [Required]
+       
         [StringLength(maximumLength: 200, MinimumLength = 1)]
         public string OrderItemSpecialRequest { get; set; }
 
