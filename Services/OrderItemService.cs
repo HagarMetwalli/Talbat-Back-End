@@ -89,22 +89,16 @@ namespace Talbat.Services
             return orderItems;
         }
 
-        public List<OrderItem> CreateListAsync(List<OrderItem> itemsList)
+        public List<OrderItem> CreateListAsync(List<OrderItem> itemsList,int orderid)
         {
             try
             {
-                foreach (var item in itemsList)
-                {
-                    db.OrderItems.Add(item);
-                }
+                itemsList.ForEach(item => item.OrderId = orderid);
+                db.OrderItems.AddRange(itemsList);
+                db.SaveChanges();
+                return itemsList;
 
-                int affected = db.SaveChanges();
-                if (affected >= 1)
-                {
-                    return itemsList;
-                }
 
-                return null;
             }
             catch (System.Exception)
             {

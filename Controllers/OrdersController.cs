@@ -141,7 +141,7 @@ namespace Talbat.Controllers
                 return BadRequest("Order is not added due to some corrupted data sent!");
             }
 
-            var orderItemsRes = _repoOrderItem.CreateListAsync(o.orderItemsList);
+            var orderItemsRes = _repoOrderItem.CreateListAsync(o.orderItemsList,orderAdded.OrderId);
             if (orderItemsRes == null)
             {
                 return BadRequest("Order item or more are not added due to some corrupted data sent!");
