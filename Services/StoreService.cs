@@ -47,11 +47,11 @@ namespace Talbat.Services
 
                                 // concatenating  FileName + FileExtension
                                 var newFileName = String.Concat(store.StoreId, fileExtension);
-                                store.StoreImage = "https://localhost:44311/StoreImages/" + newFileName;
+                                store.StoreImage = "https://localhost:44311/Images/Stores/" + newFileName;
 
                                 // Combines two strings into a path.
                                 var filepath =
-                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StoreImages")).Root + $@"\{newFileName}";
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/Stores")).Root + $@"\{newFileName}";
 
                                 using (FileStream fs = System.IO.File.Create(filepath))
                                 {
@@ -109,11 +109,11 @@ namespace Talbat.Services
 
                                 // concatenating  FileName + FileExtension
                                 var newFileName = String.Concat(store.StoreId, fileExtension);
-                                store.StoreImage = "https://localhost:44311/StoreImages/" + newFileName;
+                                store.StoreImage = "https://localhost:44311/Images/Stores/" + newFileName;
 
                                 // Combines two strings into a path.
                                 var filepath =
-                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StoreImages")).Root + $@"\{newFileName}";
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/Stores")).Root + $@"\{newFileName}";
 
                                 using (FileStream fs = System.IO.File.Create(filepath))
                                 {
@@ -172,7 +172,11 @@ namespace Talbat.Services
         {
             try
             {
-                return Task.Run(() => _db.Stores.Find(id));
+                  
+                return Task.Run(() => _db.Stores.Include("Cuisine")
+                .Include("Country")
+                .Include("StoreType")
+                .Single(s=>s.StoreId==id));
             }
             catch
             {
