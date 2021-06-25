@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Images\Items\" />
     <Folder Include="Images\Stores\" />
     <Folder Include="StoreImages\" />
   </ItemGroup>

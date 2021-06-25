@@ -47,11 +47,11 @@ namespace Talbat.Services
 
                                 // concatenating  FileName + FileExtension
                                 var newFileName = String.Concat(item.ItemId, fileExtension);
-                                item.ItemImage = "https://localhost:44311/Images/" + newFileName;
+                                item.ItemImage = "https://localhost:44311/Images/Items/" + newFileName;
                                
                                 // Combines two strings into a path.
                                 var filepath =
-                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")).Root + $@"\{newFileName}";
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/Items")).Root + $@"\{newFileName}";
 
                                 using (FileStream fs = System.IO.File.Create(filepath))
                                 {
@@ -109,11 +109,11 @@ namespace Talbat.Services
 
                                 // concatenating  FileName + FileExtension
                                 var newFileName = String.Concat(item.ItemId, fileExtension);
-                                item.ItemImage = "https://localhost:44311/Images/" + newFileName;
+                                item.ItemImage = "https://localhost:44311/Images/Items/" + newFileName;
 
                                 // Combines two strings into a path.
                                 var filepath =
-                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")).Root + $@"\{newFileName}";
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/Items")).Root + $@"\{newFileName}";
 
                                 using (FileStream fs = System.IO.File.Create(filepath))
                                 {
