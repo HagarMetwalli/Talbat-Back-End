@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,11 @@ namespace Talbat.Services
         {
             try
             {
-                return Task<List<TempPartnerRegisterationDetail>>.Run<List<TempPartnerRegisterationDetail>>(() => _db.TempPartnerRegisterationDetails.ToList());
+                return Task<List<TempPartnerRegisterationDetail>>.Run<List<TempPartnerRegisterationDetail>>(() => 
+                _db.TempPartnerRegisterationDetails
+                   .Include("Country")
+                   .Include("StoreType")
+                   .ToList());
             }
             catch
             {

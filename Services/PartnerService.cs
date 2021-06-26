@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace Talbat.Services
         public Task<List<Partner>> RetriveAllAsync()
         {
             try { 
-            return Task<List<Partner>>.Run<List<Partner>>(() => _db.Partners.ToList());
+            return Task<List<Partner>>.Run<List<Partner>>(() => _db.Partners.Include("Store").ToList());
             }
             catch
             {
@@ -121,6 +122,18 @@ namespace Talbat.Services
             }
         }
 
+        public Task<int> RetriveCount()
+        {
+            try
+            {
+
+                return Task.Run(() => _db.Partners.Count());
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }
 

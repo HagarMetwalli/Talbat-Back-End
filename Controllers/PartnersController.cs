@@ -34,6 +34,20 @@ namespace Talbat.Controllers
                 return NoContent();
             return Ok(partners);
         }
+        // GET: api/clients/GetClientCount
+        [HttpGet]
+        [Route("GetPartnerCount")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<int>))]
+        public async Task<ActionResult<List<Client>>> GetPartnerCount()
+        {
+            int count = await _repo.RetriveCount();
+            if (count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(count);
+        }
 
         // GET api/Partners/5
         [HttpGet("{id}")]
