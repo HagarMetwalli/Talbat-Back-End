@@ -763,6 +763,9 @@ namespace Talbat.Migrations
                     b.Property<int>("PartnerId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("JoinDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PartnerEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

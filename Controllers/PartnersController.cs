@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
@@ -83,6 +81,7 @@ namespace Talbat.Controllers
             Partner added = await _repo.CreatAsync(Partner);
             if (added == null)
                 return BadRequest();
+
             return Ok();
         }
 
@@ -124,7 +123,7 @@ namespace Talbat.Controllers
             {
                 return BadRequest();
             }
-            
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -135,7 +134,7 @@ namespace Talbat.Controllers
             {
                 return BadRequest();
             }
-           
+
             var existing = await _repo.RetriveAsync(id);
             if (existing == null)
             {
@@ -189,15 +188,16 @@ namespace Talbat.Controllers
             {
                 return BadRequest();
             }
-            try { 
-            var token = await _repo.Login(obj);
-
-            if (token == null)
+            try
             {
-                return Unauthorized();
-            }
+                var token = await _repo.Login(obj);
 
-            return Ok(new { Token = token });
+                if (token == null)
+                {
+                    return Unauthorized();
+                }
+
+                return Ok(new { Token = token });
 
             }
             catch

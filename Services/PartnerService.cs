@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +20,7 @@ namespace Talbat.Services
             try
             {
                 Partner.PartnerEmail.ToLower();
+                Partner.JoinDate = DateTime.Now;
                 await _db.Partners.AddAsync(Partner);
                 int affected = await _db.SaveChangesAsync();
                 if (affected == 1)
@@ -48,11 +48,11 @@ namespace Talbat.Services
                 return false;
             }
         }
-
         public Task<List<Partner>> RetriveAllAsync()
         {
-            try { 
-            return Task<List<Partner>>.Run<List<Partner>>(() => _db.Partners.ToList());
+            try
+            {
+                return Task<List<Partner>>.Run<List<Partner>>(() => _db.Partners.ToList());
             }
             catch
             {
@@ -70,13 +70,14 @@ namespace Talbat.Services
                 return null;
             }
         }
-
         public async Task<Partner> PatchAsync(Partner Partner)
         {
             try
             {
                 _db = new TalabatContext();
+                var currentPartner = _db.Partners.Find(Partner.PartnerId);
                 Partner.PartnerEmail.ToLower();
+                Partner.JoinDate = currentPartner.JoinDate;
                 _db.Partners.Update(Partner);
                 int affected = await _db.SaveChangesAsync();
                 if (affected == 1)
@@ -88,7 +89,6 @@ namespace Talbat.Services
                 return null;
             }
         }
-
         public Task<string> Login(Login obj)
         {
             try

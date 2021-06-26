@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210620111154_frist")]
-    partial class frist
+    [Migration("20210625165420_blabla")]
+    partial class blabla
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -764,6 +764,9 @@ namespace Talbat.Migrations
                 {
                     b.Property<int>("PartnerId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PartnerEmail")
                         .IsRequired()

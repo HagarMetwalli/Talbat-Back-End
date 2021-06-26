@@ -1,22 +1,13 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
 using Talbat.Services;
@@ -38,7 +29,7 @@ namespace Talbat
         {
             services.AddDbContext<TalabatContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Talbaltconn")));
             //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                //.AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
+            //.AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
@@ -49,7 +40,7 @@ namespace Talbat
                     builder.AllowAnyHeader();
                 });
             });
-            
+
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IGeneric<City>, CityService>();
@@ -90,6 +81,7 @@ namespace Talbat
             services.AddScoped<IGenericComposite<PromotionItem>, PromotionItemService>();
             services.AddScoped<IGenericComposite<CouponItem>, CouponItemService>();
             services.AddScoped<IPromotionRelatedService, PromotionService>();
+            services.AddScoped<IPartnerStatistics, PartnerStatisticsService>();
 
 
 
@@ -111,7 +103,7 @@ namespace Talbat
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidAudience = "https://localhost:4200",
-                    ValidIssuer = "https://localhost:4200",     
+                    ValidIssuer = "https://localhost:4200",
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretey@83"))
                 };
             });

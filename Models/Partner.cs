@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -15,7 +15,7 @@ namespace Talbat.Models
         public int PartnerId { get; set; }
 
         [Required]
-        [StringLength(maximumLength: 10, MinimumLength =3)]
+        [StringLength(maximumLength: 10, MinimumLength = 3)]
         public string PartnerFname { get; set; }
 
         [Required]
@@ -36,9 +36,9 @@ namespace Talbat.Models
         [DataType(DataType.Password)]
         [StringLength(maximumLength: 100, MinimumLength = 8)]
         [RegularExpression("^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{8,}$")]
-
         public string PartnerPassword { get; set; }
 
+        public DateTime JoinDate { get; set; }
 
         [ForeignKey(nameof(StoreId))]
         [InverseProperty("Partners")]
