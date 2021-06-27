@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
 using Talbat.Services;
+using Talbat.Settings;
 
 namespace Talbat
 {
@@ -52,7 +53,11 @@ namespace Talbat
                     builder.AllowAnyMethod();
                     builder.AllowAnyHeader();
                 });
+
             });
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailingService, MailingService>();
+
 
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -104,6 +109,7 @@ namespace Talbat
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+
 
             // Adding Jwt Bearer  
             .AddJwtBearer(options =>
@@ -181,7 +187,7 @@ namespace Talbat
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Talbat v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
             {
