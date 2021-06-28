@@ -12,6 +12,7 @@ namespace Talbat.Models
     public partial class Partner
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PartnerId { get; set; }
 
         [Required]

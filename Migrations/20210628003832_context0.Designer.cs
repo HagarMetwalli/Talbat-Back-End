@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210624214916_nullablestoreimaged")]
-    partial class nullablestoreimaged
+    [Migration("20210628003832_context0")]
+    partial class context0
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -762,7 +762,9 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.Partner", b =>
                 {
                     b.Property<int>("PartnerId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("PartnerEmail")
                         .IsRequired()
@@ -961,7 +963,6 @@ namespace Talbat.Migrations
                         .HasColumnType("varchar(400)");
 
                     b.Property<string>("StoreImage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("StoreLatitude")

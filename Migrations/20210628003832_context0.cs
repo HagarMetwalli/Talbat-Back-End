@@ -2,7 +2,7 @@
 
 namespace Talbat.Migrations
 {
-    public partial class ValueGeneratedOnAdd2 : Migration
+    public partial class context0 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

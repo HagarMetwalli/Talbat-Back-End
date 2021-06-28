@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Talbat.Dtos;
 using Talbat.IServices;
+using Talbat.Models;
 
 namespace Talbat.Controllers
 {
@@ -20,24 +21,61 @@ namespace Talbat.Controllers
         [HttpPost("send")]
         public async Task<IActionResult> SendMail([FromForm] MailRequestDto dto)
         {
-            await _mailingService.SendEmailAsync(dto.ToEmail, dto.Subject, dto.Body, dto.Attachments);
-            return Ok();
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                await _mailingService.SendEmailAsync(dto.ToEmail, dto.Subject, dto.Body, dto.Attachments);
+                return Ok();
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+           
+
         }
 
         [HttpPost("welcome")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> SendWelcomeEmail([FromBody] WelcomeRequestDto dto)
         {
-            var filePath = "E://1ITI//ITI Graduation Project//project//HagarMetwalli//Talabat//Talbat-Back-End//Templetes//EmailTemplate.html";
+            using (var db = new TalabatContext())
+            {
+                var exist = db.TempPartnerRegisterationDetails.FirstOrDefault(x => x.PartnerEmail == dto.Email.ToLower());
+                if (exist == null)
+                {
+                    return NotFound();
+                }
+                else {
 
-            var str = new StreamReader(filePath);
+                    try
+                    {
+                        var filePath = "E://1ITI//ITI Graduation Project//project//HagarMetwalli//Talabat//Talbat-Back-End//Templetes//EmailTemplate.html";
 
-            var mailText = str.ReadToEnd();
-            str.Close();
+                        var str = new StreamReader(filePath);
 
-            mailText = mailText.Replace("[username]", dto.UserName).Replace("[email]", dto.Email).Replace("[password]",dto.Password);
+                        var mailText = str.ReadToEnd();
+                        str.Close();
 
-            await _mailingService.SendEmailAsync(dto.Email, "Welcome to our channel", mailText);
-            return Ok();
+                        mailText = mailText.Replace("[username]", dto.UserName).Replace("[email]", dto.Email).Replace("[password]", dto.Password);
+
+                        await _mailingService.SendEmailAsync(dto.Email, "Welcome to our channel", mailText);
+                        return Ok();
+                    }
+                    catch
+                    {
+
+                        return BadRequest();
+                    }
+                }  
+            }
+
         }
     }
 }
