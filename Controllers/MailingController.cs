@@ -65,7 +65,7 @@ namespace Talbat.Controllers
 
                         mailText = mailText.Replace("[username]", dto.UserName).Replace("[email]", dto.Email).Replace("[password]", dto.Password);
 
-                        await _mailingService.SendEmailAsync(dto.Email, "Welcome to our channel", mailText);
+                        await _mailingService.SendEmailAsync(dto.Email, "Welcome to our Website", mailText);
                         return Ok();
                     }
                     catch
