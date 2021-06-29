@@ -52,8 +52,8 @@ namespace Talbat.Controllers
                 {
                     return NotFound();
                 }
-                else {
-
+                else 
+                {
                     try
                     {
                         var filePath = "E://1ITI//ITI Graduation Project//project//HagarMetwalli//Talabat//Talbat-Back-End//Templetes//EmailTemplate.html";

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class context : Migration
+    public partial class Context : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -388,7 +388,8 @@ namespace Talbat.Migrations
                 name: "TempPartnerRegisterationDetails",
                 columns: table => new
                 {
-                    TempPartnerStoreId = table.Column<int>(type: "int", nullable: false),
+                    TempPartnerStoreId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     PartnerFname = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     PartnerLname = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     StoreCountryId = table.Column<int>(type: "int", nullable: false),

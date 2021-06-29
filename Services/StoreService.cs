@@ -21,7 +21,7 @@ namespace Talbat.Services
             _db = db;
         }
 
-        public async Task<Store> CreateStoreAsync(Store store , IFormFile imgFile)
+        public async Task<Store> CreateStoreAsync(Store store)
         {
             try
             { 
@@ -31,43 +31,9 @@ namespace Talbat.Services
                     int affected = await db.SaveChangesAsync();
                     if (affected == 1)
                     {
-
-                        if (imgFile != null)
-                        {
-                            if (imgFile.Length > 0)
-                            {
-                                //Getting FileName
-                                var fileName = Path.GetFileName(imgFile.FileName);
-
-                                ////Assigning Unique Filename (Guid)
-                                //var myUniqueFileName = Convert.ToString(Guid.NewGuid());
-
-                                //Getting file Extension
-                                var fileExtension = Path.GetExtension(fileName);
-
-                                // concatenating  FileName + FileExtension
-                                var newFileName = String.Concat(store.StoreId, fileExtension);
-                                store.StoreImage = "https://localhost:44311/Images/Stores/" + newFileName;
-
-                                // Combines two strings into a path.
-                                var filepath =
-                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/Stores")).Root + $@"\{newFileName}";
-
-                                using (FileStream fs = System.IO.File.Create(filepath))
-                                {
-                                    imgFile.CopyTo(fs);
-                                    fs.Flush();
-                                }
-                                db.SaveChanges();
-                                return store;
-                            }
-
-                            return store;
-
-                        }
-                        return null;
+                        return store;
                     }
-                return store;
+                    return null;
                 }
             }
             catch

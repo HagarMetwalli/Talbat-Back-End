@@ -12,6 +12,7 @@ namespace Talbat.Models
     public partial class TempPartnerRegisterationDetail
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TempPartnerStoreId { get; set; }
 
         [Required]

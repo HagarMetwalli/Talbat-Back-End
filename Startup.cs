@@ -214,6 +214,7 @@ namespace Talbat
             {
                 endpoints.MapControllers();
             });
+            Stripe.StripeConfiguration.ApiKey = Configuration["StripAPi:secretKey"];
         }
     }
 }

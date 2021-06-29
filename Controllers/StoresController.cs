@@ -217,9 +217,10 @@ namespace Talbat.Controllers
 
         // POST api/Stores
         [HttpPost]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromForm] Store store, IFormFile storeImage)
+        public async Task<IActionResult> Post([FromBody] Store store)
         {
             if (store == null)
             {
@@ -236,12 +237,13 @@ namespace Talbat.Controllers
             {
                 return BadRequest();
             }
-            Store added = await _repo.CreateStoreAsync(store, storeImage);
+
+            Store added = await _repo.CreateStoreAsync(store);
             if (added == null)
             {
                 return BadRequest();
             }
-            return Ok();
+            return Ok(added);
         }
 
         // Patch api/ Stores/5

@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210628003832_context0")]
-    partial class context0
+    [Migration("20210628080553_Context")]
+    partial class Context
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1134,7 +1134,9 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>
                 {
                     b.Property<int>("TempPartnerStoreId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("PartnerContactRole")
                         .IsRequired()

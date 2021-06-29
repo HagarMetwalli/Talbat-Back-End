@@ -29,8 +29,8 @@ namespace Talbat.IServices
         public Task<Store> RetriveStoreInLocationAsync(int storeId, double lat1, double long1);
         public Task<List<Item>> RetriveAllWithNameAsync(int id);
 
-        public Task<Store> CreateStoreAsync(Store store, IFormFile imgFile);
-        public Task<Store> PatchStoreAsync(Store store, IFormFile imgFile);
+        public Task<Store> CreateStoreAsync(Store store);
+        public Task<Store> PatchStoreAsync(Store store, IFormFile imgFile = null);
 
     }
 }
