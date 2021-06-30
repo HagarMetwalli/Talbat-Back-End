@@ -44,6 +44,8 @@ namespace Talbat.Services
             try
             {
                 Partner Partner = await RetriveAsync(id);
+                var store = _db.Stores.Find(Partner.StoreId);
+                _db.Stores.Remove(store);
                 _db.Partners.Remove(Partner);
                 int affected = await _db.SaveChangesAsync();
                 if (affected == 1)

@@ -129,8 +129,7 @@ namespace Talbat.Services
             {
                 return Task<List<Store>>.Run<List<Store>>(() => _db.Stores
                 .Include("Cuisine")
-                .Include("Country")
-                .Include("StoreType").ToList());
+                .ToList());
             }
             catch
             {
