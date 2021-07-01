@@ -95,46 +95,104 @@ namespace Talbat.Services
             return ordersNumberList;
         }
 
-        ////only for one month
-        //public List<int> OrdersNumberByPartnerId(int partnerId, DateTime? start, DateTime? end)
-        //{
-        //    List<int> ordersNumberList = new List<int>();
+        //Reports are generated basically per month but can be changed to be per year
+        public List<int> ReviewPointsByPartnerId(int partnerId, bool isPerYear)
+        {
+            var reportEvals = new List<int>();
+            int storeId;
+            var listOfOrdersList = new List<List<Order>>();
+            Partner partner;
 
-        //    Partner partner;
+            using (var dbCon = new TalabatContext())
+            {
+                storeId = dbCon.Partners.FirstOrDefault(x => x.PartnerId == partnerId).StoreId;
+                partner = dbCon.Partners.Find(partnerId);
+            }
 
-        //    using (var dbCon = new TalabatContext())
-        //    {
-        //        partner = dbCon.Partners.Find(partnerId);
+            if (!isPerYear)
+            {
+                //monthly report
+                var pastMonth = DateTime.Now.AddMonths(-1).Month;
+                int daysIncrement = (DateTime.DaysInMonth(DateTime.Now.Year, pastMonth)) / 4;
+                int start = 1;
 
-        //    }
+                #region initialize ordersLists and reviewsList sum
+                for (int i = 1; i < 5; i++)
+                {
+                    var ordersCollection = _db.Orders.Where(o =>
+                           o.StoreId == storeId
+                        && o.OrderTime.Year == DateTime.Now.Year
+                        && o.OrderTime.Month == pastMonth
+                        && o.OrderTime.Day >= start
+                        && o.OrderTime.Day < (daysIncrement * i)
+                        )
+                    .ToList();
 
-        //    if (start == null)
-        //    {
-        //        start = partner.JoinDate;
-        //    }
+                    listOfOrdersList.Add(ordersCollection);
+                    start = (daysIncrement * i);
 
-        //    if (end == null)
-        //    {
-        //        var endDate = DateTime.Now;
-        //    }
+                }
 
-        //    var ordersList = _db.Orders.Where(o => o.StoreId == partner.StoreId && o.OrderTime.Day <= partner.JoinDate.AddDays(6).Day).ToList();
-        //    ordersNumberList.Add(ordersList.Where(o => o.IsDelivered == 1).Count());
-        //    ordersList = null;
+                listOfOrdersList.ForEach(x =>
+                {
+                    var reviewsSumPerPeriod = (_db.OrderReviews.ToList()).Join(
+                    x,
+                    ordrReview => ordrReview.OrderId,
+                    ordr => ordr.OrderId,
+                    (ordRev, ord) => new { ordRev })
+                    .ToList()
+                    .Sum(x => x.ordRev.OrderPackaging + x.ordRev.QualityOfFood + x.ordRev.ValueForMoney + x.ordRev.DeliveryTime);
 
-        //    ordersList = _db.Orders.Where(o => o.StoreId == partner.StoreId && o.OrderTime.Day <= partner.JoinDate.AddDays(14).Day && o.OrderTime.Day > partner.JoinDate.AddDays(6).Day).ToList();
-        //    ordersNumberList.Add(ordersList.Where(o => o.IsDelivered == 1).Count());
-        //    ordersList = null;
+                    reportEvals.Add(reviewsSumPerPeriod);
 
-        //    ordersList = _db.Orders.Where(o => o.StoreId == partner.StoreId && o.OrderTime.Day <= partner.JoinDate.AddDays(21).Day && o.OrderTime.Day > partner.JoinDate.AddDays(14).Day).ToList();
-        //    ordersNumberList.Add(ordersList.Where(o => o.IsDelivered == 1).Count());
-        //    ordersList = null;
+                });
+                #endregion
+            }
+            else
+            {
+                //yearly report
+                if (partner.JoinDate.Year >= DateTime.Now.Year)
+                {
+                    reportEvals.Add(0);
+                    reportEvals.Add(0);
+                    reportEvals.Add(0);
+                    reportEvals.Add(0);
+                    return reportEvals;
+                }
 
-        //    ordersList = _db.Orders.Where(o => o.StoreId == partner.StoreId && o.OrderTime.Day <= partner.JoinDate.AddDays(29).Day && o.OrderTime.Day > partner.JoinDate.AddDays(21).Day).ToList();
-        //    ordersNumberList.Add(ordersList.Where(o => o.IsDelivered == 1).Count());
+                for (int i = 0; i < 13; i += 3)
+                {
+                    var ordersCollection = _db.Orders.Where(o =>
+                               o.StoreId == storeId
+                            && o.OrderTime.Year == DateTime.Now.Year - 1
+                            && o.OrderTime.Month > i
+                            && o.OrderTime.Month <= i + 3
+                            )
+                            .ToList();
+                    listOfOrdersList.Add(ordersCollection);
+                }
 
-        //    return ordersNumberList;
-        //}
+                listOfOrdersList.ForEach(x =>
+                {
+                    var reviewsSumPerPeriod = (_db.OrderReviews.ToList()).Join(
+                    x,
+                    ordrReview => ordrReview.OrderId,
+                    ordr => ordr.OrderId,
+                    (ordRev, ord) => new { ordRev })
+                    .ToList()
+                    .Sum(x => x.ordRev.OrderPackaging + x.ordRev.QualityOfFood + x.ordRev.ValueForMoney + x.ordRev.DeliveryTime);
+
+                    reportEvals.Add(reviewsSumPerPeriod);
+
+                });
+
+
+            }
+
+            return reportEvals;
+        }
+
+
     }
 }
 

@@ -34,14 +34,9 @@ namespace Talbat.Controllers
         public ActionResult PartnerStoreOrdersStatistic(int partnerId, DateTime? start, DateTime? end, int? deliveryState)
         {
             //Per month or specific time
-            if (partnerId <= 0 || deliveryState > 1)
+            if (partnerId <= 0 || deliveryState > 1 || (_repoPartner.RetriveAsync(partnerId) == null))
             {
                 return BadRequest();
-            }
-
-            if (_repoPartner.RetriveAsync(partnerId) == null)
-            {
-                return NotFound("Partnet not found");
             }
 
             var ordersStatistics = _repo.OrdersNumberByPartnerId(partnerId, start, end, deliveryState);
@@ -51,6 +46,29 @@ namespace Talbat.Controllers
             }
 
             return Ok(ordersStatistics);
+        }
+
+        [HttpGet]
+        [Route("PartnerStoreReviewsStatistic/{partnerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+
+        public ActionResult PartnerStoreReviewsStatistic(int partnerId, bool isPerYear = false)
+        {
+            //Per month by default and per year is true
+            if (partnerId <= 0 || (_repoPartner.RetriveAsync(partnerId) == null))
+            {
+                return BadRequest();
+            }
+
+            var reviewsStatistics = _repo.ReviewPointsByPartnerId(partnerId, isPerYear);
+            if (reviewsStatistics == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(reviewsStatistics);
         }
 
 
