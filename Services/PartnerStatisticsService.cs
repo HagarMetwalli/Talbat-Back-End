@@ -47,7 +47,7 @@ namespace Talbat.Services
             {
                 endDate = new DateTime(startDate.Year, startDate.Month, (startDate.Day + (monthDaysCount - startDate.Day)), 1, 0, 0);
             }
-            else if (((DateTime)end).Year > DateTime.Now.Year || ((DateTime)end).Month > DateTime.Now.Month || ((DateTime)end).Day > DateTime.Now.Day)
+            else if (((DateTime)end).Year > DateTime.Now.Year || ((DateTime)end).Month > DateTime.Now.Month || (((DateTime)end).Day > DateTime.Now.Day && ((DateTime)end).Month == DateTime.Now.Month))
             {
                 return null;
             }
