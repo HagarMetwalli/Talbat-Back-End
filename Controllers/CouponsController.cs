@@ -160,19 +160,19 @@ namespace Talbat.Controllers
 
         // GET: api/Coupons/GetCouponDiscount
         [HttpGet]
-        [Route("GetCouponDiscount/{Id}/{clientId}")]
+        [Route("GetCouponDiscount/{key}/{clientId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult TotalDiscountValue(int Id, int clientId, [FromQuery] List<int> itemsIdList)//, [FromBody] List<Item> itemsList
+        public IActionResult TotalDiscountValue(string key, int clientId, [FromQuery] List<int> itemsIdList)//, [FromBody] List<Item> itemsList
         {
-            if (Id == 0 ||  clientId == 0)//itemsList.Count <= 0 ||
+            if (clientId == 0)//itemsList.Count <= 0 ||
             {
                 return BadRequest();
             }
             //var itemsList = new List<Item>();
             
-            var discount = _repo.RetrieveCouponDiscountValueAsync(Id, itemsIdList, clientId);
+            var discount = _repo.RetrieveCouponDiscountValueAsync(key, itemsIdList, clientId);
 
             if (discount == 0)
             {

@@ -10,5 +10,7 @@ namespace Talbat.IServices
     {
         public Task<T> RetriveByEmail(string Email);
         public Task<string> Login(Login obj);
+        public Task<int> RetriveCount();
+        public Task<string> SendEmail();
     }
 }

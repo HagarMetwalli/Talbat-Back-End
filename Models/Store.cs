@@ -37,6 +37,8 @@ namespace Talbat.Models
 
         [Required]
         public int CountryId { get; set; }
+        
+        public string? StoreImage { get; set; }
 
         [Required]
         [StringLength(maximumLength: 200, MinimumLength = 1)]

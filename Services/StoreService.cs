@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -16,16 +20,85 @@ namespace Talbat.Services
         {
             _db = db;
         }
-        public async Task<Store> CreatAsync(Store Store)
+
+        public async Task<Store> CreateStoreAsync(Store store)
+        {
+            try
+            { 
+                using (var db = new TalabatContext())
+                {
+                    await db.Stores.AddAsync(store);
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        return store;
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
+        public async Task<Store> PatchStoreAsync(Store store ,IFormFile imgFile)
         {
             try
             {
-                await _db.Stores.AddAsync(Store);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
-                    return Store;
-                return null;
+                using (var db = new TalabatContext())
+                {
+                    if (imgFile == null)
+                    {
+                        var _store = db.Stores.Single(i => i.StoreId == store.StoreId);
+                        store.StoreImage = _store.StoreImage;
+                        db.SaveChanges();
+                        return  await Task.Run(() => store);
+                    }
+                    db.Stores.Update(store);
+
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {
+                        if (imgFile != null)
+                        {
+                            if (imgFile.Length > 0)
+                            {
+                                //Getting FileName
+                                var fileName = Path.GetFileName(imgFile.FileName);
+
+                                ////Assigning Unique Filename (Guid)
+                                //var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+
+                                //Getting file Extension
+                                var fileExtension = Path.GetExtension(fileName);
+
+                                // concatenating  FileName + FileExtension
+                                var newFileName = String.Concat(store.StoreId, fileExtension);
+                                store.StoreImage = "https://localhost:44311/Images/Stores/" + newFileName;
+
+                                // Combines two strings into a path.
+                                var filepath =
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/Stores")).Root + $@"\{newFileName}";
+
+                                using (FileStream fs = System.IO.File.Create(filepath))
+                                {
+                                    imgFile.CopyTo(fs);
+                                    fs.Flush();
+                                }
+                                db.SaveChanges();
+                                return store;
+                            }
+
+                            return store;
+
+                        }
+                        return null;
+                    }
+                    return store;
+                }
             }
+
             catch
             {
                 return null;
@@ -54,7 +127,9 @@ namespace Talbat.Services
         {
             try
             {
-                return Task<List<Store>>.Run<List<Store>>(() => _db.Stores.ToList());
+                return Task<List<Store>>.Run<List<Store>>(() => _db.Stores
+                .Include("Cuisine")
+                .ToList());
             }
             catch
             {
@@ -65,13 +140,32 @@ namespace Talbat.Services
         {
             try
             {
-                return Task.Run(() => _db.Stores.Find(id));
+                  
+                return Task.Run(() => _db.Stores.Include("Cuisine")
+                .Include("Country")
+                .Include("StoreType")
+                .Single(s=>s.StoreId==id));
             }
             catch
             {
                 return null;
             }
 
+        }
+        public Task<List<Item>> RetriveAllWithNameAsync(int id)
+        {
+            try
+            {
+                return Task<IList>.Run<List<Item>>(() => _db.Items
+                .Include("ItemCategory")
+                .Include("Country")
+                .Where(s=>s.StoreId==id)
+                .ToList());
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public Task<IEnumerable<String>> RetriveMostCommonAsync()
@@ -101,10 +195,10 @@ namespace Talbat.Services
                     {
                         var all_Order_That_Have_sec_Item = _db.OrderItems.Where(q => q.ItemId == _items[j].ItemId);
                         var numberOfOrdereForSec = all_Order_That_Have_sec_Item.Count();
-
+                         
                         if (numberOfOrdereForSec > numberOfOrdere)
                         {
-                            var temp = _items[i];
+                             var temp = _items[i];
                             _items[i] = _items[j];
                             _items[j] = temp;
                             //resulte.Add(_items[j]);
@@ -179,15 +273,27 @@ namespace Talbat.Services
         {
             try
             {
-                var Categories = _db.Items.Where(c => c.StoreId == storeId).ToList();
+                var Categries = _db.Items.Include("ItemCategory").Where(c => c.StoreId == storeId)
+                .Select(x => x.ItemCategory).Distinct().ToList();
                 List<string> CategriesNames = new List<string>();
-                ItemCategory category = new ItemCategory();
-                foreach (var item in Categories)
+                foreach (var category in Categries)
                 {
-                    category = _db.ItemCategories.FirstOrDefault(c => c.ItemCategoryId == item.ItemCategoryId);
                     CategriesNames.Add(category.ItemCategoryName);
                 }
                 return Task.Run(() => CategriesNames);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public Task<List<ItemCategory>> RetriveItemCategoriesAsync(int storeId)
+         {
+            try
+            {
+                var Categries = _db.Items.Include("ItemCategory").Where(c => c.StoreId == storeId)
+                    .Select(x => x.ItemCategory).Distinct().ToList();
+                return Task.Run(() => Categries);
             }
             catch
             {
@@ -207,22 +313,22 @@ namespace Talbat.Services
             }
         }
 
-        public async Task<Store> PatchAsync(Store Store)
-        {
-            try
-            {
-                _db = new TalabatContext();
-                _db.Stores.Update(Store);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
-                    return Store;
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        //public async Task<Store> PatchAsync(Store Store)
+        //{
+        //    try
+        //    {
+        //        _db = new TalabatContext();
+        //        _db.Stores.Update(Store);
+        //        int affected = await _db.SaveChangesAsync();
+        //        if (affected == 1)
+        //            return Store;
+        //        return null;
+        //    }
+        //    catch
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public Task<IEnumerable<Item>> RetriveCategoryItemsAsync(int StoreId, int itemCategoryId)
         {
@@ -259,23 +365,25 @@ namespace Talbat.Services
                 return null;
             }
         }
-        public Task<Store> RetriveStoreInLocationAsync(string storeName, double lat1, double long1)
+
+        public Task<Store> RetriveStoreInLocationAsync(int storeid, double lat1, double long1)
         {
             try
             {
-                var store = _db.Stores.Single(x => x.StoreName == storeName);
+                var store = _db.Stores.Single(x => x.StoreId == storeid);
+
 
                 double destanceInMeters = getDistanceFromLatLonInMeter(lat1, long1, store.StoreLatitude, store.StoreLongitude);
                 if (destanceInMeters <= store.StoreDeliveryDistance)
                 {
                     return Task<Store>.Run<Store>(() => store);
                 }
-                return null;
+                return (Task<Store>)Task.Run(() => null);
 
             }
             catch
             {
-                return null;
+                return (Task<Store>)Task.Run(() => null);
             }
         }
 

@@ -10,7 +10,7 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class CityService : IGeneric<City>
+    public class CityService : Icity
     {
         private TalabatContext _db;
         public CityService(TalabatContext db)
@@ -46,6 +46,12 @@ namespace Talbat.Services
             {
                 using (var db = new TalabatContext())
                 {
+                    City cit = RetrivebyCitynameAsync(city.CityName);
+                    if (cit != null)
+                    {
+                        return null;
+                    }
+
                     await db.Cities.AddAsync(city);
                     int affected = await db.SaveChangesAsync();
 
@@ -58,6 +64,21 @@ namespace Talbat.Services
                 }
             }
             catch 
+            {
+                return null;
+            }
+
+        }
+
+        public City RetrivebyCitynameAsync(string cityname)
+        {
+            try
+            {
+                var city = _db.Cities.FirstOrDefault(s => s.CityName == cityname);
+
+                return city;
+            }
+            catch
             {
                 return null;
             }
@@ -95,6 +116,11 @@ namespace Talbat.Services
             {
                 using (var db = new TalabatContext())
                 {
+                    City cit = RetrivebyCitynameAsync(city.CityName);
+                    if (cit != null)
+                    {
+                        return null;
+                    }
                     db.Cities.Update(city);
                     int affected = await db.SaveChangesAsync();
                     if (affected == 1)

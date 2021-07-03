@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Talbat.IServices;
@@ -39,25 +41,7 @@ namespace Talbat.Controllers
             }
             return Ok(items);
         }
-        // GET: api/items
-        [HttpGet]
-        [Route("Getwithname")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(200, Type = typeof(ActionResult<List<Item>>))]
-        public async Task<ActionResult<List<Client>>> Getwithname()
-        {
-            IList<Item> items = await _repo.RetriveAllWithNameAsync();
-            if (items.Count == 0)
-            {
-                return NoContent();
-            }
-            if (items == null)
-            {
-                return BadRequest();
-            }
-            return Ok(items);
-        }
+
         // GET api/items/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
@@ -110,10 +94,10 @@ namespace Talbat.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody] Item item)
+        public async Task<IActionResult> Post([FromForm] Item item,IFormFile itemImage)
         {
 
-            if (item == null )
+            if (item == null || itemImage==null)
             {
                 return BadRequest();
             }
@@ -130,8 +114,8 @@ namespace Talbat.Controllers
             {
                 return BadRequest();
             }
+            Item added = await _repo.CreatefileAsync(item, itemImage);
 
-            Item added = await _repo.CreatAsync(item);
             if (added == null)
             {
                 return BadRequest();
@@ -168,13 +152,13 @@ namespace Talbat.Controllers
             }
         }
 
-        // Patch api/Cities/5
+        // Patch api/items/5
         [HttpPatch("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public async Task<IActionResult> Patch(int id, [FromBody] Item item)
+        public async Task<IActionResult> Patch(int id, [FromForm] Item item, IFormFile itemImage)
         {
             if (id <=0 || item == null ||item.ItemId != id)
             {
@@ -184,7 +168,6 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             var countryId = _db.Countries.Find(item.CountryId);
             var storeId = _db.Stores.Find(item.StoreId);
 
@@ -197,7 +180,7 @@ namespace Talbat.Controllers
             {
                 return NotFound();
             }
-            await _repo.PatchAsync(item);
+            await _repo.PatchfileAsync(item,itemImage);
             return new NoContentResult();
 
         }

@@ -11,8 +11,8 @@ namespace Talbat.Controllers
     [ApiController]
     public class CitiesController : ControllerBase
     {
-        private IGeneric<City> _repo;
-        public CitiesController(IGeneric<City> repo)
+        private Icity _repo;
+        public CitiesController(Icity repo)
         {
             _repo = repo;
         }

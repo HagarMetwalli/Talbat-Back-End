@@ -2,11 +2,14 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
@@ -14,12 +17,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
 using Talbat.Services;
+using Talbat.Settings;
 
 namespace Talbat
 {
@@ -48,12 +53,16 @@ namespace Talbat
                     builder.AllowAnyMethod();
                     builder.AllowAnyHeader();
                 });
+
             });
-            
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailingService, MailingService>();
+
+
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddScoped<IGeneric<City>, CityService>();
-            services.AddScoped<IGeneric<ClientAddress>, ClientAddressService>();
+            services.AddScoped<Icity, CityService>();
+            services.AddScoped<IClientAddressesRelated, ClientAddressService>();
             // services.AddScoped<IGenericService<ClientOffer>, ClientOfferService>();
             services.AddScoped<IGeneric<Country>, CountryService>();
             services.AddScoped<IGeneric<DeliveryMan>, DeliveryManService>();
@@ -69,7 +78,7 @@ namespace Talbat
             services.AddScoped<IGeneric<StoreType>, StoreTypeService>();
             //services.AddScoped<IGeneric<ReviewCategory>, ReviewCategoryService>();
             //services.AddScoped<IGeneric<Review>, ReviewService>();
-            services.AddScoped<IGeneric<Region>, RegionService>();
+            services.AddScoped<IRegions, RegionService>();
             services.AddScoped<IGeneric<RateStatus>, RateStatusService>();
             services.AddScoped<IUserService<Partner>, PartnerService>();
             services.AddScoped<IorderReview, OrderReviewService>();
@@ -100,6 +109,7 @@ namespace Talbat
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+
 
             // Adding Jwt Bearer  
             .AddJwtBearer(options =>
@@ -177,8 +187,24 @@ namespace Talbat
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Talbat v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider( Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
 
+
+            });
+
+
+            //Enable directory browsing
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
+            });
             app.UseRouting();
 
             app.UseAuthentication();
@@ -188,6 +214,7 @@ namespace Talbat
             {
                 endpoints.MapControllers();
             });
+            Stripe.StripeConfiguration.ApiKey = Configuration["StripAPi:secretKey"];
         }
     }
 }

@@ -15,11 +15,15 @@ namespace Talbat.Controllers
     {
         private IClientAddressesRelated _repo;
         private TalabatContext _db;
+        private Icity _cityrepo;
+        private IRegions _regionsrepo;
 
-        public ClientAddressesController(IClientAddressesRelated repo,TalabatContext db)
+        public ClientAddressesController(IClientAddressesRelated repo,TalabatContext db,Icity cityrepo,IRegions regionsrepo )
         {
             _repo = repo;
             _db = db;
+            _cityrepo = cityrepo;
+            _regionsrepo = regionsrepo;
         }
 
         // GET: api/clientaddresses
@@ -175,6 +179,65 @@ namespace Talbat.Controllers
             {
                 return BadRequest($"clientaddress {id} was found but failed to delete");
             }
+        }
+
+
+        // POST /api/ClientAddresses/AddAdress
+        [HttpPost]
+        [Route("AddAdress")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> AddAdress([FromBody] ClientAddressSubmite clientAddress)
+        {
+
+            if (clientAddress == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Region region = _regionsrepo.RetrivebyRegionnameAsync(clientAddress.RegionName);
+            City city = _cityrepo.RetrivebyCitynameAsync(clientAddress.CityName);
+            if (region == null || city == null)
+            {
+                return BadRequest();
+            }
+
+            ClientAddress address = new ClientAddress();
+            address.ClientAddressMobileNumber = clientAddress.ClientAddressMobileNumber;
+            address.ClientAddressLandLine = clientAddress.ClientAddressLandLine;
+            address.ClientAddressAddressTitle = clientAddress.ClientAddressAddressTitle;
+            address.ClientAddressStreet = clientAddress.ClientAddressStreet;
+            address.ClientAddressBuilding = clientAddress.ClientAddressBuilding;
+            address.ClientAddressFloor = clientAddress.ClientAddressFloor;
+            address.ClientAddressApartmentNumber = clientAddress.ClientAddressApartmentNumber;
+            address.ClientAddressOptionalDirections = clientAddress.ClientAddressOptionalDirections;
+            address.ClientAddressTypeId = clientAddress.ClientAddressTypeId;
+            address.ClientId = clientAddress.ClientId;
+            address.CityId = city.CityId;
+            address.RegionId = region.RegionId;
+               
+            var clientId = _db.Clients.Find(address.ClientId);
+            var addresstypeId = _db.AddressTypes.Find(address.ClientAddressTypeId);
+            var cityId = _db.Cities.Find(address.CityId);
+            var regionId = _db.Regions.Find(address.RegionId);
+
+            if (clientId == null || addresstypeId == null || cityId == null || regionId == null)
+            {
+                return BadRequest();
+            }
+
+            ClientAddress added = await _repo.CreatAsync(address);
+
+            if (added == null)
+            {
+                return BadRequest();
+            }
+            return Ok();
         }
     }
 }

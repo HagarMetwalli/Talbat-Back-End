@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq;
 using System.Threading.Tasks;
 using Talbat.IServices;
 using Talbat.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Talbat.Services
 {
@@ -107,11 +109,12 @@ namespace Talbat.Services
                     var element = _db.OrderReviews.Where(a => a.OrderId == item).ToList();
                     if (element.Count != 0)
                     {
-                        allreviwes.Add(_db.OrderReviews.Where(a => a.OrderId == item).First());
+                        allreviwes.Add(_db.OrderReviews.Include("Client").Where(a => a.OrderId == item).First());
                     }
                     
 
                 }
+
                 return Task<List<OrderReview>>.Run<List<OrderReview>>(() => allreviwes);
             }
             catch

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class frist : Migration
+    public partial class Context : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -346,6 +346,7 @@ namespace Talbat.Migrations
                     StoreName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     StoreDescription = table.Column<string>(type: "varchar(400)", unicode: false, maxLength: 400, nullable: false),
                     CountryId = table.Column<int>(type: "int", nullable: false),
+                    StoreImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StoreAddress = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
                     StoreLatitude = table.Column<double>(type: "float", nullable: false),
                     StoreLongitude = table.Column<double>(type: "float", nullable: false),
@@ -387,7 +388,8 @@ namespace Talbat.Migrations
                 name: "TempPartnerRegisterationDetails",
                 columns: table => new
                 {
-                    TempPartnerStoreId = table.Column<int>(type: "int", nullable: false),
+                    TempPartnerStoreId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     PartnerFname = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     PartnerLname = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     StoreCountryId = table.Column<int>(type: "int", nullable: false),
@@ -472,7 +474,7 @@ namespace Talbat.Migrations
                 {
                     ItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ItemImage = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false, defaultValueSql: "('Default.png')"),
+                    ItemImage = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true, defaultValueSql: "('Default.png')"),
                     ItemName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     ItemDescription = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false, defaultValueSql: "('No Description')"),
                     ItemPrice = table.Column<int>(type: "int", unicode: false, nullable: false),
@@ -538,7 +540,8 @@ namespace Talbat.Migrations
                 name: "Partner",
                 columns: table => new
                 {
-                    PartnerId = table.Column<int>(type: "int", nullable: false),
+                    PartnerId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     PartnerFname = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     PartnerLname = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     PartnerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),

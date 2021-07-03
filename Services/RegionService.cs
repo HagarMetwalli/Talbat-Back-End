@@ -8,22 +8,45 @@ using Talbat.Models;
 
 namespace Talbat.Services
 {
-    public class RegionService : IGeneric<Region>
+    public class RegionService : IRegions
     {
         private TalabatContext _db;
         public RegionService(TalabatContext db)
         {
             _db = db;
         }
+
+        public Region RetrivebyRegionnameAsync(string regionName)
+        {
+            try
+            {
+                var region = _db.Regions.FirstOrDefault(s => s.RegionName == regionName);
+
+                return region;
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
         public async Task<Region> CreatAsync(Region Region)
         {
             try
             {
-                await _db.Regions.AddAsync(Region);
-                int affected = await _db.SaveChangesAsync();
-                if (affected == 1)
-                    return Region;
-                return null;
+                using (var db = new TalabatContext())
+                {
+                    Region reg = RetrivebyRegionnameAsync(Region.RegionName);
+                    if (reg != null)
+                    {
+                        return null;
+                    }
+                    await _db.Regions.AddAsync(Region);
+                    int affected = await _db.SaveChangesAsync();
+                    if (affected == 1)
+                        return Region;
+                    return null;
+                }
             }
             catch
             {
@@ -75,6 +98,11 @@ namespace Talbat.Services
             try
             {
                 _db = new TalabatContext();
+                Region reg = RetrivebyRegionnameAsync(Region.RegionName);
+                if (reg != null)
+                {
+                    return null;
+                } 
                 _db.Regions.Update(Region);
                 int affected = await _db.SaveChangesAsync();
                 if (affected == 1)

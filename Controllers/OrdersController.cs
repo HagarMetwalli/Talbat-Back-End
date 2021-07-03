@@ -119,21 +119,21 @@ namespace Talbat.Controllers
                 return BadRequest("Reference or more are missing!");
             }
 
-            if (o.coupon != null)
-            {
-                var itemIdsList = o.orderItemsList.Select(x => x.ItemId).ToList();
+            //if (o.coupon != null)
+            //{
+            //    var itemIdsList = o.orderItemsList.Select(x => x.ItemId).ToList();
 
-                var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponId, itemIdsList, o.order.ClientId);
+            //    var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponKey, itemIdsList, o.order.ClientId);
 
-                if ( (o.order.OrderCost-couponDiscountValue) < 0 )
-                {
-                    o.order.OrderCost = 0;
-                }
-                else
-                {
-                    o.order.OrderCost -= couponDiscountValue;
-                }
-            }
+            //    if ( (o.order.OrderCost-couponDiscountValue) < 0 )
+            //    {
+            //        o.order.OrderCost = 0;
+            //    }
+            //    else
+            //    {
+            //        o.order.OrderCost -= couponDiscountValue;
+            //    }
+            //}
 
             var orderAdded = await _repo.CreatAsync(o.order);
             if (orderAdded == null)
@@ -141,7 +141,7 @@ namespace Talbat.Controllers
                 return BadRequest("Order is not added due to some corrupted data sent!");
             }
 
-            var orderItemsRes = _repoOrderItem.CreateListAsync(o.orderItemsList);
+            var orderItemsRes = _repoOrderItem.CreateListAsync(o.orderItemsList,orderAdded.OrderId);
             if (orderItemsRes == null)
             {
                 return BadRequest("Order item or more are not added due to some corrupted data sent!");
@@ -209,21 +209,21 @@ namespace Talbat.Controllers
                 return BadRequest("Reference or more are missing!");
             }
 
-            if (o.coupon != null)
-            {
-                var itemIdsList = o.orderItemsList.Select(x => x.ItemId).ToList();
+            //if (o.coupon != null)
+            //{
+            //    var itemIdsList = o.orderItemsList.Select(x => x.ItemId).ToList();
 
-                var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponId, itemIdsList, o.order.ClientId);
+            //    var couponDiscountValue = _repoCoupon.RetrieveCouponDiscountValueAsync(o.coupon.CouponKey, itemIdsList, o.order.ClientId);
 
-                if ((o.order.OrderCost - couponDiscountValue) < 0)
-                {
-                    o.order.OrderCost = 0;
-                }
-                else
-                {
-                    o.order.OrderCost -= couponDiscountValue;
-                }
-            }
+            //    if ((o.order.OrderCost - couponDiscountValue) < 0)
+            //    {
+            //        o.order.OrderCost = 0;
+            //    }
+            //    else
+            //    {
+            //        o.order.OrderCost -= couponDiscountValue;
+            //    }
+            //}
 
             var existing = _repo.RetriveAsync(o.order.OrderId);
             if (existing == null)

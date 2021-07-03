@@ -12,6 +12,9 @@ namespace Talbat.Models
     public partial class TempPartnerRegisterationDetail
     {
         [Key]
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
         public int TempPartnerStoreId { get; set; }
 
         [Required]
@@ -26,7 +29,6 @@ namespace Talbat.Models
         public int StoreCountryId { get; set; }
 
         [Required]
-        //[RegularExpression("^\\+?\\d{0,3}\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$")]
         public int PartnerPhoneNumber { get; set; }
 
         [Required]
@@ -46,19 +48,15 @@ namespace Talbat.Models
         [Range(1, int.MaxValue)]
         public int StoreBranchesNo { get; set; }
 
-        //[Required]
-        //public string StoreContact { get; set; }
-
         [Required]
         [StringLength(maximumLength: 100, MinimumLength = 3)]
+        [RegularExpression("^[a-zA-Z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$")]
         public string StoreWebSite { get; set; }
 
         [Required]
         [StringLength(maximumLength: 100, MinimumLength = 3)]
         public string StoreAddress { get; set; }
 
-        //[MaxLength(10)]
-        //public byte[] StoreStatus { get; set; }
 
         [Required]
         public int StoreTypeId { get; set; }

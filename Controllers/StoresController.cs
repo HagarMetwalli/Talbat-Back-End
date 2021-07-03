@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +53,26 @@ namespace Talbat.Controllers
                 return NotFound();
             return Ok(Store);
         }
+        // GET: api/stores/Getwithname
+        [HttpGet]
+        [Route("Getwithname/{storeId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<List<Item>>))]
+        public async Task<ActionResult<List<Client>>> Getwithname(int storeId)
+        {
+
+            IList<Item> items = await _repo.RetriveAllWithNameAsync(storeId);
+            if (items.Count == 0)
+            {
+                return NoContent();
+            }
+            if (items == null)
+            {
+                return BadRequest();
+            }
+            return Ok(items);
+        }
         // GET api/Stores/5
         [HttpGet]
         [Route("GetTopItemsBystoreId/{id}")]
@@ -91,6 +112,7 @@ namespace Talbat.Controllers
         [ProducesResponseType(200, Type = typeof(List<string>))]
         public async Task<ActionResult<IEnumerable<string>>> StoreCateories(string StoreName)
         {
+
             Store store = await _repo.RetriveByNameAsync(StoreName);
             if (store == null)
                 return NotFound();
@@ -142,23 +164,38 @@ namespace Talbat.Controllers
 
         // GET api/NearestStores
         [HttpGet]
-        [Route("GetStoreInLocationAsync/{storeName}/{latitude}/{Longitude}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
 
-        public async Task<IActionResult> GetStoreInLocationAsync(string storeName,double latitude, double Longitude)
+        [Route("GetStoreInLocationAsync/{storeId}/{latitude}/{Longitude}")]
+        [ProducesResponseType(200)]
+
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)] 
+
+
+        public async Task<IActionResult> GetStoreInLocationAsync(int storeid,double latitude, double Longitude)
         {
-            Store store = await _repo.RetriveByNameAsync(storeName);
+            Store store =_db.Stores.Where(a =>a.StoreId == storeid).First();
+
             if (store == null)
             {
                 return BadRequest();
             }
-            var avaliablity  =  _repo.RetriveStoreInLocationAsync(storeName,latitude, Longitude);
-            if (avaliablity != null)
+
+            try
+
             {
-                return NoContent();
+                var avaliablity = await _repo.RetriveStoreInLocationAsync(storeid, latitude, Longitude);
+                if (avaliablity != null)
+                {
+                    return Ok(avaliablity);
+                }
+                return NotFound();
             }
-            return NotFound();  
+            catch
+            {
+                return NotFound();
+            }
+           
         }
         // GET api/Stores/MC/Drinks
         [HttpGet]
@@ -192,15 +229,14 @@ namespace Talbat.Controllers
             return Ok(list);
         }
 
-
         // POST api/Stores
         [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> Post([FromBody] Store Store)
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Post([FromBody] Store store)
         {
-            if (Store == null)
+            if (store == null)
             {
                 return BadRequest();
             }
@@ -208,18 +244,59 @@ namespace Talbat.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var CountryId = _db.Countries.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            var CuisineId = _db.Cuisines.Find(Store.CuisineId);
+            var CountryId = _db.Countries.Find(store.CountryId);
+            var StoreTypeId = _db.StoreTypes.Find(store.StoreTypeId);
+            var CuisineId = _db.Cuisines.Find(store.CuisineId);
             if (CountryId == null || StoreTypeId == null || CuisineId == null)
             {
                 return BadRequest();
             }
-            Store added = await _repo.CreatAsync(Store);
+
+            Store added = await _repo.CreateStoreAsync(store);
             if (added == null)
+            {
                 return BadRequest();
-            return Ok();
+            }
+            return Ok(added);
         }
+
+        // Patch api/ Stores/5
+        [HttpPatch("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+
+        public async Task<IActionResult> Patch(int id, [FromForm] Store store, IFormFile storeImage)
+        {
+            if (store == null || store.StoreId != id)
+            {
+                return BadRequest();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var CountryId = _db.Countries.Find(store.CountryId);
+            var StoreTypeId = _db.StoreTypes.Find(store.StoreTypeId);
+            var CuisineId = _db.Cuisines.Find(store.CuisineId);
+            if (CountryId == null || StoreTypeId == null || CuisineId == null)
+            {
+                return BadRequest();
+            }
+            var existing = await _repo.RetriveAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            var affected = await _repo.PatchStoreAsync(store, storeImage);
+            if (affected == null)
+            {
+                return BadRequest();
+            }
+            return new NoContentResult();
+
+        }
+
 
         // DELETE api/Stores/5
         [HttpDelete("{id}")]
@@ -248,42 +325,7 @@ namespace Talbat.Controllers
             }
         }
 
-        // Patch api/ Stores/5
-        [HttpPatch("{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-
-        public async Task<IActionResult> Patch(int id, [FromBody] Store Store)
-        {
-            if (Store == null || Store.StoreId != id)
-            {
-                return BadRequest();
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var CountryId = _db.Countries.Find(Store.CountryId);
-            var StoreTypeId = _db.StoreTypes.Find(Store.StoreTypeId);
-            var CuisineId = _db.Cuisines.Find(Store.CuisineId);
-            if (CountryId == null || StoreTypeId == null || CuisineId == null)
-            {
-                return BadRequest();
-            }
-            var existing = await _repo.RetriveAsync(id);
-            if (existing == null)
-            {
-                return NotFound();
-            }
-            var affected = await _repo.PatchAsync(Store);
-            if (affected == null)
-            {
-                return BadRequest();
-            }
-            return new NoContentResult();
-
-        }
+ 
         //// GET api/Stores/GetStoreInArea/area
         //[HttpGet]
         //[Route("GetStoreInArea/{area}")]
@@ -335,7 +377,31 @@ namespace Talbat.Controllers
                 return Ok(stores);
             }
         }
-        // GET api/Stores/GetStoresWithCusineName/cusineName
+        // GET api/Stores/GetCategories
+        [HttpGet]
+        [Route("GetCategories/{storeId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+
+        public async Task<IActionResult> GetCategories(int storeId)
+        {
+            Store store = _db.Stores.Find(storeId);
+
+            if (store == null)
+            {
+                return BadRequest();
+            }
+            var itemCategories = await _repo.RetriveItemCategoriesAsync(storeId);
+            {
+                if (itemCategories.Count == 0)
+                {
+                    return NotFound();
+                }
+                return Ok(itemCategories);
+            }
+        }
+        // GET api/Stores/GetStoresWithCusineName/cusineId
         [HttpGet]
         [Route("GetStoresWithCusineName/{cusineId}")]
         [ProducesResponseType(200)]

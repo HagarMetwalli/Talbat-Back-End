@@ -10,7 +10,7 @@ namespace Talbat.Models
         public Order order { get; set; }
         public List<OrderItem> orderItemsList { get; set; }
 
-        public Coupon coupon = null;
+       // public Coupon coupon = null;
 
     }
 }

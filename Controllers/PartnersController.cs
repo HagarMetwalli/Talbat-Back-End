@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.AspNetCore.Mvc;
+using MimeKit;
+using MimeKit.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +37,20 @@ namespace Talbat.Controllers
             if (partners.Count == 0)
                 return NoContent();
             return Ok(partners);
+        }
+        // GET: api/clients/GetClientCount
+        [HttpGet]
+        [Route("GetPartnerCount")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<int>))]
+        public async Task<ActionResult<List<Client>>> GetPartnerCount()
+        {
+            int count = await _repo.RetriveCount();
+            if (count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(count);
         }
 
         // GET api/Partners/5
@@ -205,5 +223,57 @@ namespace Talbat.Controllers
                 return Unauthorized();
             }
         }
+        //// POST api/Partners
+        [HttpPost]
+        [Route("SendEmail")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        //[FromBody]
+        //Email email
+        public async Task<IActionResult> SendEmail()
+        {
+            //if (email == null)
+            //{
+            //    return BadRequest();
+            //}
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            // var tempPartner = _db.TempPartnerRegisterationDetails.Single(p => p.TempPartnerStoreId == email.Id);
+
+            //if (tempPartner == null)
+            //{
+            //    return BadRequest();
+
+            //}
+            //if (tempPartner.PartnerEmail != email.To.ToLower())
+            //{
+            //    return NotFound();
+            //}
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse("from_address@example.com"));
+            email.To.Add(MailboxAddress.Parse("to_address@example.com"));
+            email.Subject = "Test Email Subject";
+            email.Body = new TextPart(TextFormat.Html) { Text = "<h1>Example HTML Message Body</h1>" };
+
+            // send email
+            using var smtp = new SmtpClient();
+            smtp.Connect("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate("elza.schuppe@ethereal.email", "Sf3T9DkJSwF2C7Cyyp");
+            smtp.Send(email);
+            smtp.Disconnect(true);
+
+            //var sending = _repo.SendEmail();
+
+            //if (sending != null)
+            //{
+            //    return BadRequest("The Email Not Send");
+            //}
+            return Ok();
+        }
+
     }
 }
