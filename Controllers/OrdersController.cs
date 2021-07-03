@@ -100,6 +100,7 @@ namespace Talbat.Controllers
         //public async Task<IActionResult> Post([FromBody] Order order, [FromQuery] List<OrderItem> orderItemsList, Coupon coupon = null)   
         public async Task<IActionResult> Post([FromBody] OrderSubmitData o)
         {
+           
             if (o.order == null || o.orderItemsList == null)
             {
                 return BadRequest("Param or more are missing!");
