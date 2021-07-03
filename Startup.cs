@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Talbat.Data;
 using Talbat.IServices;
 using Talbat.Models;
 using Talbat.Services;
@@ -100,6 +101,8 @@ namespace Talbat
             services.AddScoped<IGenericComposite<CouponItem>, CouponItemService>();
             services.AddScoped<IPromotionRelatedService, PromotionService>();
 
+            //stripe seitting
+            services.Configure<StripSettings>(Configuration.GetSection("StripAPi"));
 
 
             // Adding Authentication  
@@ -214,7 +217,7 @@ namespace Talbat
             {
                 endpoints.MapControllers();
             });
-            Stripe.StripeConfiguration.ApiKey = Configuration["StripAPi:secretKey"];
+            Stripe.StripeConfiguration.ApiKey = Configuration["StripAPi:Secretkey"];
         }
     }
 }
