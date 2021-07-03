@@ -12,10 +12,10 @@ namespace Talbat.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
-        private IGeneric<Region> _repo;
+        private IRegions _repo;
         private TalabatContext _db;
 
-        public RegionsController(IGeneric<Region> repo, TalabatContext db)
+        public RegionsController(IRegions repo, TalabatContext db)
         {
             _repo = repo;
             _db = db;
