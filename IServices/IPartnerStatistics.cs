@@ -7,7 +7,8 @@ namespace Talbat.IServices
     {
         public List<int> OrdersNumberByPartnerId(int partnerId, DateTime? start, DateTime? end, int? deliveryState);
 
-        public List<int> ReviewPointsByPartnerId(int partnerId, bool isPerYear);
+        public List<List<int>> defaultStatistics(int partnerId);
 
+        public List<int> ReviewPointsByPartnerId(int partnerId, bool isPerYear);
     }
 }
