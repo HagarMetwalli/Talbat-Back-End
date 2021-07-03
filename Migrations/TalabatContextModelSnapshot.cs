@@ -430,7 +430,6 @@ namespace Talbat.Migrations
                         .HasDefaultValueSql("('No Description')");
 
                     b.Property<string>("ItemImage")
-                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)")
@@ -760,7 +759,9 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.Partner", b =>
                 {
                     b.Property<int>("PartnerId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("PartnerEmail")
                         .IsRequired()
@@ -958,6 +959,9 @@ namespace Talbat.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(400)");
 
+                    b.Property<string>("StoreImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("StoreLatitude")
                         .HasColumnType("float");
 
@@ -1127,8 +1131,13 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>
                 {
                     b.Property<int>("TempPartnerStoreId")
+
+                       // .HasColumnName("TempPartnerStoreId");
+
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("TempPartnerStoreId");
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
 
                     b.Property<string>("PartnerContactRole")
                         .IsRequired()

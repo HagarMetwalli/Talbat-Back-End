@@ -24,8 +24,8 @@ namespace Talbat.Models
         [Key]
         public int ItemId { get; set; }
 
-        [Required(ErrorMessage = "Item Image is required")]
-        public string ItemImage { get; set; }
+        //[Required(ErrorMessage = "Item Image is required")]
+        public string? ItemImage { get; set; }
 
         [Required(ErrorMessage = "Item Name is required")]
         [MinLength(3), MaxLength(50)]

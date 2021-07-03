@@ -11,7 +11,7 @@ namespace Talbat.Models
     {
         public StoreType()
         {
-            //Stores = new HashSet<Store>();
+            Stores = new HashSet<Store>();
             //TempPartnerRegisterationDetails = new HashSet<TempPartnerRegisterationDetail>();
         }
 

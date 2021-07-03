@@ -467,7 +467,7 @@ namespace Talbat.Models
 
             modelBuilder.Entity<Partner>(entity =>
             {
-                entity.Property(e => e.PartnerId).ValueGeneratedNever();
+                entity.Property(e => e.PartnerId).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.Store)
                     .WithMany(p => p.Partners)
@@ -644,7 +644,7 @@ namespace Talbat.Models
 
             modelBuilder.Entity<TempPartnerRegisterationDetail>(entity =>
             {
-                entity.Property(e => e.TempPartnerStoreId).ValueGeneratedNever();
+                entity.Property(e => e.TempPartnerStoreId).ValueGeneratedOnAdd();
 
                 //entity.Property(e => e.StoreStatus).IsFixedLength(true);
 

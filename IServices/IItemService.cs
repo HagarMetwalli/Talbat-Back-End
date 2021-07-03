@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,5 +12,9 @@ namespace Talbat.IServices
         public Task<List<SubItem>> RetriveSubItemsByItemIdAsync(int itemId);
 
         public Task<List<SubItemCategory>> RetriveSubItemsCategoriesByItemIdAsync(int itemId);
+        public Task<Item> CreatefileAsync(Item item, IFormFile imgFile);
+        public Task<Item> PatchfileAsync(Item item, IFormFile imgFile);
+
+
     }
 }

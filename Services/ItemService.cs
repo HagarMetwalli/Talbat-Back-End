@@ -1,8 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.FileProviders;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Talbat.IServices;
@@ -17,21 +21,118 @@ namespace Talbat.Services
         {
             _db = db;
         }
-        public async Task<Item> CreatAsync(Item item)
+        public async Task<Item> CreatefileAsync(Item item, IFormFile imgFile)
         {
             try
             {
                 using (var db = new TalabatContext())
                 {
-                    await _db.Items.AddAsync(item);
-                    int affected = await _db.SaveChangesAsync();
+                    await db.Items.AddAsync(item);
+                    int affected = await db.SaveChangesAsync();
                     if (affected == 1)
                     {
-                        return item;
+
+                        if (imgFile != null)
+                        {
+                            if (imgFile.Length > 0)
+                            {
+                                //Getting FileName
+                                var fileName = Path.GetFileName(imgFile.FileName);
+
+                                ////Assigning Unique Filename (Guid)
+                                //var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+
+                                //Getting file Extension
+                                var fileExtension = Path.GetExtension(fileName);
+
+                                // concatenating  FileName + FileExtension
+                                var newFileName = String.Concat(item.ItemId, fileExtension);
+                                item.ItemImage = "https://localhost:44311/Images/Items/" + newFileName;
+                               
+                                // Combines two strings into a path.
+                                var filepath =
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/Items")).Root + $@"\{newFileName}";
+
+                                using (FileStream fs = System.IO.File.Create(filepath))
+                                {
+                                    imgFile.CopyTo(fs);
+                                    fs.Flush();
+                                }
+                                db.SaveChanges();
+                                return item;
+                            }
+
+                            return item;
+
+                        }
+                       return null;
                     }
-                    return null;
+                    return item;
                 }
             }
+
+            catch
+            {
+                return null;
+            }
+        }
+        public async Task<Item> PatchfileAsync(Item item, IFormFile imgFile)
+        {
+            try
+            {
+                using (var db = new TalabatContext())
+                {
+                    if (imgFile == null)
+                    {
+                        var _item = db.Items.Single(i => i.ItemId == item.ItemId);
+                        item.ItemImage = _item.ItemImage;
+                        db.SaveChanges();
+                        return item;
+                    }
+                    db.Items.Update(item);
+
+                    int affected = await db.SaveChangesAsync();
+                    if (affected == 1)
+                    {  
+                        if (imgFile != null)
+                        {
+                            if (imgFile.Length > 0)
+                            {
+                                //Getting FileName
+                                var fileName = Path.GetFileName(imgFile.FileName);
+
+                                ////Assigning Unique Filename (Guid)
+                                //var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+
+                                //Getting file Extension
+                                var fileExtension = Path.GetExtension(fileName);
+
+                                // concatenating  FileName + FileExtension
+                                var newFileName = String.Concat(item.ItemId, fileExtension);
+                                item.ItemImage = "https://localhost:44311/Images/Items/" + newFileName;
+
+                                // Combines two strings into a path.
+                                var filepath =
+                                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/Items")).Root + $@"\{newFileName}";
+
+                                using (FileStream fs = System.IO.File.Create(filepath))
+                                {
+                                    imgFile.CopyTo(fs);
+                                    fs.Flush();
+                                }
+                                db.SaveChanges();
+                                return item;
+                            }
+
+                            return item;
+
+                        }
+                        return null;
+                    }
+                    return item;
+                }
+            }
+
             catch
             {
                 return null;
@@ -44,6 +145,15 @@ namespace Talbat.Services
                 using (var db = new TalabatContext())
                 {
                     Item item = await RetriveAsync(id);
+                    var orderItems = db.OrderItems.Where(i => i.ItemId == id).ToList();
+                    if (orderItems != null)
+                    {
+                        foreach (var orderItem in orderItems)
+                        {
+                            db.OrderItems.Remove(orderItem);
+                        }
+                        
+                    }
                     db.Items.Remove(item);
                     int affected = await db.SaveChangesAsync();
 
@@ -71,6 +181,7 @@ namespace Talbat.Services
                 return null;
             }
         }
+
         public Task<Item> RetriveAsync(int id)
         {
             try
@@ -142,6 +253,11 @@ namespace Talbat.Services
             {
                 return null;
             }
+        }
+
+        public Task<Item> CreatAsync(Item item)
+        {
+            throw new NotImplementedException();
         }
     }
 }

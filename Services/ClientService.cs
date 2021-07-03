@@ -38,6 +38,18 @@ namespace Talbat.Services
                 return null;
             }
         }
+        public Task<int> RetriveCount()
+        {
+            try
+            {
+
+                return Task.Run(() => _db.Clients.Count());
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public Task<Client> RetriveByEmail(string Email)
         {
             try
@@ -134,6 +146,18 @@ namespace Talbat.Services
             {
                 return (Task<string>)Task.Run(() => null);
             }
+        }
+
+  
+ 
+public Task<string> SendEmail(Email email)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<string> SendEmail()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -42,6 +42,20 @@ namespace Talbat.Controllers
             }    
             return Ok(clients);
         }
+        // GET: api/clients/GetClientCount
+        [HttpGet]
+        [Route("GetClientCount")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(ActionResult<int>))]
+        public async Task<ActionResult<List<Client>>> GetClientCount()
+        {
+            int count = await _repo.RetriveCount();
+            if (count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(count);
+        }
 
         // GET api/clients/5
         [HttpGet("{id}")]
