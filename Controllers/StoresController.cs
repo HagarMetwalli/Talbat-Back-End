@@ -152,7 +152,7 @@ namespace Talbat.Controllers
             List<Store> stores = await _repo.RetriveStoresBasedLocationAsync(latitude, Longitude);
             if (stores.Count == 0)
             {
-                return NoContent();
+                return NotFound();
             }
             if (stores == null)
             {

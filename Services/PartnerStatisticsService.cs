@@ -14,6 +14,19 @@ namespace Talbat.Services
             _db = db;
         }
 
+        public List<List<int>> defaultStatistics(int partnerId)
+        {
+            List<List<int>> defaultStatisticsLists = new List<List<int>>();
+            defaultStatisticsLists.Add(OrdersNumberByPartnerId(partnerId, null, null, null));
+            defaultStatisticsLists.Add(OrdersNumberByPartnerId(partnerId, null, null, 0));
+            defaultStatisticsLists.Add(OrdersNumberByPartnerId(partnerId, null, null, 1));
+
+            defaultStatisticsLists.Add(ReviewPointsByPartnerId(partnerId, false));
+            defaultStatisticsLists.Add(ReviewPointsByPartnerId(partnerId, true));
+
+            return defaultStatisticsLists;
+        }
+
         //only for one month
         //reports are only per month so if requested for more than a month... only give for the starting date month report
         public List<int> OrdersNumberByPartnerId(int partnerId, DateTime? start, DateTime? end, int? deliveryState)
