@@ -84,10 +84,14 @@ namespace Talbat.Services
                 {
                     if (imgFile == null)
                     {
-                        var _item = db.Items.Single(i => i.ItemId == item.ItemId);
+                        var _item = _db.Items.Single(i => i.ItemId == item.ItemId);
                         item.ItemImage = _item.ItemImage;
-                        db.SaveChanges();
-                        return item;
+                        db.Items.Update(item);
+                        int affect = await db.SaveChangesAsync();
+                        if (affect == 1)
+                            return item;
+                        else
+                            return null;
                     }
                     db.Items.Update(item);
 
@@ -120,6 +124,7 @@ namespace Talbat.Services
                                     imgFile.CopyTo(fs);
                                     fs.Flush();
                                 }
+  
                                 db.SaveChanges();
                                 return item;
                             }
