@@ -31,21 +31,26 @@ namespace Talbat.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
 
-        public ActionResult PartnerStoreOrdersStatistic(int partnerId, DateTime? start, DateTime? end, int? deliveryState)
+        public ActionResult PartnerStoreOrdersStatistic(int partnerId, DateTime? start, DateTime? end, int? deliveryState, bool customStatistics = true)
         {
             //Per month or specific time
             if (partnerId <= 0 || deliveryState > 1 || (_repoPartner.RetriveAsync(partnerId) == null))
-            {
                 return BadRequest();
-            }
 
-            var ordersStatistics = _repo.OrdersNumberByPartnerId(partnerId, start, end, deliveryState);
-            if (ordersStatistics == null)
+            if (!customStatistics)
             {
-                return BadRequest("Invalid Date!");
+                var ordersStatistics = _repo.defaultStatistics(partnerId);
+                if (ordersStatistics == null)
+                    return BadRequest("Invalid Date!");
+                return Ok(ordersStatistics);
             }
-
-            return Ok(ordersStatistics);
+            else
+            {
+                var ordersStatistics = _repo.OrdersNumberByPartnerId(partnerId, start, end, deliveryState);
+                if (ordersStatistics == null)
+                    return BadRequest("Invalid Date!");
+                return Ok(ordersStatistics);
+            }
         }
 
         [HttpGet]
