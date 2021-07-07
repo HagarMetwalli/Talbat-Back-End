@@ -763,6 +763,9 @@ namespace Talbat.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("JoinDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PartnerEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1131,13 +1134,9 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>
                 {
                     b.Property<int>("TempPartnerStoreId")
-
-                       // .HasColumnName("TempPartnerStoreId");
-
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
 
                     b.Property<string>("PartnerContactRole")
                         .IsRequired()
