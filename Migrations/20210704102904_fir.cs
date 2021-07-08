@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talbat.Migrations
 {
-    public partial class Context : Migration
+    public partial class fir : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -547,7 +547,8 @@ namespace Talbat.Migrations
                     PartnerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PartnerPhoneNo = table.Column<int>(type: "int", nullable: false),
                     StoreId = table.Column<int>(type: "int", nullable: false),
-                    PartnerPassword = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    PartnerPassword = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    JoinDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -719,7 +720,7 @@ namespace Talbat.Migrations
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     ItemId = table.Column<int>(type: "int", nullable: false),
                     OrderItemQty = table.Column<int>(type: "int", nullable: false, defaultValueSql: "((1))"),
-                    OrderItemSpecialRequest = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false, defaultValueSql: "('none')")
+                    OrderItemSpecialRequest = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true, defaultValueSql: "('none')")
                 },
                 constraints: table =>
                 {

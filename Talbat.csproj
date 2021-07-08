@@ -33,9 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\Items\" />
-    <Folder Include="Images\Stores\" />
-    <Folder Include="Migrations\" />
     <Folder Include="StoreImages\" />
   </ItemGroup>
 
