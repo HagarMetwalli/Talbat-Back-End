@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talbat.Models;
 
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    partial class TalabatContextModelSnapshot : ModelSnapshot
+    [Migration("20210624174314_partner2")]
+    partial class partner2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -430,6 +432,7 @@ namespace Talbat.Migrations
                         .HasDefaultValueSql("('No Description')");
 
                     b.Property<string>("ItemImage")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)")
@@ -759,9 +762,7 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.Partner", b =>
                 {
                     b.Property<int>("PartnerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("PartnerEmail")
                         .IsRequired()
@@ -959,9 +960,6 @@ namespace Talbat.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(400)");
 
-                    b.Property<string>("StoreImage")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("StoreLatitude")
                         .HasColumnType("float");
 
@@ -1131,13 +1129,8 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>
                 {
                     b.Property<int>("TempPartnerStoreId")
-
-                       // .HasColumnName("TempPartnerStoreId");
-
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
+                        .HasColumnName("TempPartnerStoreId");
 
                     b.Property<string>("PartnerContactRole")
                         .IsRequired()

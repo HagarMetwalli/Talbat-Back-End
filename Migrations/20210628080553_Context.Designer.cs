@@ -10,8 +10,8 @@ using Talbat.Models;
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    [Migration("20210704102904_fir")]
-    partial class fir
+    [Migration("20210628080553_Context")]
+    partial class Context
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -695,6 +695,7 @@ namespace Talbat.Migrations
                         .HasDefaultValueSql("((1))");
 
                     b.Property<string>("OrderItemSpecialRequest")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(200)
                         .IsUnicode(false)
@@ -764,9 +765,6 @@ namespace Talbat.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("JoinDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("PartnerEmail")
                         .IsRequired()
