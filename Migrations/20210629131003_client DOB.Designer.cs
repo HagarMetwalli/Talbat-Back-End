@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talbat.Models;
 
 namespace Talbat.Migrations
 {
     [DbContext(typeof(TalabatContext))]
-    partial class TalabatContextModelSnapshot : ModelSnapshot
+    [Migration("20210629131003_client DOB")]
+    partial class clientDOB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -693,6 +695,7 @@ namespace Talbat.Migrations
                         .HasDefaultValueSql("((1))");
 
                     b.Property<string>("OrderItemSpecialRequest")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(200)
                         .IsUnicode(false)
@@ -1131,13 +1134,9 @@ namespace Talbat.Migrations
             modelBuilder.Entity("Talbat.Models.TempPartnerRegisterationDetail", b =>
                 {
                     b.Property<int>("TempPartnerStoreId")
-
-                       // .HasColumnName("TempPartnerStoreId");
-
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
 
                     b.Property<string>("PartnerContactRole")
                         .IsRequired()
